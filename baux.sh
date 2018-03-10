@@ -6,7 +6,7 @@
 
 function die()
 {
-    echo "$@"; exit 1
+    echo "$@" >&2 ; exit 1
 }
 
 function check_tool()
@@ -56,7 +56,7 @@ function read_config()
     ensure "2 == $#" "Need LICENSE_CONFIGS array and CONFIG_FILE"
 
     # make a ref of config array
-    local -n CONFIGS="$1"
+    local -n __CONFIGS="$1"
     local CONFIG_FILE="$2"
     local OLD_IFS="${IFS}"
     local TMP_FILE
@@ -72,7 +72,7 @@ function read_config()
     while IFS="=" read -r NAME VALUE; do
         NAME="${NAME#\"}"; NAME="${NAME%\"}"
         VALUE="${VALUE#\"}"; VALUE="${VALUE%\"}"
-        CONFIGS["${NAME,,}"]="${VALUE}"
+        __CONFIGS["${NAME,,}"]="${VALUE}"
     done <"${TMP_FILE}"
 
     rm -rf "${TMP_FILE}"
