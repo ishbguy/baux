@@ -4,33 +4,33 @@
 
 #set -x
 
-die_hook() { true; }
-die() {
+baux_die_hook() { true; }
+baux_die() {
     echo "$@" >&2
-    die_hook
+    baux_die_hook
     exit 1
 }
 
-check_tool() {
+baux_check_tool() {
     for TOOL in "$@"; do
         which "${TOOL}" >/dev/null 2>&1 \
-            || die "You need to install ${TOOL}"
+            || baux_die "You need to install ${TOOL}"
     done
 }
 
-ensure() {
+baux_ensure() {
     local EXPR="$1"
     local MESSAGE="$2"
 
-    [[ $# -lt 1 ]] && die "${FUNCNAME[0]}() args error."
+    [[ $# -lt 1 ]] && baux_die "${FUNCNAME[0]}() args error."
     
     [[ -n $MESSAGE ]] && MESSAGE=": ${MESSAGE}"
-    [ ${EXPR} ] || die "${FUNCNAME[1]}() args error${MESSAGE}."
+    [ ${EXPR} ] || baux_die "${FUNCNAME[1]}() args error${MESSAGE}."
 }
 
 # echo a message with color
-cecho() {
-    ensure "2 == $#" "Need a COLOR name and a MESSAGE"
+baux_cecho() {
+    baux_ensure "2 == $#" "Need a COLOR name and a MESSAGE"
 
     local COLOR_NAME="$1"
     local MESSAGE="$2"
@@ -50,8 +50,8 @@ cecho() {
     echo -ne "${COLOR}${MESSAGE}[0m"
 }
 
-read_config() {
-    ensure "2 == $#" "Need LICENSE_CONFIGS array and CONFIG_FILE"
+baux_read_config() {
+    baux_ensure "2 == $#" "Need LICENSE_CONFIGS array and CONFIG_FILE"
 
     # make a ref of config array
     local -n __CONFIGS="$1"
