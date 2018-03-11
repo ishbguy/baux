@@ -4,24 +4,21 @@
 
 #set -x
 
-function die_hook() { true; }
-function die()
-{
+die_hook() { true; }
+die() {
     echo "$@" >&2
     die_hook
     exit 1
 }
 
-function check_tool()
-{
+check_tool() {
     for TOOL in "$@"; do
         which "${TOOL}" >/dev/null 2>&1 \
             || die "You need to install ${TOOL}"
     done
 }
 
-function ensure()
-{
+ensure() {
     local EXPR="$1"
     local MESSAGE="$2"
 
@@ -32,8 +29,7 @@ function ensure()
 }
 
 # echo a message with color
-function cecho()
-{
+cecho() {
     ensure "2 == $#" "Need a COLOR name and a MESSAGE"
 
     local COLOR_NAME="$1"
@@ -54,8 +50,7 @@ function cecho()
     echo -ne "${COLOR}${MESSAGE}[0m"
 }
 
-function read_config()
-{
+read_config() {
     ensure "2 == $#" "Need LICENSE_CONFIGS array and CONFIG_FILE"
 
     # make a ref of config array
