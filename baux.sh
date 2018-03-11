@@ -40,6 +40,7 @@ baux_ensure_not_empty() {
 # echo a message with color
 baux_cecho() {
     baux_ensure "2 == $#" "Need a COLOR name and a MESSAGE"
+    baux_ensure_not_empty "$@"
 
     local COLOR_NAME="$1"
     local MESSAGE="$2"
@@ -80,6 +81,7 @@ baux_getoptions()
 
 baux_read_config() {
     baux_ensure "2 == $#" "Need LICENSE_CONFIGS array and CONFIG_FILE"
+    baux_ensure_not_empty "$@"
 
     # make a ref of config array
     local -n __CONFIGS="$1"
