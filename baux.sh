@@ -28,6 +28,15 @@ baux_ensure() {
     [ ${EXPR} ] || baux_die "${FUNCNAME[1]}() args error${MESSAGE}."
 }
 
+baux_ensure_not_empty() {
+    baux_ensure "$# -ge 1" "Need one or more args"
+
+    for arg in "$@"; do
+        [[ ! -z ${arg} ]] || baux_die \
+            "${FUNCNAME[1]}() args error: Arguments should not be empty."
+    done
+}
+
 # echo a message with color
 baux_cecho() {
     baux_ensure "2 == $#" "Need a COLOR name and a MESSAGE"

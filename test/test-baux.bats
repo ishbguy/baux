@@ -29,6 +29,21 @@ SRC_DIR=${PWD}
     [ "${output}" = "() args error." ]
 }
 
+@test "test baux_ensure_not_empty" {
+    run bash -c "source ${SRC_DIR}/baux.sh; baux_ensure_not_empty"
+    [ "${status}" -eq 1 ]
+    [ "${output}" = "baux_ensure_not_empty() args error: Need one or more args." ]
+    run bash -c "source ${SRC_DIR}/baux.sh; baux_ensure_not_empty \"\""
+    [ "${status}" -eq 1 ]
+    [ "${output}" = "() args error: Arguments should not be empty." ]
+    run bash -c "source ${SRC_DIR}/baux.sh; baux_ensure_not_empty one"
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "" ]
+    run bash -c "source ${SRC_DIR}/baux.sh; baux_ensure_not_empty one \"\""
+    [ "${status}" -eq 1 ]
+    [ "${output}" = "() args error: Arguments should not be empty." ]
+}
+
 @test "test baux_cecho" {
     run bash -c "source ${SRC_DIR}/baux.sh; baux_cecho black 'test'"
     [ "${status}" -eq 0 ]
