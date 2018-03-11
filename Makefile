@@ -1,7 +1,7 @@
-TESTS := test-baux.bats
+TEST_DIR := $(shell pwd)/test
 
 all : test
 
 .PHONY : test
 test :
-	bats $(TESTS)
+	bats $(TEST_DIR)
