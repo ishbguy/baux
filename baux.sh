@@ -4,9 +4,12 @@
 
 #set -x
 
+function die_hook() { true; }
 function die()
 {
-    echo "$@" >&2 ; exit 1
+    echo "$@" >&2
+    die_hook
+    exit 1
 }
 
 function check_tool()
