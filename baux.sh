@@ -22,7 +22,7 @@ baux_ensure() {
     local EXPR="$1"
     local MESSAGE="$2"
 
-    [[ $# -lt 1 ]] && baux_die "${FUNCNAME[0]}() args error."
+    [[ $# -ge 1 ]] || baux_die "${FUNCNAME[0]}() args error."
     
     [[ -n $MESSAGE ]] && MESSAGE=": ${MESSAGE}"
     [ ${EXPR} ] || baux_die "${FUNCNAME[1]}() args error${MESSAGE}."
@@ -32,7 +32,7 @@ baux_ensure_not_empty() {
     baux_ensure "$# -ge 1" "Need one or more args"
 
     for arg in "$@"; do
-        [[ ! -z ${arg} ]] || baux_die \
+        [[ -n ${arg} ]] || baux_die \
             "${FUNCNAME[1]}() args error: Arguments should not be empty."
     done
 }
