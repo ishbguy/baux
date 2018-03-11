@@ -59,6 +59,25 @@ baux_cecho() {
     echo -ne "${COLOR}${MESSAGE}[0m"
 }
 
+baux_getoptions()
+{
+    baux_ensure "$# -ge 3" "Need OPTIONS and ARGUMENTS"
+    baux_ensure_not_empty "$1" "$2" "$3"
+
+    local -n __options="$1"
+    local -n __arguments="$2"
+    local argstring="$3"
+    shift 3
+
+    OPTIND=1
+    while getopts "${argstring}" OPT; do
+        [[ ${OPT} == ":" || ${OPT} == "?" ]] && die "${HELP}"
+        __options[${OPT}]=1
+        __arguments[${OPT}]="${OPTARG}"
+    done
+    shift $((OPTIND - 1))
+}
+
 baux_read_config() {
     baux_ensure "2 == $#" "Need LICENSE_CONFIGS array and CONFIG_FILE"
 
