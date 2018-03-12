@@ -88,3 +88,42 @@ SRC_DIR=${PWD}
 
     rm ${TMP}
 }
+
+@test "test baux_getoptions" {
+    run bash -c "source ${SRC_DIR}/baux.sh; \
+        declare -A OPTS ARGS;\
+        test_getopts() { \
+            baux_getoptions OPTS ARGS 'a' \$@; \
+            shift $((OPTIND-1)); \
+        }; \
+        test_getopts -a; \
+        echo \${ARGS[a]}; \
+        [[ \${OPTS[a]} -eq 1 ]]"
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "" ]
+
+    run bash -c "source ${SRC_DIR}/baux.sh; \
+        declare -A OPTS ARGS;\
+        test_getopts() { \
+            baux_getoptions OPTS ARGS 'a:' \$@; \
+            shift $((OPTIND-1)); \
+        }; \
+        test_getopts -a a; \
+        echo \${ARGS[a]}; \
+        [[ \${OPTS[a]} -eq 1 ]]"
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "a" ]
+
+    run bash -c "source ${SRC_DIR}/baux.sh; \
+        declare -A OPTS ARGS;\
+        test_getopts() { \
+            baux_getoptions OPTS ARGS 'a:' \$@; \
+            shift $((OPTIND-1)); \
+        }; \
+        test_getopts -a a -b; \
+        echo \${ARGS[a]}; \
+        [[ \${OPTS[a]} -eq 1 ]]"
+        echo $output
+    [ "${status}" -eq 0 ]
+    [[ "${output}" =~ "illegal option" ]]
+}
