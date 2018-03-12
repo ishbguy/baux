@@ -80,8 +80,8 @@ SRC_DIR=${PWD}
     echo "host=test.com" >> ${TMP}
 
     run bash -c "source ${SRC_DIR}/baux.sh; declare -A CONFIGS; \
-    baux_read_config CONFIGS ${TMP}; \
-    echo \"\${CONFIGS[@]}\""
+        baux_read_config CONFIGS ${TMP}; \
+        echo \"\${CONFIGS[@]}\""
     echo $output
     [ "${status}" -eq 0 ]
     [ "${output}" = "test.com test" ]
