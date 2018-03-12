@@ -2,6 +2,9 @@
 # Copyright (c) 2018 Herbert Shen <ishbguy@hotmail.com> All Rights Reserved.
 # Released under the terms of the MIT License.
 
+# only allow sourced
+[[ ${BASH_SOURCE[0]} == $0 ]] && exit 1
+
 #set -x
 
 baux_die_hook() { true; }
