@@ -2,74 +2,90 @@
 
 SRC_DIR=${PWD}
 
+source ${SRC_DIR}/baux.sh &>/dev/null
+
 @test "test baux_die" {
-    run bash -c "source ${SRC_DIR}/baux.sh; baux_die TEST"
+    run baux_die TEST
     [ "${status}" -eq 1 ]
     [ "${output}" = "TEST" ]
 }
 
 @test "test baux_check_tool" {
-    run bash -c "source ${SRC_DIR}/baux.sh; baux_check_tool bats"
+    run baux_check_tool bats
     [ "${status}" -eq 0 ]
     [ "${output}" = "" ]
-    run bash -c "source ${SRC_DIR}/baux.sh; baux_check_tool XXXX"
+
+    run baux_check_tool XXXX
     [ "${status}" -eq 1 ]
     [ "${output}" = "You need to install XXXX" ]
 }
 
 @test "test baux_ensure" {
-    run bash -c "source ${SRC_DIR}/baux.sh; baux_ensure"
+    run baux_ensure
     [ "${status}" -eq 1 ]
     [ "${output}" = "baux_ensure() args error." ]
-    run bash -c "source ${SRC_DIR}/baux.sh; baux_ensure '1 == 1'"
+
+    run baux_ensure '1 == 1'
     [ "${status}" -eq 0 ]
     [ "${output}" = "" ]
+
     run bash -c "source ${SRC_DIR}/baux.sh; baux_ensure '1 != 1'"
     [ "${status}" -eq 1 ]
     [ "${output}" = "() args error." ]
 }
 
 @test "test baux_ensure_not_empty" {
-    run bash -c "source ${SRC_DIR}/baux.sh; baux_ensure_not_empty"
+    run baux_ensure_not_empty
     [ "${status}" -eq 1 ]
     [ "${output}" = "baux_ensure_not_empty() args error: Need one or more args." ]
-    run bash -c "source ${SRC_DIR}/baux.sh; baux_ensure_not_empty \"\""
+
+    run baux_ensure_not_empty ""
     [ "${status}" -eq 1 ]
-    [ "${output}" = "() args error: Arguments should not be empty." ]
-    run bash -c "source ${SRC_DIR}/baux.sh; baux_ensure_not_empty one"
+    [[ "${output}" =~ "args error: Arguments should not be empty." ]]
+
+    run baux_ensure_not_empty one
     [ "${status}" -eq 0 ]
     [ "${output}" = "" ]
-    run bash -c "source ${SRC_DIR}/baux.sh; baux_ensure_not_empty one \"\""
+
+    run baux_ensure_not_empty one ""
     [ "${status}" -eq 1 ]
-    [ "${output}" = "() args error: Arguments should not be empty." ]
+    [[ "${output}" =~ "args error: Arguments should not be empty." ]]
 }
 
 @test "test baux_cecho" {
-    run bash -c "source ${SRC_DIR}/baux.sh; baux_cecho black 'test'"
+    run baux_cecho black test
     [ "${status}" -eq 0 ]
     [ "${output}" = "[30mtest[0m" ]
-    run bash -c "source ${SRC_DIR}/baux.sh; baux_cecho red 'test'"
+
+    run baux_cecho red test
     [ "${status}" -eq 0 ]
     [ "${output}" = "[31mtest[0m" ]
-    run bash -c "source ${SRC_DIR}/baux.sh; baux_cecho green 'test'"
+
+    run baux_cecho green test
     [ "${status}" -eq 0 ]
     [ "${output}" = "[32mtest[0m" ]
-    run bash -c "source ${SRC_DIR}/baux.sh; baux_cecho yellow 'test'"
+
+    run baux_cecho yellow test
     [ "${status}" -eq 0 ]
     [ "${output}" = "[33mtest[0m" ]
-    run bash -c "source ${SRC_DIR}/baux.sh; baux_cecho blue 'test'"
+
+    run baux_cecho blue test
     [ "${status}" -eq 0 ]
     [ "${output}" = "[34mtest[0m" ]
-    run bash -c "source ${SRC_DIR}/baux.sh; baux_cecho magenta 'test'"
+
+    run baux_cecho magenta test
     [ "${status}" -eq 0 ]
     [ "${output}" = "[35mtest[0m" ]
-    run bash -c "source ${SRC_DIR}/baux.sh; baux_cecho cyan 'test'"
+
+    run baux_cecho cyan test
     [ "${status}" -eq 0 ]
     [ "${output}" = "[36mtest[0m" ]
-    run bash -c "source ${SRC_DIR}/baux.sh; baux_cecho white 'test'"
+
+    run baux_cecho white test
     [ "${status}" -eq 0 ]
     [ "${output}" = "[37mtest[0m" ]
-    run bash -c "source ${SRC_DIR}/baux.sh; baux_cecho other 'test'"
+
+    run baux_cecho other test
     [ "${status}" -eq 0 ]
     [ "${output}" = "[34mtest[0m" ]
 }
@@ -79,10 +95,14 @@ SRC_DIR=${PWD}
     echo "user=test" >> ${TMP}
     echo "host=test.com" >> ${TMP}
 
-    run bash -c "source ${SRC_DIR}/baux.sh; declare -A CONFIGS; \
-        baux_read_config CONFIGS ${TMP}; \
-        echo \"\${CONFIGS[@]}\""
-    echo $output
+    test_read_config() {
+        local -A CONFIGS
+        baux_read_config CONFIGS ${TMP}
+        echo ${CONFIGS[@]}
+    }
+
+    run test_read_config
+
     [ "${status}" -eq 0 ]
     [ "${output}" = "test.com test" ]
 
@@ -90,37 +110,35 @@ SRC_DIR=${PWD}
 }
 
 @test "test baux_getoptions" {
-    run bash -c "source ${SRC_DIR}/baux.sh; \
-        declare -A OPTS ARGS;\
-        test_getopts() { \
-            baux_getoptions OPTS ARGS 'a' \$@; \
-            shift $((OPTIND-1)); \
-        }; \
-        test_getopts -a; \
-        echo \${ARGS[a]}; \
-        [[ \${OPTS[a]} -eq 1 ]]"
-    [ "${status}" -eq 0 ]
-    [ "${output}" = "" ]
+    declare -A OPTS ARGS
+
+    run baux_getoptions OPTS ARGS
+    [ "${status}" -eq 1 ]
+    [[ "${output}" =~ "Need OPTIONS and ARGUMENTS" ]]
+
+    run baux_getoptions OPTS ARGS ""
+    [ "${status}" -eq 1 ]
+    [[ "${output}" =~ "should not be empty" ]]
 
     run bash -c "source ${SRC_DIR}/baux.sh; \
         declare -A OPTS ARGS;\
-        test_getopts() { \
-            baux_getoptions OPTS ARGS 'a:' \$@; \
-            shift $((OPTIND-1)); \
-        }; \
-        test_getopts -a a; \
+        baux_getoptions OPTS ARGS 'a' -a a; \
         echo \${ARGS[a]}; \
         [[ \${OPTS[a]} -eq 1 ]]"
     [ "${status}" -eq 0 ]
-    [ "${output}" = "a" ]
+    [ "${output}" == "" ]
 
     run bash -c "source ${SRC_DIR}/baux.sh; \
         declare -A OPTS ARGS;\
-        test_getopts() { \
-            baux_getoptions OPTS ARGS 'a:' \$@; \
-            shift $((OPTIND-1)); \
-        }; \
-        test_getopts -a a -b; \
+        baux_getoptions OPTS ARGS 'a:' -a a; \
+        echo \${ARGS[a]}; \
+        [[ \${OPTS[a]} -eq 1 ]]"
+    [ "${status}" -eq 0 ]
+    [ "${output}" == "a" ]
+
+    run bash -c "source ${SRC_DIR}/baux.sh; \
+        declare -A OPTS ARGS;\
+        baux_getoptions OPTS ARGS 'a:' -a a -b; \
         echo \${ARGS[a]}; \
         [[ \${OPTS[a]} -eq 1 ]]"
         echo $output
