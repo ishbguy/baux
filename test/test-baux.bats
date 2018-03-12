@@ -95,6 +95,14 @@ source ${SRC_DIR}/baux.sh &>/dev/null
     echo "user=test" >> ${TMP}
     echo "host=test.com" >> ${TMP}
 
+    run baux_read_config
+    [ "${status}" -eq 1 ]
+    [[ "${output}" =~ "Need LICENSE_CONFIGS array and CONFIG_FILE" ]]
+
+    run baux_read_config "" ""
+    [ "${status}" -eq 1 ]
+    [[ "${output}" =~ "should not be empty" ]]
+
     test_read_config() {
         local -A CONFIGS
         baux_read_config CONFIGS ${TMP}
