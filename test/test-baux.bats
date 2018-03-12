@@ -43,6 +43,10 @@ source ${SRC_DIR}/baux.sh &>/dev/null
     [ "${status}" -eq 1 ]
     [[ "${output}" =~ "args error: Arguments should not be empty." ]]
 
+    run baux_ensure_not_empty " "
+    [ "${status}" -eq 1 ]
+    [[ "${output}" =~ "args error: Arguments should not be empty." ]]
+
     run baux_ensure_not_empty one
     [ "${status}" -eq 0 ]
     [ "${output}" = "" ]

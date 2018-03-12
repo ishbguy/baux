@@ -32,6 +32,7 @@ baux_ensure_not_empty() {
     baux_ensure "$# -ge 1" "Need one or more args"
 
     for arg in "$@"; do
+        arg=$(echo "${arg}" | sed -re 's/^\s+//;s/\+$//')
         [[ -n ${arg} ]] || baux_die \
             "${FUNCNAME[1]}() args error: Arguments should not be empty."
     done
