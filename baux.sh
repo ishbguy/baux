@@ -128,7 +128,7 @@ getoptions()
 
     OPTIND=1
     while getopts "${arg_string}" opt; do
-        [[ ${opt} == ":" || ${opt} == "?" ]] && die "${HELP}"
+        [[ ${opt} == ":" || ${opt} == "?" ]] && die "$(usage)"
         __options[${opt}]=1
         __arguments[${opt}]="${OPTARG}"
     done
