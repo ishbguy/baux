@@ -98,7 +98,7 @@ read_config() {
 
     TMP_FILE=$(mktemp)
     # use trap to rm temp file and recover old IFS
-    trap "rm -f ${TMP_FILE}; IFS=${OLD_IFS}" RETURN
+    trap 'rm -f ${TMP_FILE}; IFS=${OLD_IFS}' RETURN
 
     # remove blank lines, comments, heading and tailing spaces
     sed -re '/^\s*$/d;/^#.*/d;s/#.*//g;s/^\s+//;s/\s+$//' \
