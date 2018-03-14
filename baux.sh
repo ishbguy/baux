@@ -2,13 +2,35 @@
 # Copyright (c) 2018 Herbert Shen <ishbguy@hotmail.com> All Rights Reserved.
 # Released under the terms of the MIT License.
 
+#set -x
+
 # only allow sourced
 [[ ${BASH_SOURCE[0]} == "$0" ]] \
     && { echo "Only allow to be sourced, not for running."; exit 1; }
 
-#set -x
+# readonly constants
+declare -gr BAUX_TRUE=0
+declare -gr BAUX_FALSE=1
+declare -gr BAUX_SUCCESS=0
+declare -gr BAUX_FAIL=1
+declare -gr BAUX_OK=0
 
-source common.sh
+# global variables
+declare -gi BAUX_EXIT_CODE=0
+declare -gA BAUX_IMPORT_FILES
+
+import() {
+    ensure "$# -ge 1" "Need to specify an import file."
+    ensure_not_empty "$@"
+    
+    for file in "$@"; do
+        [[ -e ${file} ]] || die "${file} does not exist."
+        # ensure source one time
+        [[ -z ${BAUX_IMPORT_FILES[${file}]} ]] || continue
+        source "${file}" || die "Can not import ${file}."
+        BAUX_IMPORT_FILES[${file}]="${file}"
+    done
+}
 
 die_hook() { true; }
 die() {

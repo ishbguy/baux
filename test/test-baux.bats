@@ -96,6 +96,7 @@ source ${SRC_DIR}/baux.sh &>/dev/null
 
 @test "test read_config" {
     TMP=$(mktemp)
+    teardown() { rm -rf ${TMP}; }
     echo "user=test" >> ${TMP}
     echo "host=test.com" >> ${TMP}
 
@@ -117,8 +118,6 @@ source ${SRC_DIR}/baux.sh &>/dev/null
 
     [ "${status}" -eq 0 ]
     [ "${output}" = "test.com test" ]
-
-    rm ${TMP}
 }
 
 @test "test getoptions" {
@@ -155,4 +154,35 @@ source ${SRC_DIR}/baux.sh &>/dev/null
         [[ \${OPTS[a]} -eq 1 ]]"
     [ "${status}" -eq 1 ]
     [[ "${output}" =~ "illegal option" ]]
+}
+
+@test "test import" {
+    tmp=$(mktemp)
+    teardown() { rm ${tmp}; }
+
+    run import
+    [[ ${status} -eq 1 ]]
+    [[ ${output} =~ "Need to specify an import file." ]]
+
+    run import ""
+    [[ ${status} -eq 1 ]]
+    [[ ${output} =~ "should not be empty" ]]
+
+    run import xxxx
+    [[ ${status} -eq 1 ]]
+    [[ ${output} =~ "does not exist" ]]
+
+    echo "test-import() { echo test-import; }" >${tmp}
+    run bash -c "source ${SRC_DIR}/baux.sh; \
+        import ${tmp}; \
+        test-import"
+    [[ ${status} -eq 0 ]]
+    [[ ${output} =~ "test-import" ]]
+
+    echo "test-import() { echo test-import; }" >${tmp}
+    run bash -c "source ${SRC_DIR}/baux.sh; \
+        import ${tmp} ${tmp}; \
+        test-import"
+    [[ ${status} -eq 0 ]]
+    [[ ${output} =~ "test-import" ]]
 }
