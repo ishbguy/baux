@@ -38,13 +38,13 @@ All the mentioned functions prefix with `baux_` in **BAUX**. Some features are n
     - Floating point: add, minus, time, divide, etc.
     - Complex number: add, minus, time, divide, etc.
 + **Exception**
-    - `try()`, `catch()`.
+    - `try()`, `catch()`, `throw()`.
 + **Regex**
     - Pattern match: IP, URL, tele-number, etc.
 
 ## :straight_ruler: Prerequisite
 
-> + [`bash`](https://www.gnu.org/software/bash/bash.html)
+> + [`bash` > 4.3](https://www.gnu.org/software/bash/bash.html)
 > + [`sed`](https://www.gnu.org/software/sed/)
 
 ## :rocket: Installation
