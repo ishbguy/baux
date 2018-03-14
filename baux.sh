@@ -3,15 +3,18 @@
 # Released under the terms of the MIT License.
 
 # only allow sourced
-[[ ${BASH_SOURCE[0]} == "$0" ]] && exit 1
+[[ ${BASH_SOURCE[0]} == "$0" ]] \
+    && { echo "Only allow to be sourced, not for running."; exit 1; }
 
 #set -x
+
+source common.sh
 
 die_hook() { true; }
 die() {
     echo "$@" >&2
     die_hook
-    exit 1
+    exit ${BAUX_FAIL}
 }
 
 check_tool() {
@@ -94,7 +97,7 @@ read_config() {
     local old_ifs="${IFS}"
     local tmp_file
 
-    [[ -e ${config_file} ]] || return 1
+    [[ -e ${config_file} ]] || return ${BAUX_FAIL}
 
     tmp_file=$(mktemp)
     # use trap to rm temp file and recover old IFS
