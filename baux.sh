@@ -3,48 +3,48 @@
 # Released under the terms of the MIT License.
 
 # only allow sourced
-[[ ${BASH_SOURCE[0]} == $0 ]] && exit 1
+[[ ${BASH_SOURCE[0]} == "$0" ]] && exit 1
 
 #set -x
 
-baux_die_hook() { true; }
-baux_die() {
+die_hook() { true; }
+die() {
     echo "$@" >&2
-    baux_die_hook
+    die_hook
     exit 1
 }
 
-baux_check_tool() {
+check_tool() {
     for TOOL in "$@"; do
         which "${TOOL}" >/dev/null 2>&1 \
-            || baux_die "You need to install ${TOOL}"
+            || die "You need to install ${TOOL}"
     done
 }
 
-baux_ensure() {
+ensure() {
     local EXPR="$1"
     local MESSAGE="$2"
 
-    [[ $# -ge 1 ]] || baux_die "${FUNCNAME[0]}() args error."
+    [[ $# -ge 1 ]] || die "${FUNCNAME[0]}() args error."
     
     [[ -n $MESSAGE ]] && MESSAGE=": ${MESSAGE}"
-    [ ${EXPR} ] || baux_die "${FUNCNAME[1]}() args error${MESSAGE}."
+    [ ${EXPR} ] || die "${FUNCNAME[1]}() args error${MESSAGE}."
 }
 
-baux_ensure_not_empty() {
-    baux_ensure "$# -ge 1" "Need one or more args"
+ensure_not_empty() {
+    ensure "$# -ge 1" "Need one or more args"
 
     for arg in "$@"; do
         arg=$(echo "${arg}" | sed -re 's/^\s+//;s/\+$//')
-        [[ -n ${arg} ]] || baux_die \
+        [[ -n ${arg} ]] || die \
             "${FUNCNAME[1]}() args error: Arguments should not be empty."
     done
 }
 
 # echo a message with color
-baux_cecho() {
-    baux_ensure "2 == $#" "Need a COLOR name and a MESSAGE"
-    baux_ensure_not_empty "$@"
+cecho() {
+    ensure "2 == $#" "Need a COLOR name and a MESSAGE"
+    ensure_not_empty "$@"
 
     local COLOR_NAME="$1"
     local MESSAGE="$2"
@@ -64,10 +64,10 @@ baux_cecho() {
     echo -ne "${COLOR}${MESSAGE}[0m"
 }
 
-baux_getoptions()
+getoptions()
 {
-    baux_ensure "$# -ge 3" "Need OPTIONS and ARGUMENTS"
-    baux_ensure_not_empty "$1" "$2" "$3"
+    ensure "$# -ge 3" "Need OPTIONS and ARGUMENTS"
+    ensure_not_empty "$1" "$2" "$3"
 
     local -n __options="$1"
     local -n __arguments="$2"
@@ -83,9 +83,9 @@ baux_getoptions()
     shift $((OPTIND - 1))
 }
 
-baux_read_config() {
-    baux_ensure "2 == $#" "Need LICENSE_CONFIGS array and CONFIG_FILE"
-    baux_ensure_not_empty "$@"
+read_config() {
+    ensure "2 == $#" "Need LICENSE_CONFIGS array and CONFIG_FILE"
+    ensure_not_empty "$@"
 
     # make a ref of config array
     local -n __CONFIGS="$1"
