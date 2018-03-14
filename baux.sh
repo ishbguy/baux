@@ -35,7 +35,8 @@ ensure_not_empty() {
     ensure "$# -ge 1" "Need one or more args"
 
     for arg in "$@"; do
-        arg=$(echo "${arg}" | sed -re 's/^\s+//;s/\+$//')
+        arg="${arg## *}"
+        arg="${arg%% *}"
         [[ -n ${arg} ]] || die \
             "${FUNCNAME[1]}() args error: Arguments should not be empty."
     done
