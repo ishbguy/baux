@@ -230,3 +230,21 @@ source ${SRC_DIR}/baux.sh &>/dev/null
     [[ ${status} -eq 0 ]]
     [[ ${output} =~ "test-import" ]]
 }
+
+@test "test random" {
+    run random
+    [[ ${status} -eq 0 ]]
+    [[ ${output} =~ "" ]]
+
+    run random test
+    [[ ${status} -eq 0 ]]
+    [[ ${output} =~ "test" ]]
+
+    run random {1..10}
+    [[ ${status} -eq 0 ]]
+    [[ ${output} != "1 2 3 4 5 6 7 8 9 10" ]]
+
+    run random one two three
+    [[ ${status} -eq 0 ]]
+    [[ ${output} != "one two three" ]]
+}

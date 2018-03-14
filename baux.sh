@@ -116,6 +116,26 @@ cecho() {
     echo -ne "${color}${message}\\x1B[0m"
 }
 
+# random given args
+random() {
+    local -i count="${#@}"
+    local -a in=("$@")
+    local -a out
+    local -A hits
+
+    [[ ${count} -gt 1 ]] || echo "$@"
+    for ((i = 0; i < count; i++)); do
+        local idx
+        while true; do
+            idx=$((RANDOM % count))
+            [[ -z ${hits[${in[$idx]}]} ]] && break
+        done
+        hits[${in[$idx]}]="${in[$idx]}"
+        out+=("${in[$idx]}")
+    done
+    echo "${out[@]}"
+}
+
 getoptions()
 {
     ensure "$# -ge 3" "Need OPTIONS and ARGUMENTS"
