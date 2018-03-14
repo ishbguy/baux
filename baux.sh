@@ -15,20 +15,20 @@ die() {
 }
 
 check_tool() {
-    for TOOL in "$@"; do
-        which "${TOOL}" >/dev/null 2>&1 \
-            || die "You need to install ${TOOL}"
+    for tool in "$@"; do
+        which "${tool}" >/dev/null 2>&1 \
+            || die "You need to install ${tool}"
     done
 }
 
 ensure() {
-    local EXPR="$1"
-    local MESSAGE="$2"
+    local expression="$1"
+    local message="$2"
 
     [[ $# -ge 1 ]] || die "${FUNCNAME[0]}() args error."
     
-    [[ -n $MESSAGE ]] && MESSAGE=": ${MESSAGE}"
-    [ ${EXPR} ] || die "${FUNCNAME[1]}() args error${MESSAGE}."
+    [[ -n ${message} ]] && message=": ${message}"
+    [ ${expression} ] || die "${FUNCNAME[1]}() args error${message}."
 }
 
 ensure_not_empty() {
@@ -44,25 +44,25 @@ ensure_not_empty() {
 
 # echo a message with color
 cecho() {
-    ensure "2 == $#" "Need a COLOR name and a MESSAGE"
+    ensure "2 == $#" "Need a color name and a message"
     ensure_not_empty "$@"
 
-    local COLOR_NAME="$1"
-    local MESSAGE="$2"
-    local COLOR=
+    local color_name="$1"
+    local message="$2"
+    local color=
 
-    case "${COLOR_NAME}" in
-        bla|black)  COLOR="\\x1B[30m" ;;
-        re|red)     COLOR="\\x1B[31m" ;;
-        gr|green)   COLOR="\\x1B[32m" ;;
-        ye|yellow)  COLOR="\\x1B[33m" ;;
-        blu|blue)   COLOR="\\x1B[34m" ;;
-        ma|magenta) COLOR="\\x1B[35m" ;;
-        cy|cyan)    COLOR="\\x1B[36m" ;;
-        wh|white)   COLOR="\\x1B[37m" ;;
-        *)          COLOR="\\x1B[34m" ;;
+    case "${color_name}" in
+        bla|black)  color="\\x1B[30m" ;;
+        re|red)     color="\\x1B[31m" ;;
+        gr|green)   color="\\x1B[32m" ;;
+        ye|yellow)  color="\\x1B[33m" ;;
+        blu|blue)   color="\\x1B[34m" ;;
+        ma|magenta) color="\\x1B[35m" ;;
+        cy|cyan)    color="\\x1B[36m" ;;
+        wh|white)   color="\\x1B[37m" ;;
+        *)          color="\\x1B[34m" ;;
     esac
-    echo -ne "${COLOR}${MESSAGE}[0m"
+    echo -ne "${color}${message}[0m"
 }
 
 getoptions()
@@ -72,44 +72,44 @@ getoptions()
 
     local -n __options="$1"
     local -n __arguments="$2"
-    local argstring="$3"
+    local arg_string="$3"
     shift 3
 
     OPTIND=1
-    while getopts "${argstring}" OPT; do
-        [[ ${OPT} == ":" || ${OPT} == "?" ]] && die "${HELP}"
-        __options[${OPT}]=1
-        __arguments[${OPT}]="${OPTARG}"
+    while getopts "${arg_string}" opt; do
+        [[ ${opt} == ":" || ${opt} == "?" ]] && die "${HELP}"
+        __options[${opt}]=1
+        __arguments[${opt}]="${OPTARG}"
     done
     shift $((OPTIND - 1))
 }
 
 read_config() {
-    ensure "2 == $#" "Need LICENSE_CONFIGS array and CONFIG_FILE"
+    ensure "2 == $#" "Need license configs array and config file"
     ensure_not_empty "$@"
 
     # make a ref of config array
-    local -n __CONFIGS="$1"
-    local CONFIG_FILE="$2"
-    local OLD_IFS="${IFS}"
-    local TMP_FILE
+    local -n __configs="$1"
+    local config_file="$2"
+    local old_ifs="${IFS}"
+    local tmp_file
 
-    [[ -e ${CONFIG_FILE} ]] || return 1
+    [[ -e ${config_file} ]] || return 1
 
-    TMP_FILE=$(mktemp)
+    tmp_file=$(mktemp)
     # use trap to rm temp file and recover old IFS
-    trap 'rm -f ${TMP_FILE}; IFS=${OLD_IFS}' RETURN
+    trap 'rm -f ${tmp_file}; IFS=${old_ifs}' RETURN
 
     # remove blank lines, comments, heading and tailing spaces
     sed -re '/^\s*$/d;/^#.*/d;s/#.*//g;s/^\s+//;s/\s+$//' \
-        "${CONFIG_FILE}" >"${TMP_FILE}"
+        "${config_file}" >"${tmp_file}"
 
     # read name-value pairs from config file
-    while IFS="=" read -r NAME VALUE; do
-        NAME="${NAME#\"}"; NAME="${NAME%\"}"
-        VALUE="${VALUE#\"}"; VALUE="${VALUE%\"}"
-        __CONFIGS["${NAME,,}"]="${VALUE}"
-    done <"${TMP_FILE}"
+    while IFS="=" read -r name value; do
+        name="${name#\"}"; name="${name%\"}"
+        value="${value#\"}"; value="${value%\"}"
+        __configs["${name,,}"]="${value}"
+    done <"${tmp_file}"
 }
 
 # vim:ft=sh:ts=4:sw=4

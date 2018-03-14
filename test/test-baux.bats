@@ -101,7 +101,7 @@ source ${SRC_DIR}/baux.sh &>/dev/null
 
     run read_config
     [ "${status}" -eq 1 ]
-    [[ "${output}" =~ "Need LICENSE_CONFIGS array and CONFIG_FILE" ]]
+    [[ "${output}" =~ "Need license configs array and config file" ]]
 
     run read_config "" ""
     [ "${status}" -eq 1 ]
