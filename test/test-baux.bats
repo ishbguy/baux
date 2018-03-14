@@ -22,6 +22,38 @@ source ${SRC_DIR}/baux.sh &>/dev/null
     [[ "${output}" =~ "test" ]]
 }
 
+@test "test proname" {
+    run proname
+    [[ "${status}" -eq 0 ]]
+    [[ "${output}" =~ "bats-exec-test" ]]
+}
+
+@test "test version" {
+    run version
+    [[ "${status}" -eq 1 ]]
+    [[ "${output}" =~ "You need to define a VERSION variable." ]]
+
+    VERSION=0.0.1
+    run version
+    [[ "${status}" -eq 0 ]]
+    [[ "${output}" =~ "bats-exec-test 0.0.1" ]]
+}
+
+@test "test usage" {
+    run usage
+    [[ "${status}" -eq 2 ]]
+    [[ "${output}" =~ "You need to define a VERSION variable." ]]
+    [[ "${output}" =~ "You need to define a HELP variable." ]]
+
+    HELP="usage help"
+    VERSION=0.0.1
+    run usage
+    echo ${output}
+    [[ "${status}" -eq 0 ]]
+    [[ "${output}" =~ "bats-exec-test 0.0.1" ]]
+    [[ "${output}" =~ "usage help" ]]
+}
+
 @test "test check_tool" {
     run check_tool bats
     [ "${status}" -eq 0 ]

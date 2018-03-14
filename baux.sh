@@ -44,6 +44,26 @@ warn() {
     BAUX_EXIT_CODE=$((BAUX_EXIT_CODE+1))
 }
 
+proname() { echo "$0"; }
+version() {
+    if [[ -n ${VERSION} ]]; then
+        echo "$(proname) ${VERSION}"
+    else
+        warn "You need to define a VERSION variable."
+    fi
+    return ${BAUX_EXIT_CODE}
+}
+
+usage() {
+    version
+    if [[ -n ${HELP} ]]; then
+        echo "${HELP}"
+    else
+        warn "You need to define a HELP variable."
+    fi
+    return ${BAUX_EXIT_CODE}
+}
+
 check_tool() {
     for tool in "$@"; do
         which "${tool}" >/dev/null 2>&1 \
