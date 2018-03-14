@@ -113,7 +113,7 @@ cecho() {
         wh|white)   color="\\x1B[37m" ;;
         *)          color="\\x1B[34m" ;;
     esac
-    echo -ne "${color}${message}[0m"
+    echo -ne "${color}${message}\\x1B[0m"
 }
 
 getoptions()
