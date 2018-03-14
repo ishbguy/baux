@@ -24,7 +24,7 @@ All the mentioned functions prefix with `baux_` in **BAUX**. Some features are n
 + **Assertion**
     - pre- or post- condition: `ensure()`, `ensure_not_empty()`.
     - Numeric ensure: `ensure_equal()`, `ensure_not_equal()`.
-    - String ensure: `ensure_like()`, `ensure_dislike()`, `ensure_match()`, `ensure_mismatch()`
+    - String ensure: `ensure_like()`, `ensure_unlike()`.
     - `is` test: `is_xxx()`.
 + **Debugging**
     - Logger: `logger()`.
@@ -38,9 +38,9 @@ All the mentioned functions prefix with `baux_` in **BAUX**. Some features are n
     - Floating point: add, minus, time, divide, etc.
     - Complex number: add, minus, time, divide, etc.
 + **Exception**
+    - `try()`, `catch()`.
 + **Regex**
-+ **Datetime**
-+ **Network**
+    - Pattern match: IP, URL, tele-number, etc.
 
 ## :straight_ruler: Prerequisite
 
