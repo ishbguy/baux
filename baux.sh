@@ -36,7 +36,8 @@ die_hook() { true; }
 die() {
     echo "$@" >&2
     die_hook
-    exit ${BAUX_FAIL}
+    BAUX_EXIT_CODE=$((BAUX_EXIT_CODE+1))
+    exit ${BAUX_EXIT_CODE}
 }
 
 warn() {
