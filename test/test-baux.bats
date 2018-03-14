@@ -29,9 +29,9 @@ source ${SRC_DIR}/baux.sh &>/dev/null
     [ "${status}" -eq 0 ]
     [ "${output}" = "" ]
 
-    run bash -c "source ${SRC_DIR}/baux.sh; ensure '1 != 1'"
+    run ensure "1 != 1"
     [ "${status}" -eq 1 ]
-    [ "${output}" = "() args error." ]
+    [[ "${output}" =~ "() args error." ]]
 }
 
 @test "test ensure_not_empty" {

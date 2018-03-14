@@ -53,7 +53,7 @@ ensure() {
     [[ $# -ge 1 ]] || die "${FUNCNAME[0]}() args error."
     
     [[ -n ${message} ]] && message=": ${message}"
-    [ ${expression} ] || die "${FUNCNAME[1]}() args error${message}."
+    eval "[[ ${expression} ]]" || die "${FUNCNAME[1]}() args error${message}."
 }
 
 ensure_not_empty() {
