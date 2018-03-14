@@ -39,6 +39,11 @@ die() {
     exit ${BAUX_FAIL}
 }
 
+warn() {
+    echo "$@" >&2
+    BAUX_EXIT_CODE=$((BAUX_EXIT_CODE+1))
+}
+
 check_tool() {
     for tool in "$@"; do
         which "${tool}" >/dev/null 2>&1 \

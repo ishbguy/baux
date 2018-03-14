@@ -10,6 +10,18 @@ source ${SRC_DIR}/baux.sh &>/dev/null
     [ "${output}" = "TEST" ]
 }
 
+@test "test warn" {
+    run warn test
+    [[ "${status}" -eq 0 ]]
+    [[ "${output}" =~ "test" ]]
+
+    run bash -c "source ${SRC_DIR}/baux.sh; \
+        warn test; \
+        exit \${BAUX_EXIT_CODE}"
+    [[ "${status}" -eq 1 ]]
+    [[ "${output}" =~ "test" ]]
+}
+
 @test "test check_tool" {
     run check_tool bats
     [ "${status}" -eq 0 ]
