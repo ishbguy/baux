@@ -131,13 +131,9 @@ import $SRC_DIR/utili.sh
     [[ $status -eq 0 ]]
     [[ $output =~ "test" ]]
 
-    run random {1..10}
+    run random {1..100}
     [[ $status -eq 0 ]]
     [[ $output != "1 2 3 4 5 6 7 8 9 10" ]]
-
-    run random one two three four
-    [[ $status -eq 0 ]]
-    [[ $output != "one two three four" ]]
 }
 
 @test "test cecho" {
