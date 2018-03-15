@@ -20,11 +20,11 @@ All the mentioned functions prefix with `baux_` in **BAUX**. Some features are n
 + **Helper**
     - Alert: `die()`, `warn()`.
     - Information: `proname()`, `version()`, `help()`.
-    - Utility: `cecho()`, `random()`, `hash()`.
+    - Utility: `cecho()`, `random()`.
 + **Assertion**
     - pre- or post- condition: `ensure()`, `ensure_not_empty()`.
     - Numeric ensure: `ensure_equal()`, `ensure_not_equal()`.
-    - String ensure: `ensure_like()`, `ensure_unlike()`.
+    - String ensure: `ensure_like()`, `ensure_unlike()`, `ensure_match()`, `ensure_mismatch()`.
     - `is` test: `is_xxx()`.
 + **Debugging**
     - Logger: `logger()`.
