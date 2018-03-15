@@ -28,7 +28,7 @@ cecho() {
         wh|white)   color="\\x1B[37m" ;;
         *)          color="\\x1B[34m" ;;
     esac
-    echo -ne "$color$message\\x1B[0m"
+    echo -e "$color$message\\x1B[0m"
 }
 
 # random given args
@@ -87,7 +87,7 @@ read_config() {
     local old_ifs="$IFS"
     local tmp_file
 
-    [[ -e $config_file ]] || return $BAUX_FAIL
+    [[ -e $config_file ]] || return "$BAUX_FAIL"
 
     tmp_file=$(mktemp)
     # use trap to rm temp file and recover old IFS

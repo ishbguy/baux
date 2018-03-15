@@ -21,14 +21,14 @@ declare -gA BAUX_IMPORT_FILES
 
 die_hook() { true; }
 die() {
-    echo "$@" >&2
+    echo -e "$@" >&2
     die_hook
     BAUX_EXIT_CODE=$((BAUX_EXIT_CODE+1))
     exit $BAUX_EXIT_CODE
 }
 
 warn() {
-    echo "$@" >&2
+    echo -e "$@" >&2
     BAUX_EXIT_CODE=$((BAUX_EXIT_CODE+1))
 }
 
@@ -45,7 +45,7 @@ version() {
 usage() {
     version
     if [[ -n $HELP ]]; then
-        echo "$HELP"
+        echo -e "$HELP"
     else
         warn "You need to define a HELP variable."
     fi
