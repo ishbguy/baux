@@ -1,12 +1,23 @@
 #! /usr/bin/env bash
 # Copyright (c) 2018 Herbert Shen <ishbguy@hotmail.com> All Rights Reserved.
-# Released under the terms of the MIT License.
-
-#set -x
+# Released under the terms of MIT License.
 
 # only allow sourced
 [[ ${BASH_SOURCE[0]} == "$0" ]] \
-    && { echo "Only allow to be sourced, not for running."; exit 1; }
+    && { echo "Only allow to be sourced, not for running." >&2; exit 1; }
+
+# source guard
+[[ $BAUX_UTILI_SOURCED -eq 1 ]] && return
+declare -gr BAUX_UTILI_SOURCED=1
+declare -gr BAUX_UTILI_ABS_PATH=$(realpath "${BASH_SOURCE[0]}")
+declare -gr BAUX_UTILI_ABS_DIR="${BAUX_UTILI_ABS_PATH%/*}"
+
+# source dependences
+if [[ $BAUX_SOUECED -ne 1 ]]; then
+    [[ ! -e $BAUX_UTILI_ABS_DIR/baux.sh ]] \
+        && { echo "Can not source the dependent script baux.sh." >&2; exit 1; }
+    source "$BAUX_UTILI_ABS_DIR/baux.sh"
+fi
 
 # echo a message with color
 cecho() {

@@ -1,12 +1,16 @@
 #! /usr/bin/env bash
 # Copyright (c) 2018 Herbert Shen <ishbguy@hotmail.com> All Rights Reserved.
-# Released under the terms of the MIT License.
-
-#set -x
+# Released under the terms of MIT License.
 
 # only allow sourced
 [[ ${BASH_SOURCE[0]} == "$0" ]] \
-    && { echo "Only allow to be sourced, not for running."; exit 1; }
+    && { echo "Only allow to be sourced, not for running." >&2; exit 1; }
+
+# source guard
+[[ $BAUX_SOUECED -eq 1 ]] && return
+declare -gr BAUX_SOUECED=1
+declare -gr BAUX_ABS_PATH=$(realpath "${BASH_SOURCE[0]}")
+declare -gr BAUX_ABS_DIR="${BAUX_ABS_PATH%/*}"
 
 # readonly constants
 declare -gr BAUX_TRUE=0
@@ -82,7 +86,7 @@ import() {
         # ensure source one time
         [[ -z ${BAUX_IMPORT_FILES[$file]} ]] || continue
         source "$file" || die "Can not import $file."
-        BAUX_IMPORT_FILES[$file]="$file"
+        BAUX_IMPORT_FILES[$(realpath "$file")]=$(realpath "$file")
     done
 }
 

@@ -189,8 +189,7 @@ import $SRC_DIR/utili.sh
     [[ $status -eq 1 ]]
     [[ $output =~ "should not be empty" ]]
 
-    run bash -c "source $SRC_DIR/baux.sh; \
-        import  $SRC_DIR/utili.sh; \
+    run bash -c "source $SRC_DIR/utili.sh; \
         declare -A opts args;\
         getoptions opts args 'a' -a a; \
         echo \${args[a]}; \
@@ -199,8 +198,7 @@ import $SRC_DIR/utili.sh
     [[ $status -eq 0 ]]
     [[ $output == "" ]]
 
-    run bash -c "source $SRC_DIR/baux.sh; \
-        import  $SRC_DIR/utili.sh; \
+    run bash -c "source $SRC_DIR/utili.sh; \
         declare -A opts args;\
         getoptions opts args 'a:' -a a; \
         echo \${args[a]}; \
@@ -208,8 +206,7 @@ import $SRC_DIR/utili.sh
     [[ $status -eq 0 ]]
     [[ $output == "a" ]]
 
-    run bash -c "source $SRC_DIR/baux.sh; \
-        import  $SRC_DIR/utili.sh; \
+    run bash -c "source $SRC_DIR/utili.sh; \
         declare -A opts args;\
         getoptions opts args 'a:' -a a -b; \
         echo \${args[a]}; \
