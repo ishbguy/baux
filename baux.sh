@@ -79,7 +79,7 @@ ensure() {
     [[ $# -ge 1 ]] || die "${FUNCNAME[0]}() args error."
     
     [[ -n $message ]] && message=": $message"
-    eval "[[ $expression ]]" || die "${FUNCNAME[1]}() args error$message."
+    eval "[[ $expression ]]" || die "$(caller 0): ${FUNCNAME[0]} \"$expression\" failed$message."
 }
 
 ensure_not_empty() {
@@ -89,7 +89,7 @@ ensure_not_empty() {
         arg="${arg## *}"
         arg="${arg%% *}"
         [[ -n $arg ]] || die \
-            "${FUNCNAME[1]}() args error: Arguments should not be empty."
+            "$(caller 0): Arguments should not be empty."
     done
 }
 

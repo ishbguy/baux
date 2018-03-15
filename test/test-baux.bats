@@ -75,21 +75,21 @@ source $SRC_DIR/baux.sh &>/dev/null
 
     run ensure "1 != 1"
     [[ $status -eq 1 ]]
-    [[ $output =~ "() args error." ]]
+    [[ $output =~ "failed" ]]
 }
 
 @test "test ensure_not_empty" {
     run ensure_not_empty
     [[ $status -eq 1 ]]
-    [[ $output == "ensure_not_empty() args error: Need one or more args." ]]
+    [[ $output =~ "Need one or more args." ]]
 
     run ensure_not_empty ""
     [[ $status -eq 1 ]]
-    [[ $output =~ "args error: Arguments should not be empty." ]]
+    [[ $output =~ "Arguments should not be empty." ]]
 
     run ensure_not_empty " "
     [[ $status -eq 1 ]]
-    [[ $output =~ "args error: Arguments should not be empty." ]]
+    [[ $output =~ "Arguments should not be empty." ]]
 
     run ensure_not_empty one
     [[ $status -eq 0 ]]
@@ -97,7 +97,7 @@ source $SRC_DIR/baux.sh &>/dev/null
 
     run ensure_not_empty one ""
     [[ $status -eq 1 ]]
-    [[ $output =~ "args error: Arguments should not be empty." ]]
+    [[ $output =~ "Arguments should not be empty." ]]
 }
 
 @test "test cecho" {
