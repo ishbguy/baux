@@ -1,5 +1,10 @@
 # [BAUX](https://github.com/ishbguy/baux)
 
+[![license][licsvg]][lic]
+
+[licsvg]: https://img.shields.io/github/license/mashape/apistatus.svg
+[lic]: https://github.com/ishbguy/baux/blob/master/LICENSE
+
 **BAUX** is a bash auxiliary library for writing script.
 
 ## Table of Contents
@@ -25,11 +30,11 @@ All the mentioned functions prefix with `baux_` in **BAUX**. Some features are n
     - pre- or post- condition: `ensure()`, `ensure_not_empty()`.
     - Numeric ensure: `ensure_equal()`, `ensure_not_equal()`.
     - String ensure: `ensure_like()`, `ensure_unlike()`, `ensure_match()`, `ensure_mismatch()`.
-    - `is` test: `is_xxx()`.
 + **Debugging**
     - Logger: `logger()`.
     - Trace: `callstack()`.
 + **Testing**
+    - `is` test: `is_xxx()`.
     - Test suit: `unit_add()`, `unit_run()`, `unit_sum()`, `unit_setup()`, `unit_teardown()`.
 + **Algorithms**
     - Data structure: stack, queue, list, tree, etc.
