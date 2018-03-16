@@ -19,48 +19,57 @@ if [[ $BAUX_SOUECED -ne 1 ]]; then
     source "$BAUX_ENSURE_ABS_DIR/baux.sh"
 fi
 
-ensure_equal() {
-    ensure "$# -ge 2 || $# -le 3" "Need two integers args."
-    ensure_not_empty "$1" "$2"
+if [[ $DEBUG == "1" ]]; then
+    ensure_equal() {
+        ensure "$# -ge 2 || $# -le 3" "Need two integers args."
+        ensure_not_empty "$1" "$2"
 
-    [[ $1 -eq $2 ]] \
-        || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nExpect: $1\\nActual: $2"
-}
+        [[ $1 -eq $2 ]] \
+            || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nExpect: $1\\nActual: $2"
+    }
 
-ensure_not_equal() {
-    ensure "$# -ge 2 || $# -le 3" "Need two integers args."
-    ensure_not_empty "$1" "$2"
+    ensure_not_equal() {
+        ensure "$# -ge 2 || $# -le 3" "Need two integers args."
+        ensure_not_empty "$1" "$2"
 
-    [[ $1 -ne $2 ]] \
-        || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nNot Expect: $1\\nActual: $2"
-}
+        [[ $1 -ne $2 ]] \
+            || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nNot Expect: $1\\nActual: $2"
+    }
 
-ensure_match() {
-    ensure "$# -ge 2 || $# -le 3" "Need two string args."
+    ensure_match() {
+        ensure "$# -ge 2 || $# -le 3" "Need two string args."
 
-    [[ "$1" == "$2" ]] \
-        || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nExpect: $1\\nActual: $2"
-}
+        [[ "$1" == "$2" ]] \
+            || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nExpect: $1\\nActual: $2"
+    }
 
-ensure_mismatch() {
-    ensure "$# -ge 2 || $# -le 3" "Need two string args."
+    ensure_mismatch() {
+        ensure "$# -ge 2 || $# -le 3" "Need two string args."
 
-    [[ "$1" != "$2" ]] \
-        || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nNot Expect: $1\\nActual: $2"
-}
+        [[ "$1" != "$2" ]] \
+            || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nNot Expect: $1\\nActual: $2"
+    }
 
-ensure_like() {
-    ensure "$# -ge 2 || $# -le 3" "Need two string args."
+    ensure_like() {
+        ensure "$# -ge 2 || $# -le 3" "Need two string args."
 
-    [[ $1 =~ $2 ]] \
-        || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nExpect: $1\\nActual: $2"
-}
+        [[ $1 =~ $2 ]] \
+            || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nExpect: $1\\nActual: $2"
+    }
 
-ensure_unlike() {
-    ensure "$# -ge 2 || $# -le 3" "Need two string args."
+    ensure_unlike() {
+        ensure "$# -ge 2 || $# -le 3" "Need two string args."
 
-    [[ ! $1 =~ $2 ]] \
-        || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nNot Expect: $1\\nActual: $2"
-}
+        [[ ! $1 =~ $2 ]] \
+            || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nNot Expect: $1\\nActual: $2"
+    }
+else
+    ensure_equal() { true; }
+    ensure_not_equal() { true; }
+    ensure_match() { true; }
+    ensure_mismatch() { true; }
+    ensure_like() { true; }
+    ensure_unlike() { true; }
+fi
 
 # vim:ft=sh:ts=4:sw=4
