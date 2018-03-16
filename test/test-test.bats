@@ -5,7 +5,6 @@ SRC_DIR=$PWD
 source $SRC_DIR/test.sh
 
 @test "test is_defined" {
-    skip
     test=
     is_defined test
     test=""
@@ -31,9 +30,11 @@ source $SRC_DIR/test.sh
 }
 
 @test "test is_type" {
-    skip
     declare -a array
-    is_type a array
+    run is_type a array
+    echo $output
+    echo $status
+    [[ $status -eq 0 ]]
 
     declare -A Array
     is_type A Array
