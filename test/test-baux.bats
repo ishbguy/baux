@@ -2,6 +2,7 @@
 
 SRC_DIR=$PWD
 
+DEBUG=1
 source $SRC_DIR/baux.sh &>/dev/null
 
 @test "test die" {
@@ -94,13 +95,15 @@ source $SRC_DIR/baux.sh &>/dev/null
     tmp=$(mktemp)
     teardown() { rm $tmp; }
 
-    run import
-    [[ $status -eq 1 ]]
-    [[ $output =~ "Need to specify an import file." ]]
+    if [[ $DEBUG == "1" ]]; then
+        run import
+        [[ $status -eq 1 ]]
+        [[ $output =~ "Need to specify an import file." ]]
 
-    run import ""
-    [[ $status -eq 1 ]]
-    [[ $output =~ "should not be empty" ]]
+        run import ""
+        [[ $status -eq 1 ]]
+        [[ $output =~ "should not be empty" ]]
+    fi
 
     run import xxxx
     [[ $status -eq 1 ]]
