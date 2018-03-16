@@ -53,4 +53,60 @@ is_type() {
     return 0
 }
 
+is_array() {
+    ensure "$# -ge 1" "Need at least a variable name."
+    ensure_not_empty "$@"
+
+    is_type a "$@"
+}
+
+is_map() {
+    ensure "$# -ge 1" "Need at least a variable name."
+    ensure_not_empty "$@"
+
+    is_type A "$@"
+}
+
+is_ref() {
+    ensure "$# -ge 1" "Need at least a variable name."
+    ensure_not_empty "$@"
+
+    is_type n "$@"
+}
+
+is_integer() {
+    ensure "$# -ge 1" "Need at least a variable name."
+    ensure_not_empty "$@"
+
+    is_type i "$@"
+}
+
+is_lower() {
+    ensure "$# -ge 1" "Need at least a variable name."
+    ensure_not_empty "$@"
+
+    is_type l "$@"
+}
+
+is_upper() {
+    ensure "$# -ge 1" "Need at least a variable name."
+    ensure_not_empty "$@"
+
+    is_type u "$@"
+}
+
+is_export() {
+    ensure "$# -ge 1" "Need at least a variable name."
+    ensure_not_empty "$@"
+
+    is_type x "$@"
+}
+
+is_function() {
+    ensure "$# -ge 1" "Need at least a variable name."
+    ensure_not_empty "$@"
+
+    is_type f "$@"
+}
+
 # vim:ft=sh:ts=4:sw=4
