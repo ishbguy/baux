@@ -56,26 +56,31 @@ usage() {
     return $BAUX_EXIT_CODE
 }
 
-ensure() {
-    local expression="$1"
-    local message="$2"
+if [[ $DEBUG == "1" ]]; then
+    ensure() {
+        local expression="$1"
+        local message="$2"
 
-    [[ $# -ge 1 ]] || die "${FUNCNAME[0]}() args error."
-    
-    [[ -n $message ]] && message=": $message"
-    eval "[[ $expression ]]" || die "$(caller 0): ${FUNCNAME[0]} \"$expression\" failed$message."
-}
+        [[ $# -ge 1 ]] || die "${FUNCNAME[0]}() args error."
 
-ensure_not_empty() {
-    ensure "$# -ge 1" "Need one or more args"
+        [[ -n $message ]] && message=": $message"
+        eval "[[ $expression ]]" || die "$(caller 0): ${FUNCNAME[0]} \"$expression\" failed$message."
+    }
 
-    for arg in "$@"; do
-        arg="${arg## *}"
-        arg="${arg%% *}"
-        [[ -n $arg ]] || die \
-            "$(caller 0): Arguments should not be empty."
-    done
-}
+    ensure_not_empty() {
+        ensure "$# -ge 1" "Need one or more args"
+
+        for arg in "$@"; do
+            arg="${arg## *}"
+            arg="${arg%% *}"
+            [[ -n $arg ]] || die \
+                "$(caller 0): Arguments should not be empty."
+        done
+    }
+else
+    ensure() { true; }
+    ensure_not_empty() { true; }
+fi
 
 import() {
     ensure "$# -ge 1" "Need to specify an import file."

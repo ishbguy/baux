@@ -1,10 +1,12 @@
 # [BAUX](https://github.com/ishbguy/baux)
 
-[![Build Status][buildsvg]][build] [![License][licsvg]][lic]
+[![Build Status][buildsvg]][build] [![Version][versvg]][ver] [![License][licsvg]][lic]
 
 [buildsvg]: https://travis-ci.org/ishbguy/baux.svg?branch=master
 [build]: https://travis-ci.org/ishbguy/baux
-[licsvg]: https://img.shields.io/github/license/mashape/apistatus.svg
+[versvg]: https://img.shields.io/badge/version-v0.0.1-lightgrey.svg
+[ver]: https://img.shields.io/badge/version-v0.0.1-lightgrey.svg
+[licsvg]: https://img.shields.io/badge/license-MIT-green.svg
 [lic]: https://github.com/ishbguy/baux/blob/master/LICENSE
 
 **BAUX** is a bash auxiliary library for writing script.

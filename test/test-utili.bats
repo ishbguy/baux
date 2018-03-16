@@ -59,13 +59,15 @@ source $SRC_DIR/utili.sh
 @test "test getoptions" {
     declare -A opts args
 
-    run getoptions opts args
-    [[ $status -eq 1 ]]
-    [[ $output =~ "Need OPTIONS and ARGUMENTS" ]]
+    if [[ $DEBUG == 1 ]]; then
+        run getoptions opts args
+        [[ $status -eq 1 ]]
+        [[ $output =~ "Need OPTIONS and ARGUMENTS" ]]
 
-    run getoptions opts args ""
-    [[ $status -eq 1 ]]
-    [[ $output =~ "should not be empty" ]]
+        run getoptions opts args ""
+        [[ $status -eq 1 ]]
+        [[ $output =~ "should not be empty" ]]
+    fi
 
     run bash -c "source $SRC_DIR/utili.sh; \
         declare -A opts args;\
@@ -109,13 +111,15 @@ source $SRC_DIR/utili.sh
     echo "user=test" >> $tmp
     echo "host=test.com" >> $tmp
 
-    run read_config
-    [[ $status -eq 1 ]]
-    [[ $output =~ "Need license configs array and config file" ]]
+    if [[ $DEBUG == "1" ]]; then
+        run read_config
+        [[ $status -eq 1 ]]
+        [[ $output =~ "Need license configs array and config file" ]]
 
-    run read_config "" ""
-    [[ $status -eq 1 ]]
-    [[ $output =~ "should not be empty" ]]
+        run read_config "" ""
+        [[ $status -eq 1 ]]
+        [[ $output =~ "should not be empty" ]]
+    fi
 
     test_read_config() {
         local -A configs
