@@ -9,8 +9,7 @@
 # source guard
 [[ $BAUX_SOUECED -eq 1 ]] && return
 declare -gr BAUX_SOUECED=1
-declare -gr BAUX_ABS_PATH=$(realpath "${BASH_SOURCE[0]}")
-declare -gr BAUX_ABS_DIR="${BAUX_ABS_PATH%/*}"
+declare -gr BAUX_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd)
 
 # readonly constants
 declare -gr BAUX_TRUE=0
@@ -82,16 +81,28 @@ else
     ensure_not_empty() { true; }
 fi
 
+if ! hash realpath &>/dev/null; then
+    realpath() {
+        ensure "$# -eq 1" "Need to specify a file."
+        ensure_not_empty "$1"
+
+        local dir=$(dirname "$1")
+        [[ -d $dir ]] && cd "$dir" || return 1
+        echo "$(pwd)/$(basename "$1")"
+    }
+fi
+
 import() {
     ensure "$# -ge 1" "Need to specify an import file."
     ensure_not_empty "$@"
-    
+
     for file in "$@"; do
         [[ -e $file ]] || die "$file does not exist."
         # ensure source one time
         [[ -z ${BAUX_IMPORT_FILES[$file]} ]] || continue
         source "$file" || die "Can not import $file."
-        BAUX_IMPORT_FILES[$(realpath "$file")]=$(realpath "$file")
+        local file_path=$(realpath "$file")
+        BAUX_IMPORT_FILES[$file_path]="$file_path"
     done
 }
 

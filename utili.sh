@@ -9,8 +9,7 @@
 # source guard
 [[ $BAUX_UTILI_SOURCED -eq 1 ]] && return
 declare -gr BAUX_UTILI_SOURCED=1
-declare -gr BAUX_UTILI_ABS_PATH=$(realpath "${BASH_SOURCE[0]}")
-declare -gr BAUX_UTILI_ABS_DIR="${BAUX_UTILI_ABS_PATH%/*}"
+declare -gr BAUX_UTILI_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd)
 
 # source dependences
 if [[ $BAUX_SOUECED -ne 1 ]]; then
@@ -83,8 +82,7 @@ getoptions()
 
 check_tool() {
     for tool in "$@"; do
-        which "$tool" >/dev/null 2>&1 \
-            || die "You need to install $tool"
+        hash "$tool" &>/dev/null || die "You need to install $tool"
     done
 }
 

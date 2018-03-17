@@ -9,8 +9,7 @@
 # source guard
 [[ $BAUX_ENSURE_SOURCED -eq 1 ]] && return
 declare -gr BAUX_ENSURE_SOURCED=1
-declare -gr BAUX_ENSURE_ABS_PATH=$(realpath "${BASH_SOURCE[0]}")
-declare -gr BAUX_ENSURE_ABS_DIR="${BAUX_ENSURE_ABS_PATH%/*}"
+declare -gr BAUX_ENSURE_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd)
 
 # source dependences
 if [[ $BAUX_SOUECED -ne 1 ]]; then
