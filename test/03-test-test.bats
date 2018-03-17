@@ -5,7 +5,6 @@ SRC_DIR=$PWD
 source $SRC_DIR/test.sh
 
 @test "test is_defined" {
-    skip
     test=
     is_defined test
     test=""
@@ -31,32 +30,28 @@ source $SRC_DIR/test.sh
 }
 
 @test "test is_type" {
-    skip
-    declare -a array
+    declare -a array=()
     is_type a array
 
-    declare -A Array
+    declare -A Array=()
     is_type A Array
 
-    declare -A Array
-    is_type A Array
-
-    declare -n array_ref
+    declare -n array_ref=Array
     is_type n array_ref
 
-    declare -i integer
+    declare -i integer=1
     is_type i integer
 
-    declare -r ro
+    declare -r ro=0
     is_type r ro
 
-    declare -l lower
+    declare -l lower=lower
     is_type l lower
 
-    declare -u UPPER
+    declare -u UPPER=UPPER
     is_type u UPPER
 
-    declare -x EXPORT
+    declare -x EXPORT=export
     is_type x EXPORT
 
     test_fun() { true; }

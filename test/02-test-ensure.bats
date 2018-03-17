@@ -2,6 +2,7 @@
 
 SRC_DIR=$PWD
 
+DEBUG=1
 source $SRC_DIR/ensure.sh
 
 @test "test ensure_equal" {
