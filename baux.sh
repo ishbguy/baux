@@ -35,7 +35,7 @@ warn() {
     BAUX_EXIT_CODE=$((BAUX_EXIT_CODE+1))
 }
 
-proname() { echo "$0"; }
+proname() { basename "$0"; }
 version() {
     if [[ -n $VERSION ]]; then
         echo "$(proname) $VERSION"
