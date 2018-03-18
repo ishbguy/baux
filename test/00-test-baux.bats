@@ -58,7 +58,7 @@ source $SRC_DIR/baux.sh &>/dev/null
     tmp=$(mktemp)
     teardown() { rm $tmp; }
 
-    if [[ $DEBUG == "1" ]]; then
+    if [[ $BAUX_ENSURE_DEBUG == "1" ]]; then
         run import
         [[ $status -eq 1 ]]
         [[ $output =~ "Need to specify an import file." ]]

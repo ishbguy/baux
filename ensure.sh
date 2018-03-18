@@ -18,7 +18,7 @@ if [[ $BAUX_SOUECED -ne 1 ]]; then
     source "$BAUX_ENSURE_ABS_DIR/baux.sh"
 fi
 
-declare -g BAUX_ENSURE_DEBUG="${DEBUG:-0}"
+declare -g BAUX_ENSURE_DEBUG="${DEBUG:-1}"
 
 if [[ $BAUX_ENSURE_DEBUG == "1" ]]; then
     ensure() {

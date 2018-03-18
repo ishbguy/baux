@@ -59,7 +59,7 @@ source $SRC_DIR/utili.sh
 @test "test getoptions" {
     declare -A opts args
 
-    if [[ $DEBUG == 1 ]]; then
+    if [[ $BAUX_ENSURE_DEBUG == 1 ]]; then
         run getoptions opts args
         [[ $status -eq 1 ]]
         [[ $output =~ "Need OPTIONS and ARGUMENTS" ]]
@@ -111,7 +111,7 @@ source $SRC_DIR/utili.sh
     echo "user=test" >> $tmp
     echo "host=test.com" >> $tmp
 
-    if [[ $DEBUG == "1" ]]; then
+    if [[ $BAUX_ENSURE_DEBUG == "1" ]]; then
         run read_config
         [[ $status -eq 1 ]]
         [[ $output =~ "Need license configs array and config file" ]]
