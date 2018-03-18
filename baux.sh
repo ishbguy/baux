@@ -18,13 +18,6 @@ if [[ $BAUX_ENSURE_SOURCED -ne 1 ]]; then
     source "$BAUX_ABS_DIR/ensure.sh"
 fi
 
-# readonly constants
-declare -gr BAUX_TRUE=0
-declare -gr BAUX_FALSE=1
-declare -gr BAUX_SUCCESS=0
-declare -gr BAUX_FAIL=1
-declare -gr BAUX_OK=0
-
 # global variables
 declare -gi BAUX_EXIT_CODE=0
 declare -gA BAUX_IMPORT_FILES
