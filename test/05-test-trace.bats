@@ -32,6 +32,5 @@ source $SRC_DIR/trace.sh
         callstack $1
     }
     run one 0
-        echo $output
     [[ $output =~ "main" ]]
 }

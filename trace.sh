@@ -27,16 +27,14 @@ frame() {
     # ensure not over flow
     [[ $((idx+2)) -lt ${#FUNCNAME[@]} ]] || return
 
-    # contruct a frame array include: file line funcname line_content
-    local -A frame
-    frame[file]="${BASH_SOURCE[$((idx+2))]}"
-    frame[line]="${BASH_LINENO[$((idx+1))]}"
-    frame[caller]="${FUNCNAME[$((idx+2))]}"
-    local line_content=$(sed -n -e "${frame[line]}p" "${frame[file]}" \
-        | sed -r 's/^\s+//')
-    frame[line_content]="$line_content"
+    # contruct a frame array include: file line func caller line_content
+    local -a frame
+    frame+=("${BASH_SOURCE[$((idx+2))]}")
+    frame+=("${BASH_LINENO[$((idx+1))]}")
+    frame+=("${FUNCNAME[$((idx+1))]}")
+    frame+=("${FUNCNAME[$((idx+2))]}")
 
-    echo "${frame[line_content]} [${frame[file]}:${frame[line]}:${frame[caller]}]"
+    echo "${frame[@]}"
 }
 
 callstack() {
@@ -47,9 +45,12 @@ callstack() {
     # skip the current func
     local depth=$((${#FUNCNAME[@]} - 1))
 
-    local indent="+ "
+    local indent="+"
     for ((i = idx; i < depth; i++)); do
-        echo "$indent$(frame $i)"
+        local -a frame=($(frame "$i"))
+        local cmdline=$(sed -ne "${frame[1]}p" "${frame[0]}" \
+            | sed -r 's/^\s+//')
+        echo "$indent $cmdline [${frame[0]}:${frame[1]}:${frame[3]}]"
         indent="  $indent"
     done
 }
