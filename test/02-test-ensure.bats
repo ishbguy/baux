@@ -5,6 +5,42 @@ SRC_DIR=$PWD
 DEBUG=1
 source $SRC_DIR/ensure.sh
 
+@test "test ensure" {
+    run ensure
+    [[ $status -eq 1 ]]
+    [[ $output == "ensure() args error." ]]
+
+    run ensure '1 == 1'
+    [[ $status -eq 0 ]]
+    [[ $output == "" ]]
+
+    run ensure "1 != 1"
+    [[ $status -eq 1 ]]
+    [[ $output =~ "failed" ]]
+}
+
+@test "test ensure_not_empty" {
+    run ensure_not_empty
+    [[ $status -eq 1 ]]
+    [[ $output =~ "Need one or more args." ]]
+
+    run ensure_not_empty ""
+    [[ $status -eq 1 ]]
+    [[ $output =~ "Arguments should not be empty." ]]
+
+    run ensure_not_empty " "
+    [[ $status -eq 1 ]]
+    [[ $output =~ "Arguments should not be empty." ]]
+
+    run ensure_not_empty one
+    [[ $status -eq 0 ]]
+    [[ $output == "" ]]
+
+    run ensure_not_empty one ""
+    [[ $status -eq 1 ]]
+    [[ $output =~ "Arguments should not be empty." ]]
+}
+
 @test "test ensure_equal" {
     run ensure_equal 1 1
     [[ $status -eq 0 ]]
