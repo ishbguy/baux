@@ -11,12 +11,12 @@
 declare -gr BAUX_SOUECED=1
 declare -gr BAUX_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd)
 
-# readonly constants
-declare -gr BAUX_TRUE=0
-declare -gr BAUX_FALSE=1
-declare -gr BAUX_SUCCESS=0
-declare -gr BAUX_FAIL=1
-declare -gr BAUX_OK=0
+# source dependences
+if [[ $BAUX_ENSURE_SOURCED -ne 1 ]]; then
+    [[ ! -e $BAUX_ABS_DIR/ensure.sh ]] \
+        && { echo "Can not source the dependent script ensure.sh." >&2; exit 1; }
+    source "$BAUX_ABS_DIR/ensure.sh"
+fi
 
 # global variables
 declare -gi BAUX_EXIT_CODE=0
@@ -35,7 +35,7 @@ warn() {
     BAUX_EXIT_CODE=$((BAUX_EXIT_CODE+1))
 }
 
-proname() { echo "$0"; }
+proname() { basename "$0"; }
 version() {
     if [[ -n $VERSION ]]; then
         echo "$(proname) $VERSION"
@@ -54,32 +54,6 @@ usage() {
     fi
     return $BAUX_EXIT_CODE
 }
-
-if [[ $DEBUG == "1" ]]; then
-    ensure() {
-        local expression="$1"
-        local message="$2"
-
-        [[ $# -ge 1 ]] || die "${FUNCNAME[0]}() args error."
-
-        [[ -n $message ]] && message=": $message"
-        eval "[[ $expression ]]" || die "$(caller 0): ${FUNCNAME[0]} \"$expression\" failed$message."
-    }
-
-    ensure_not_empty() {
-        ensure "$# -ge 1" "Need one or more args"
-
-        for arg in "$@"; do
-            arg="${arg## *}"
-            arg="${arg%% *}"
-            [[ -n $arg ]] || die \
-                "$(caller 0): Arguments should not be empty."
-        done
-    }
-else
-    ensure() { true; }
-    ensure_not_empty() { true; }
-fi
 
 if ! hash realpath &>/dev/null; then
     realpath() {

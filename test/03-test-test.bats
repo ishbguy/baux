@@ -2,6 +2,7 @@
 
 SRC_DIR=$PWD
 
+DEBUG=0
 source $SRC_DIR/test.sh
 
 @test "test is_defined" {

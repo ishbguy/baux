@@ -96,7 +96,7 @@ read_config() {
     local old_ifs="$IFS"
     local tmp_file
 
-    [[ -e $config_file ]] || return "$BAUX_FAIL"
+    [[ -e $config_file ]] || return 1
 
     tmp_file=$(mktemp)
     # use trap to rm temp file and recover old IFS

@@ -2,7 +2,6 @@
 
 SRC_DIR=$PWD
 
-DEBUG=1
 source $SRC_DIR/baux.sh &>/dev/null
 
 @test "test die" {
@@ -55,47 +54,11 @@ source $SRC_DIR/baux.sh &>/dev/null
     [[ $output =~ "usage help" ]]
 }
 
-@test "test ensure" {
-    run ensure
-    [[ $status -eq 1 ]]
-    [[ $output == "ensure() args error." ]]
-
-    run ensure '1 == 1'
-    [[ $status -eq 0 ]]
-    [[ $output == "" ]]
-
-    run ensure "1 != 1"
-    [[ $status -eq 1 ]]
-    [[ $output =~ "failed" ]]
-}
-
-@test "test ensure_not_empty" {
-    run ensure_not_empty
-    [[ $status -eq 1 ]]
-    [[ $output =~ "Need one or more args." ]]
-
-    run ensure_not_empty ""
-    [[ $status -eq 1 ]]
-    [[ $output =~ "Arguments should not be empty." ]]
-
-    run ensure_not_empty " "
-    [[ $status -eq 1 ]]
-    [[ $output =~ "Arguments should not be empty." ]]
-
-    run ensure_not_empty one
-    [[ $status -eq 0 ]]
-    [[ $output == "" ]]
-
-    run ensure_not_empty one ""
-    [[ $status -eq 1 ]]
-    [[ $output =~ "Arguments should not be empty." ]]
-}
-
 @test "test import" {
     tmp=$(mktemp)
     teardown() { rm $tmp; }
 
-    if [[ $DEBUG == "1" ]]; then
+    if [[ $BAUX_ENSURE_DEBUG == "1" ]]; then
         run import
         [[ $status -eq 1 ]]
         [[ $output =~ "Need to specify an import file." ]]

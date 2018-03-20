@@ -18,7 +18,29 @@ if [[ $BAUX_SOUECED -ne 1 ]]; then
     source "$BAUX_ENSURE_ABS_DIR/baux.sh"
 fi
 
-if [[ $DEBUG == "1" ]]; then
+declare -g BAUX_ENSURE_DEBUG="${DEBUG:-1}"
+
+if [[ $BAUX_ENSURE_DEBUG == "1" ]]; then
+    ensure() {
+        local expression="$1"
+        local message="$2"
+
+        [[ $# -ge 1 ]] || die "${FUNCNAME[0]}() args error."
+
+        [[ -n $message ]] && message=": $message"
+        eval "[[ $expression ]]" &>/dev/null \
+            || die "$(caller 0): ${FUNCNAME[0]} \"$expression\" failed$message."
+    }
+
+    ensure_not_empty() {
+        ensure "$# -ge 1" "Need one or more args"
+
+        for arg in "$@"; do
+            [[ -n $(echo $arg|sed -r 's/^\s+//;s/\s+$//') ]] || die \
+                "$(caller 0): Arguments should not be empty."
+        done
+    }
+
     ensure_equal() {
         ensure "$# -ge 2 || $# -le 3" "Need two integers args."
         ensure_not_empty "$1" "$2"
@@ -63,6 +85,8 @@ if [[ $DEBUG == "1" ]]; then
             || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nNot Expect: $1\\nActual: $2"
     }
 else
+    ensure() { true; }
+    ensure_not_empty() { true; }
     ensure_equal() { true; }
     ensure_not_equal() { true; }
     ensure_match() { true; }
