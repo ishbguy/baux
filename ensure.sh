@@ -28,16 +28,15 @@ if [[ $BAUX_ENSURE_DEBUG == "1" ]]; then
         [[ $# -ge 1 ]] || die "${FUNCNAME[0]}() args error."
 
         [[ -n $message ]] && message=": $message"
-        eval "[[ $expression ]]" || die "$(caller 0): ${FUNCNAME[0]} \"$expression\" failed$message."
+        eval "[[ $expression ]]" &>/dev/null \
+            || die "$(caller 0): ${FUNCNAME[0]} \"$expression\" failed$message."
     }
 
     ensure_not_empty() {
         ensure "$# -ge 1" "Need one or more args"
 
         for arg in "$@"; do
-            arg="${arg## *}"
-            arg="${arg%% *}"
-            [[ -n $arg ]] || die \
+            [[ -n $(echo $arg|sed -r 's/^\s+//;s/\s+$//') ]] || die \
                 "$(caller 0): Arguments should not be empty."
         done
     }

@@ -16,6 +16,10 @@ source $SRC_DIR/ensure.sh
     run ensure "1 != 1"
     [[ $status -eq 1 ]]
     [[ $output =~ "failed" ]]
+
+    run ensure " != 1"
+    [[ $status -eq 1 ]]
+    [[ $output =~ "failed" ]]
 }
 
 @test "test ensure_not_empty" {
@@ -30,6 +34,14 @@ source $SRC_DIR/ensure.sh
     run ensure_not_empty " "
     [[ $status -eq 1 ]]
     [[ $output =~ "Arguments should not be empty." ]]
+
+    run ensure_not_empty " one"
+    [[ $status -eq 0 ]]
+    [[ $output == "" ]]
+
+    run ensure_not_empty "one "
+    [[ $status -eq 0 ]]
+    [[ $output == "" ]]
 
     run ensure_not_empty one
     [[ $status -eq 0 ]]
