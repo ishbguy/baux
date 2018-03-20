@@ -92,7 +92,7 @@ is() {
     local actual="$2"
     local msg="${3:-[[ $1 == $2 ]]}"
     local -u result
-    __judge "\"$expect\" == \"$actual\""
+    __judge "'$expect' == '$actual'"
     __issue "$result" "$msg"
     __diag "$result" "'$expect'" "'$actual'" 
 }
@@ -104,7 +104,7 @@ isnt() {
     local actual="$2"
     local msg="${3:-[[ $1 != $2 ]]}"
     local -u result
-    __judge "\"$expect\" != \"$actual\""
+    __judge "'$expect' != '$actual'"
     __issue "$result" "$msg"
     __diag "$result" "'$expect'" "'$actual'" 
 }
@@ -116,7 +116,7 @@ like() {
     local actual="$2"
     local msg="${3:-[[ $1 =~ $2 ]]}"
     local -u result
-    __judge "\"$expect\" =~ \"$actual\""
+    __judge "'$expect' =~ '$actual'"
     __issue "$result" "$msg"
     __diag "$result" "'$expect'" "'$actual'" 
 }
@@ -128,7 +128,7 @@ unlike() {
     local actual="$2"
     local msg="${3:-[[ ! $1 =~ $2 ]]}"
     local -u result
-    __judge "! \"$expect\" =~ \"$actual\""
+    __judge "! '$expect' =~ '$actual'"
     __issue "$result" "$msg"
     __diag "$result" "'$expect'" "'$actual'" 
 }
@@ -143,7 +143,7 @@ subtest() {
 
     eval "$name() {
     $cmd
-    }" &>/dev/null || die "subtest \"$1\" init fail."
+    }" &>/dev/null || die "subtest '$1' init fail."
 
     # exec in sub shell for avoiding exit
     (eval "$name")
