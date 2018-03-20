@@ -42,21 +42,3 @@ source $SRC_DIR/unit.sh
     [[ $status -eq 1 ]]
     [[ $output =~ "FAIL" ]]
 }
-
-@test "test is" {
-    run is 1 1 "Test equal"
-    [[ $status -eq 0 ]]
-    [[ $output =~ "OK" ]]
-
-    run is 1 0 "Test not equal"
-    [[ $status -eq 1 ]]
-    [[ $output =~ "FAIL" ]]
-
-    run is "" "" "Test two spaces"
-    [[ $status -eq 0 ]]
-    [[ $output =~ "OK" ]]
-
-    run is "1" "" "Test two spaces"
-    [[ $status -eq 1 ]]
-    [[ $output =~ "FAIL" ]]
-}
