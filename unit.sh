@@ -63,7 +63,8 @@ __issue() {
     local -u result="$1"
     local msg="$2"
 
-    echo "${BAUX_UNIT_COUNTS[TOTAL]} $msg $(cecho "${BAUX_UNIT_COLORS[$result]}" "${BAUX_UNIT_PROMPTS[$result]}")"
+    echo "${BAUX_UNIT_COUNTS[TOTAL]} $msg $(cecho \
+        "${BAUX_UNIT_COLORS[$result]}" "${BAUX_UNIT_PROMPTS[$result]}")"
 }
 
 __location() {
@@ -95,7 +96,8 @@ ok() {
     local -u result
     __judge "$expr"
     __issue "$result" "$msg"
-    [[ $result != "${BAUX_UNIT_PROMPTS[FAIL]}" ]] || { cecho red "$(__location 0)"; return 1; }
+    [[ $result != "${BAUX_UNIT_PROMPTS[FAIL]}" ]] \
+        || { cecho red "$(__location 0)"; return 1; }
 }
 
 is() {
@@ -190,7 +192,8 @@ skip() {
 
 summary() {
     for it in TOTAL PASS FAIL SKIP; do
-        echo -n "$(cecho ${BAUX_UNIT_COLORS[$it]} ${BAUX_UNIT_PROMPTS[$it]}): ${BAUX_UNIT_COUNTS[$it]}, "
+        echo -n "$(cecho ${BAUX_UNIT_COLORS[$it]} \
+            ${BAUX_UNIT_PROMPTS[$it]}): ${BAUX_UNIT_COUNTS[$it]}, "
     done
     echo
 }
