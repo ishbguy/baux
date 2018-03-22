@@ -47,4 +47,12 @@ isfloat() { ispattern "^${BAUX_CTYPE_PAT_FLOAT}$" "$@"; }
 isrealnum() { ispattern "^${BAUX_CTYPE_PAT_REALNUM}$" "$@"; }
 isident() { ispattern "^${BAUX_CTYPE_PAT_IDENT}$" "$@"; }
 
+tolower() { echo "${@:,,}"; }
+toupper() { echo "${@:^^}"; }
+ltrim() { echo "${@/#+( )/}"; }
+rtrim() { echo "${@/%+( )/}"; }
+trim() { echo "${@//+( )/}"; }
+sub() { local pat="$1" rep="$2"; shift 2; echo "${@/$pat/$rep}"; }
+gsub() { local pat="$1" rep="$2"; shift 2; echo "${@//$pat/$rep}"; }
+
 # vim:ft=sh:ts=4:sw=4
