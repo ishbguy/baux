@@ -28,32 +28,46 @@ is_defined() {
     return 0
 }
 
-is_type() {
-    ensure "$# -ge 2" "Need at least a type name and a variable name."
+declare -A BAUX_TEST_TYPES
+BAUX_TEST_TYPES[-]="normal"
+BAUX_TEST_TYPES[a]="array"
+BAUX_TEST_TYPES[A]="map"
+BAUX_TEST_TYPES[n]="reference"
+BAUX_TEST_TYPES[i]="integer"
+BAUX_TEST_TYPES[r]="readonly"
+BAUX_TEST_TYPES[l]="lower"
+BAUX_TEST_TYPES[u]="upper"
+BAUX_TEST_TYPES[x]="export"
 
-    local type="$1"; shift
-    [[ ${#type} -eq 1 || ${type} =~ [aAnifrlux] ]] || die "Type should be [a|A|n|i|f|r|l|u|x]."
-
+typeof() {
+    local -a types=()
     for var in "$@"; do
-        if [[ $type == "f" ]]; then
-            declare -F "$var" &>/dev/null || return 1
-        else
-            def=$(declare -p "$var" 2>/dev/null)
-            [[ $def =~ -([-aAnirlux]) ]] || return 1
-            [[ ${BASH_REMATCH[1]} == "$type" ]] || return 1
+        local def=$(declare -p "$var" 2>/dev/null)
+        if [[ -z $def ]]; then
+            declare -F "$var" &>/dev/null && types+=("function") && continue
+            types+=("undefined") && continue
         fi
+        [[ $def =~ -([-aAnirlux]) ]]
+        types+=("${BAUX_TEST_TYPES[${BASH_REMATCH[1]}]}")
     done
-    return 0
+    echo "${types[@]}"
+}
+
+is_type() {
+    local type="$1"; shift
+    local -a types=($(typeof "$@"))
+    types=("${types[@]//$type/}")
+    [[ ${types[*]} =~ ^[[:space:]]*$ ]]
 }
 
 # test variabe declare
-is_array() { is_type a "$@"; }
-is_map() { is_type A "$@"; }
-is_ref() { is_type n "$@"; }
-is_int() { is_type i "$@"; }
-is_lower() { is_type l "$@"; }
-is_upper() { is_type u "$@"; }
-is_export() { is_type x "$@"; }
-is_func() { is_type f "$@"; }
+is_array() { is_type array "$@"; }
+is_map() { is_type map "$@"; }
+is_ref() { is_type reference "$@"; }
+is_int() { is_type integer "$@"; }
+is_lower() { is_type lower "$@"; }
+is_upper() { is_type upper "$@"; }
+is_export() { is_type export "$@"; }
+is_func() { is_type function "$@"; }
 
 # vim:ft=sh:ts=4:sw=4

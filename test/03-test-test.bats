@@ -32,32 +32,32 @@ source $SRC_DIR/lib/test.sh
 
 @test "test is_type" {
     declare -a array=()
-    is_type a array
+    is_type array array
 
     declare -A Array=()
-    is_type A Array
+    is_type map Array
 
     declare -n array_ref=Array
-    is_type n array_ref
+    is_type reference array_ref
 
     declare -i integer=1
-    is_type i integer
+    is_type integer integer
 
     declare -r ro=0
-    is_type r ro
+    is_type readonly ro
 
     declare -l lower=lower
-    is_type l lower
+    is_type lower lower
 
     declare -u UPPER=UPPER
-    is_type u UPPER
+    is_type upper UPPER
 
     declare -x EXPORT=export
-    is_type x EXPORT
+    is_type export EXPORT
 
     test_fun() { true; }
-    is_type f test_fun
+    is_type function test_fun
 
-    run is_type f test_fail
+    run is_type function test_fail
     [[ $status -eq 1 ]]
 }
