@@ -2,7 +2,7 @@
 
 SRC_DIR=$PWD
 
-source $SRC_DIR/utili.sh
+source $SRC_DIR/lib/utili.sh
 
 @test "test random" {
     run random
@@ -69,7 +69,7 @@ source $SRC_DIR/utili.sh
         [[ $output =~ "should not be empty" ]]
     fi
 
-    run bash -c "source $SRC_DIR/utili.sh; \
+    run bash -c "source $SRC_DIR/lib/utili.sh; \
         declare -A opts args;\
         getoptions opts args 'a' -a a; \
         echo \${args[a]}; \
@@ -78,7 +78,7 @@ source $SRC_DIR/utili.sh
     [[ $status -eq 0 ]]
     [[ $output == "" ]]
 
-    run bash -c "source $SRC_DIR/utili.sh; \
+    run bash -c "source $SRC_DIR/lib/utili.sh; \
         declare -A opts args;\
         getoptions opts args 'a:' -a a; \
         echo \${args[a]}; \
@@ -86,7 +86,7 @@ source $SRC_DIR/utili.sh
     [[ $status -eq 0 ]]
     [[ $output == "a" ]]
 
-    run bash -c "source $SRC_DIR/utili.sh; \
+    run bash -c "source $SRC_DIR/lib/utili.sh; \
         declare -A opts args;\
         getoptions opts args 'a:' -a a -b; \
         echo \${args[a]}; \

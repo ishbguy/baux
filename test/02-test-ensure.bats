@@ -2,7 +2,7 @@
 
 SRC_DIR=$PWD
 
-source $SRC_DIR/ensure.sh
+source $SRC_DIR/lib/ensure.sh
 
 @test "test ensure" {
     run ensure

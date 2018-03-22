@@ -1,7 +1,7 @@
 #! /usr/bin/bats
 
 SRC_DIR=$PWD
-source $SRC_DIR/array.sh
+source $SRC_DIR/lib/array.sh
 
 
 @test "test push" {
