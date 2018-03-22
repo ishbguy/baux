@@ -36,7 +36,7 @@ pop() {
     local -n __array="$1"
 
     [[ ${#__array[@]} -eq 0 ]] && return 0
-    echo ${__array[$((${#__array[@]}-1))]}
+    echo "${__array[$((${#__array[@]}-1))]}"
     __array=("${__array[@]:0:$((${#__array[@]}-1))}")
 }
 
@@ -47,7 +47,7 @@ _shift() {
     local -n __array="$1"
 
     [[ ${#__array[@]} -eq 0 ]] && return 0
-    echo ${__array[0]}
+    echo "${__array[0]}"
     __array=("${__array[@]:1:${#__array[@]}}")
 }
 
