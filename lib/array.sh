@@ -93,4 +93,33 @@ exists() {
     [[ -n ${__array[$2]} ]]
 }
 
+_join() {
+    local sep="$1"
+    local out="$2"
+    shift 2
+
+    for it in "$@"; do
+        out+="$sep$it"
+    done
+    echo "$out"
+}
+
+_split() {
+    ensure "$# -eq 2 || $# -eq 3" "Need at least a string and an array"
+    is_array "$2" || die "$1 is not an array name."
+    
+    local string="$1"
+    local -n __array="$2"
+    local sep="${3:- }" # space as default seperator
+
+    [[ $string =~ $sep ]] || { __array=("$string"); return; }
+    local right left
+    while [[ -n $string && $string =~ $sep ]]; do
+        right=${string%%$sep*}
+        left=${string#$right$sep}
+        __array+=("$right")
+        string="$left"
+    done
+}
+
 # vim:ft=sh:ts=4:sw=4

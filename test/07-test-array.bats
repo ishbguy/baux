@@ -163,3 +163,34 @@ source $SRC_DIR/lib/array.sh
     run exists map five
     [[ $status -eq 1 ]]
 }
+
+@test "test _join" {
+    array=(one two three "" five)
+
+    run _join : "${array[@]}"
+    [[ $status -eq 0 ]]
+    [[ $output == "one:two:three::five" ]]
+}
+
+@test "test _split" {
+    declare -a array=()
+    
+    _split "one::three:" array ":"
+    [[ ${array[0]} == "one" ]]
+    [[ ${array[1]} == "" ]]
+    [[ ${array[2]} == "three" ]]
+    [[ ${array[3]} == "" ]]
+
+    array=()
+
+    _split "one  three " array
+    [[ ${array[0]} == "one" ]]
+    [[ ${array[1]} == "" ]]
+    [[ ${array[2]} == "three" ]]
+    [[ ${array[3]} == "" ]]
+
+    array=()
+
+    _split "one  three " array ":"
+    [[ ${array[0]} == "one  three " ]]
+}
