@@ -85,6 +85,14 @@ keys() {
     echo "${!__array[@]}"
 }
 
+values() {
+    ensure "$# -eq 1" "Need only an array name."
+    is_array "$1" || is_map "$1" || die "$1 is not an array name."
+
+    local -n __array="$1"
+    echo "${__array[@]}"
+}
+
 exists() {
     ensure "$# -eq 2" "Need an array name and a key"
     is_array "$1" || is_map "$1" || die "$1 is not an array name."

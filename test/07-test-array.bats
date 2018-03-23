@@ -136,6 +136,26 @@ source $SRC_DIR/lib/array.sh
     [[ $output =~ "four" ]]
 }
 
+@test "test values" {
+    array=(1 2 3 4 5)
+
+    run values array
+    [[ $status -eq 0 ]]
+    [[ $output == "1 2 3 4 5" ]]
+
+    array=()
+
+    run values array
+    [[ $status -eq 0 ]]
+    [[ $output == "" ]]
+
+    array=(" " " " " ")
+
+    run values array
+    [[ $status -eq 0 ]]
+    [[ $output == "     " ]]
+}
+
 @test "test exists" {
     array=(1 2 3 4 5)
 
