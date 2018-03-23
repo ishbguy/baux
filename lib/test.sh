@@ -18,7 +18,7 @@ if [[ $BAUX_SOUECED -ne 1 ]]; then
     source "$BAUX_TEST_ABS_DIR/baux.sh"
 fi
 
-declare -A BAUX_TEST_TYPES
+declare -gA BAUX_TEST_TYPES
 BAUX_TEST_TYPES[N]="normal"
 BAUX_TEST_TYPES[a]="array"
 BAUX_TEST_TYPES[A]="map"
@@ -28,14 +28,17 @@ BAUX_TEST_TYPES[r]="readonly"
 BAUX_TEST_TYPES[l]="lower"
 BAUX_TEST_TYPES[u]="upper"
 BAUX_TEST_TYPES[x]="export"
+BAUX_TEST_TYPES[f]="function"
+BAUX_TEST_TYPES[U]="undefined"
 
 typeof() {
     local -a types=()
     for var in "$@"; do
         local def=$(declare -p "$var" 2>/dev/null)
         if [[ -z $def ]]; then
-            declare -F "$var" &>/dev/null && types+=("function") && continue
-            types+=("undefined") && continue
+            declare -F "$var" &>/dev/null \
+                && types+=("${BAUX_TEST_TYPES[f]}") && continue
+            types+=("${BAUX_TEST_TYPES[U]}") && continue
         fi
         [[ $def =~ -([-aAnirlux]) ]]
         local match="${BASH_REMATCH[1]}"
@@ -47,12 +50,12 @@ typeof() {
 
 defined() {
     local -a types=($(typeof "$@"))
-    [[ ! ${types[*]} =~ undefined ]]
+    [[ ! ${types[*]} =~ ${BAUX_TEST_TYPES[U]} ]]
 }
 
 istype() {
     local type="$1"; shift
-    local -a types=($(typeof "$@"))
+    local -a types=("$(typeof "$@")")
     types=("${types[@]//$type/}")
     [[ ${types[*]} =~ ^[[:space:]]*$ ]]
 }

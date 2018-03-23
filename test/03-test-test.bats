@@ -33,6 +33,8 @@ source $SRC_DIR/lib/test.sh
 @test "test istype" {
     declare -a array=()
     istype array array
+    run istype map array
+    [[ $status -eq 1 ]]
 
     declare -A Array=()
     istype map Array
