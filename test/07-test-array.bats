@@ -191,6 +191,14 @@ source $SRC_DIR/lib/array.sh
 
     array=()
 
+    _split "   " array
+    [[ ${array[0]} == "" ]]
+    [[ ${array[1]} == "" ]]
+    [[ ${array[2]} == "" ]]
+    [[ ${array[3]} == "" ]]
+
+    array=()
+
     _split "one  three " array ":"
     [[ ${array[0]} == "one  three " ]]
 }

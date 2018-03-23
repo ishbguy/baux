@@ -112,7 +112,8 @@ _split() {
     local -n __array="$2"
     local sep="${3:- }" # space as default seperator
 
-    [[ $string =~ $sep ]] || { __array=("$string"); return; }
+    # no sep in string just save the original string
+    [[ $string =~ $sep ]] || { __array=("$string"); return 0; }
     local right left
     while [[ -n $string && $string =~ $sep ]]; do
         right=${string%%$sep*}
@@ -120,6 +121,9 @@ _split() {
         __array+=("$right")
         string="$left"
     done
+    # end is sep, append "" to array
+    [[ $1 =~ $sep$ ]] && __array+=("")
+    return 0
 }
 
 # vim:ft=sh:ts=4:sw=4
