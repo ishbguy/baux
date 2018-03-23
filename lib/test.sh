@@ -18,18 +18,8 @@ if [[ $BAUX_SOUECED -ne 1 ]]; then
     source "$BAUX_TEST_ABS_DIR/baux.sh"
 fi
 
-is_defined() {
-    for var in "$@"; do
-        def=$(declare -p "$var" 2>/dev/null)
-        if [[ -z $def ]]; then
-            declare -F "$var" &>/dev/null || return 1
-        fi
-    done
-    return 0
-}
-
 declare -A BAUX_TEST_TYPES
-BAUX_TEST_TYPES[-]="normal"
+BAUX_TEST_TYPES[N]="normal"
 BAUX_TEST_TYPES[a]="array"
 BAUX_TEST_TYPES[A]="map"
 BAUX_TEST_TYPES[n]="reference"
@@ -48,12 +38,19 @@ typeof() {
             types+=("undefined") && continue
         fi
         [[ $def =~ -([-aAnirlux]) ]]
-        types+=("${BAUX_TEST_TYPES[${BASH_REMATCH[1]}]}")
+        local match="${BASH_REMATCH[1]}"
+        [[ $match == '-' ]] && match=N
+        types+=("${BAUX_TEST_TYPES[$match]}")
     done
     echo "${types[@]}"
 }
 
-is_type() {
+defined() {
+    local -a types=($(typeof "$@"))
+    [[ ! ${types[*]} =~ undefined ]]
+}
+
+istype() {
     local type="$1"; shift
     local -a types=($(typeof "$@"))
     types=("${types[@]//$type/}")
@@ -61,13 +58,13 @@ is_type() {
 }
 
 # test variabe declare
-is_array() { is_type array "$@"; }
-is_map() { is_type map "$@"; }
-is_ref() { is_type reference "$@"; }
-is_int() { is_type integer "$@"; }
-is_lower() { is_type lower "$@"; }
-is_upper() { is_type upper "$@"; }
-is_export() { is_type export "$@"; }
-is_func() { is_type function "$@"; }
+is_array() { istype array "$@"; }
+is_map() { istype map "$@"; }
+is_ref() { istype reference "$@"; }
+is_int() { istype integer "$@"; }
+is_lower() { istype lower "$@"; }
+is_upper() { istype upper "$@"; }
+is_export() { istype export "$@"; }
+is_func() { istype function "$@"; }
 
 # vim:ft=sh:ts=4:sw=4
