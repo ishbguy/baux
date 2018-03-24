@@ -1,9 +1,11 @@
 # [BAUX](https://github.com/ishbguy/baux)
 
-[![Build Status][buildsvg]][build] [![Version][versvg]][ver] [![License][licsvg]][lic]
+[![Travis][travissvg]][travis] [![Codacy][codacysvg]][codacy] [![Version][versvg]][ver] [![License][licsvg]][lic]
 
-[buildsvg]: https://travis-ci.org/ishbguy/baux.svg?branch=master
-[build]: https://travis-ci.org/ishbguy/baux
+[travissvg]: https://travis-ci.org/ishbguy/baux.svg?branch=master
+[travis]: https://travis-ci.org/ishbguy/baux
+[codacysvg]: https://api.codacy.com/project/badge/Grade/9a7820362a97474b87652d1519714e1b
+[codacy]: https://www.codacy.com/app/ishbguy/baux?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ishbguy/baux&amp;utm_campaign=Badge_Grade
 [versvg]: https://img.shields.io/badge/version-v0.0.1-lightgrey.svg
 [ver]: https://img.shields.io/badge/version-v0.0.1-lightgrey.svg
 [licsvg]: https://img.shields.io/badge/license-MIT-green.svg
