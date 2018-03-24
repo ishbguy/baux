@@ -222,3 +222,49 @@ source $SRC_DIR/lib/array.sh
     _split "one  three " array ":"
     [[ ${array[0]} == "one  three " ]]
 }
+
+@test "test sort" {
+    array=({10..0})
+
+    __issorted $(_sort $(_sort -R ${array[@]}))
+    __issorted $(select_sort $(_sort -R ${array[@]}))
+    __issorted $(insert_sort $(_sort -R ${array[@]}))
+    __issorted $(shell_sort $(_sort -R ${array[@]}))
+}
+
+@test "test search" {
+    array=({1..100})
+
+    run search array 49
+    [[ $output == "48" ]]
+
+    run search array 100
+    [[ $output == "99" ]]
+
+    run search array 49 100
+    [[ $output == "48 99" ]]
+}
+
+@test "test lsearch" {
+    array=({0..1000})
+
+    NEED=$((RANDOM % 1000))
+    run lsearch array  $NEED
+    [[ $output == $NEED ]]
+
+    NEED=$((RANDOM % 1000))
+    run lsearch array $NEED
+    [[ $output == $NEED ]]
+}
+
+@test "test bsearch" {
+    array=({0..10})
+
+    NEED=$((RANDOM % 10))
+    run bsearch array $NEED
+    [[ $output == $NEED ]]
+
+    NEED=$((RANDOM % 10))
+    run bsearch array $NEED
+    [[ $output == $NEED ]]
+}
