@@ -38,8 +38,6 @@ log() {
 
     local level="$1"
     local message="$2"
-    # get $line $subroutine $filename
-    local -a caller=( $(caller 0) )
 
     [[ ${BAUX_LOG_LEVEL[$level]} -gt ${BAUX_LOG_LEVEL[$BAUX_LOG_OUTPUT_LEVEL]} ]] && return
 
