@@ -155,8 +155,8 @@ __cmp() { [[ $1 -gt $2 ]]; }
 __issorted() {
     local -a array=("$@")
     local len=${#array[@]}
-    for ((i = 0; i < $[$len-1]; i++)); do
-        __cmp ${array[$i]} ${array[$i+1]} && return 1
+    for ((i = 0; i < $((len-1)); i++)); do
+        __cmp "${array[$i]}" "${array[$i+1]}" && return 1
     done
     return 0
 }
@@ -176,7 +176,7 @@ select_sort() {
 
     for ((i = 0; i < ${#array[@]}; i++)); do
         for ((j = i+1; j < ${#array[@]}; j++)); do
-            $cmp ${array[$i]} ${array[$j]} && __swap array $i $j
+            "$cmp" "${array[$i]}" "${array[$j]}" && __swap array "$i" "$j"
         done
     done
     echo "${array[@]}"
@@ -184,12 +184,12 @@ select_sort() {
 
 insert_sort() {
     local cmp=__cmp
-    is_func "$1" && cmp=$1 && shift
+    is_func "$1" && cmp="$1" && shift
     local -a array=("$@")
     
     for ((i = 1; i < ${#array[@]}; i++)); do
         for ((j = i; j > 0; j--)); do
-            $cmp ${array[$j-1]} ${array[$j]} && __swap array $j $[$j-1]
+            "$cmp" "${array[$j-1]}" "${array[$j]}" && __swap array "$j" "$((j-1))"
         done
     done
     echo "${array[@]}"
@@ -197,7 +197,7 @@ insert_sort() {
 
 shell_sort() {
     local cmp=__cmp
-    is_func "$1" && cmp=$1 && shift
+    is_func "$1" && cmp="$1" && shift
     local -a array=("$@")
     local l=${#array[@]}
     local h=1
@@ -207,8 +207,8 @@ shell_sort() {
     while ((h>=1)); do
         for ((i = h; i < ${#array[@]}; i++)); do
             for ((j = i; j >= h; j = j-h)); do
-                $cmp ${array[$j-$h]} ${array[$j]} \
-                    && __swap array $j $[$j-$h]
+                "$cmp" "${array[$j-$h]}" "${array[$j]}" \
+                    && __swap array "$j" "$((j-h))"
             done
         done
         h=$((h/3))
@@ -240,7 +240,7 @@ lsearch() {
     local -n __array="$1"
     local need="$2"
     for idx in "${!__array[@]}"; do
-        [[ ${__array[$idx]} == $need ]] && echo $idx && return 0
+        [[ ${__array[$idx]} == "$need" ]] && echo "$idx" && return 0
     done
     return 1
 }
@@ -248,7 +248,7 @@ lsearch() {
 bsearch() {
     ensure "$# -eq 2" "Need an array name and a item"
     local cmp=__cmp
-    is_func "$1" && cmp=$1 && shift
+    is_func "$1" && cmp="$1" && shift
     is_array "$1" || is_map "$1" || die "$1 is not an array name."
 
     local -n __array="$1"
@@ -259,8 +259,8 @@ bsearch() {
     hi=$((${#__array[@]}-1))
     while ((low <= hi)); do
         mid=$(((low+hi)/2))
-        [[ ${__array[$mid]} == $need ]] && echo $mid && return 0
-        if __cmp ${__array[$mid]} $need ; then
+        [[ ${__array[$mid]} == "$need" ]] && echo "$mid" && return 0
+        if __cmp "${__array[$mid]}" "$need" ; then
             hi=$((mid-1))
 
         else
