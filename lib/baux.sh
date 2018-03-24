@@ -9,7 +9,7 @@
 # source guard
 [[ $BAUX_SOUECED -eq 1 ]] && return
 declare -gr BAUX_SOUECED=1
-declare -gr BAUX_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd)
+declare -gr BAUX_ABS_DIR=$(builtin cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd)
 
 # source dependences
 if [[ $BAUX_ENSURE_SOURCED -ne 1 ]]; then
@@ -61,7 +61,7 @@ if ! hash realpath &>/dev/null; then
         ensure_not_empty "$1"
 
         local dir=$(dirname "$1")
-        [[ -d $dir ]] && cd "$dir" || return 1
+        [[ -d $dir ]] && builtin cd "$dir" || return 1
         echo "$(pwd)/$(basename "$1")"
     }
 fi

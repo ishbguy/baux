@@ -9,7 +9,7 @@
 # source guard
 [[ $BAUX_ENSURE_SOURCED -eq 1 ]] && return
 declare -gr BAUX_ENSURE_SOURCED=1
-declare -gr BAUX_ENSURE_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd)
+declare -gr BAUX_ENSURE_ABS_DIR=$(builtin cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd)
 
 # source dependences
 if [[ $BAUX_SOUECED -ne 1 ]]; then
@@ -33,38 +33,20 @@ if [[ $BAUX_ENSURE_DEBUG == "1" ]]; then
     }
 
     ensure_not_empty() {
-        ensure "$# -ge 1" "Need one or more args"
-
         for arg in "$@"; do
-            [[ -n $(echo $arg|sed -r 's/^\s+//;s/\s+$//') ]] || die \
+            [[ -n $(echo $arg |sed -r 's/^\s+//;s/\s+$//') ]] || die \
                 "$(caller 0): Arguments should not be empty."
         done
     }
 
-    ensure_equal() {
-        ensure "$# -ge 2 || $# -le 3" "Need two integers args."
-        ensure_not_empty "$1" "$2"
-
-        [[ $1 -eq $2 ]] \
-            || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nExpect: $1\\nActual: $2"
-    }
-
-    ensure_not_equal() {
-        ensure "$# -ge 2 || $# -le 3" "Need two integers args."
-        ensure_not_empty "$1" "$2"
-
-        [[ $1 -ne $2 ]] \
-            || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nNot Expect: $1\\nActual: $2"
-    }
-
-    ensure_match() {
+    ensure_is() {
         ensure "$# -ge 2 || $# -le 3" "Need two string args."
 
         [[ "$1" == "$2" ]] \
             || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nExpect: $1\\nActual: $2"
     }
 
-    ensure_mismatch() {
+    ensure_isnt() {
         ensure "$# -ge 2 || $# -le 3" "Need two string args."
 
         [[ "$1" != "$2" ]] \
@@ -87,10 +69,8 @@ if [[ $BAUX_ENSURE_DEBUG == "1" ]]; then
 else
     ensure() { true; }
     ensure_not_empty() { true; }
-    ensure_equal() { true; }
-    ensure_not_equal() { true; }
-    ensure_match() { true; }
-    ensure_mismatch() { true; }
+    ensure_is() { true; }
+    ensure_isnt() { true; }
     ensure_like() { true; }
     ensure_unlike() { true; }
 fi

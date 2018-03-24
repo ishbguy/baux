@@ -1,7 +1,7 @@
 #! /usr/bin/env bats
 
 SRC_DIR=$PWD
-source $SRC_DIR/trace.sh
+source $SRC_DIR/lib/trace.sh
 
 @test "test frame" {
     one() {

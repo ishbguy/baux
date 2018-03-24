@@ -2,7 +2,7 @@
 
 SRC_DIR=$PWD
 
-source $SRC_DIR/baux.sh &>/dev/null
+source $SRC_DIR/lib/baux.sh &>/dev/null
 
 @test "test die" {
     run die TEST
@@ -15,7 +15,7 @@ source $SRC_DIR/baux.sh &>/dev/null
     [[ $status -eq 0 ]]
     [[ $output == "test" ]]
 
-    run bash -c "source $SRC_DIR/baux.sh; \
+    run bash -c "source $SRC_DIR/lib/baux.sh; \
         warn test; \
         exit \$BAUX_EXIT_CODE"
     [[ $status -eq 1 ]]
@@ -73,14 +73,14 @@ source $SRC_DIR/baux.sh &>/dev/null
     [[ $output =~ "does not exist" ]]
 
     echo "test-import() { echo test-import; }" >$tmp
-    run bash -c "source $SRC_DIR/baux.sh; \
+    run bash -c "source $SRC_DIR/lib/baux.sh; \
         import $tmp; \
         test-import"
     [[ $status -eq 0 ]]
     [[ $output =~ "test-import" ]]
 
     echo "test-import() { echo test-import; }" >$tmp
-    run bash -c "source $SRC_DIR/baux.sh; \
+    run bash -c "source $SRC_DIR/lib/baux.sh; \
         import $tmp $tmp; \
         test-import"
     [[ $status -eq 0 ]]

@@ -1,7 +1,7 @@
 #! /usr/bin/env bats
 
 SRC_DIR=$PWD
-source $SRC_DIR/log.sh
+source $SRC_DIR/lib/log.sh
 
 @test "test log" {
     run log debug "test"

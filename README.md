@@ -33,7 +33,7 @@ All the mentioned functions prefix with `baux_` in **BAUX**. Some features are n
 + **Assertion**
     - pre- or post- condition: `ensure()`, `ensure_not_empty()`.
     - Numeric ensure: `ensure_equal()`, `ensure_not_equal()`.
-    - String ensure: `ensure_like()`, `ensure_unlike()`, `ensure_match()`, `ensure_mismatch()`.
+    - String ensure: `ensure_like()`, `ensure_unlike()`, `ensure_is()`, `ensure_isnt()`.
 + **Debugging**
     - Logger: `logger()`.
     - Trace: `callstack()`.

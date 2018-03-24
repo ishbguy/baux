@@ -9,7 +9,7 @@
 # source guard
 [[ $BAUX_UNIT_SOURCED -eq 1 ]] && return
 declare -gr BAUX_UNIT_SOURCED=1
-declare -gr BAUX_UNIT_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)
+declare -gr BAUX_UNIT_ABS_DIR=$(builtin cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)
 
 # source dependences
 if [[ $BAUX_SOUECED -ne 1 ]]; then
@@ -21,23 +21,40 @@ fi
 import "$BAUX_UNIT_ABS_DIR/utili.sh"
 import "$BAUX_UNIT_ABS_DIR/trace.sh"
 
-declare -gi BAUX_UNIT_COUNT=0
-declare -gi BAUX_UNIT_PASS=0
-declare -gi BAUX_UNIT_FAIL=0
-declare -gi BAUX_UNIT_SKIP=0
+declare -gA BAUX_UNIT_PROMPTS
+declare -gA BAUX_UNIT_COLORS
+declare -gA BAUX_UNIT_COUNTS
 declare -gi BAUX_UNIT_SKIP_FLAG=0
-declare -gi BAUX_UNIT_SUB_FLAG=0
-declare -ga BAUX_UNIT_TESTS=()
-declare -ga BAUX_UNIT_SUB_TESTS=()
+
+BAUX_UNIT_COUNTS[TOTAL]=0
+BAUX_UNIT_COUNTS[PASS]=0
+BAUX_UNIT_COUNTS[FAIL]=0
+BAUX_UNIT_COUNTS[SKIP]=0
+
+BAUX_UNIT_PROMPTS[TOTAL]="TOTAL"
+BAUX_UNIT_PROMPTS[PASS]="PASS"
+BAUX_UNIT_PROMPTS[FAIL]="FAIL"
+BAUX_UNIT_PROMPTS[SKIP]="SKIP"
+
+BAUX_UNIT_COLORS[TOTAL]="blue"
+BAUX_UNIT_COLORS[PASS]="green"
+BAUX_UNIT_COLORS[FAIL]="red"
+BAUX_UNIT_COLORS[SKIP]="yellow"
 
 __judge() {
     local expr="$1"
-    ((++BAUX_UNIT_COUNT))
+    ((++BAUX_UNIT_COUNTS[TOTAL]))
+    if [[ $BAUX_UNIT_SKIP_FLAG -eq 1 ]]; then
+        ((++BAUX_UNIT_COUNTS[SKIP]))
+        BAUX_UNIT_SKIP_FLAG=0
+        result="SKIP"
+        return
+    fi
     if (eval "[[ $expr ]]" &>/dev/null); then
-        ((++BAUX_UNIT_PASS))
-        result="OK"
+        ((++BAUX_UNIT_COUNTS[PASS]))
+        result="PASS"
     else
-        ((++BAUX_UNIT_FAIL))
+        ((++BAUX_UNIT_COUNTS[FAIL]))
         result="FAIL"
     fi
 }
@@ -45,12 +62,9 @@ __judge() {
 __issue() {
     local -u result="$1"
     local msg="$2"
-    local -A colors
-    colors[OK]="green"
-    colors[FAIL]="red"
-    colors[SKIP]="yellow"
 
-    echo "$BAUX_UNIT_COUNT $(cecho ${colors[$result]} $result) $msg"
+    echo "${BAUX_UNIT_COUNTS[TOTAL]} $msg $(cecho \
+        "${BAUX_UNIT_COLORS[$result]}" "${BAUX_UNIT_PROMPTS[$result]}")"
 }
 
 __location() {
@@ -64,12 +78,12 @@ __diag() {
     local result="$1"
     local expect="$2"
     local actual="$3"
-    [[ $result != "FAIL" ]] && return 0
+    [[ $result != "${BAUX_UNIT_PROMPTS[FAIL]}" ]] && return 0
 
     # fail
-    cecho red "$(__location 1)"
-    cecho red "Expect: $expect"
-    cecho red "Actual: $actual"
+    cecho red "$(__location 1)" >&2
+    cecho red "Expect: $expect" >&2
+    cecho red "Actual: $actual" >&2
     return 1
 }
 
@@ -82,7 +96,8 @@ ok() {
     local -u result
     __judge "$expr"
     __issue "$result" "$msg"
-    [[ $result != "FAIL" ]] || { cecho red "$(__location 0)"; return 1; }
+    [[ $result != "${BAUX_UNIT_PROMPTS[FAIL]}" ]] \
+        || { cecho red "$(__location 0)"; return 1; }
 }
 
 is() {
@@ -92,7 +107,7 @@ is() {
     local actual="$2"
     local msg="${3:-[[ $1 == $2 ]]}"
     local -u result
-    __judge "\"$expect\" == \"$actual\""
+    __judge "'$expect' == '$actual'"
     __issue "$result" "$msg"
     __diag "$result" "'$expect'" "'$actual'" 
 }
@@ -104,7 +119,7 @@ isnt() {
     local actual="$2"
     local msg="${3:-[[ $1 != $2 ]]}"
     local -u result
-    __judge "\"$expect\" != \"$actual\""
+    __judge "'$expect' != '$actual'"
     __issue "$result" "$msg"
     __diag "$result" "'$expect'" "'$actual'" 
 }
@@ -116,7 +131,7 @@ like() {
     local actual="$2"
     local msg="${3:-[[ $1 =~ $2 ]]}"
     local -u result
-    __judge "\"$expect\" =~ \"$actual\""
+    __judge "'$expect' =~ '$actual'"
     __issue "$result" "$msg"
     __diag "$result" "'$expect'" "'$actual'" 
 }
@@ -128,7 +143,7 @@ unlike() {
     local actual="$2"
     local msg="${3:-[[ ! $1 =~ $2 ]]}"
     local -u result
-    __judge "! \"$expect\" =~ \"$actual\""
+    __judge "! '$expect' =~ '$actual'"
     __issue "$result" "$msg"
     __diag "$result" "'$expect'" "'$actual'" 
 }
@@ -137,24 +152,50 @@ subtest() {
     ensure "$# -eq 2" "Need test name and test instructions"
     ensure_not_empty "$1"
 
-    local name=$(echo "$1" | sed -r 's/[[:punct:][:space:]]/_/g')
-    local cmd="$2"
-    local ouput
+    local name="$1"
+    local tests="$2"
+    local encode_name=$(echo "$name" | sed -r 's/[[:punct:][:space:]]/_/g')
 
-    eval "$name() {
-    $cmd
-    }" &>/dev/null || die "subtest \"$1\" init fail."
+    eval "$encode_name() {
+        BAUX_UNIT_COUNTS[TOTAL]=0
+        BAUX_UNIT_COUNTS[PASS]=0
+        BAUX_UNIT_COUNTS[FAIL]=0;
+        $tests
+        return \${BAUX_UNIT_COUNTS[FAIL]}
+    }" &>/dev/null || die "subtest \"$name\" init fail."
 
+    ((++BAUX_UNIT_COUNTS[TOTAL]))
+    echo -ne "${BAUX_UNIT_COUNTS[TOTAL]} subtest: $name "
+
+    # return if skip
+    if [[ $BAUX_UNIT_SKIP_FLAG -eq 1 ]]; then
+        BAUX_UNIT_SKIP_FLAG=0
+        ((++BAUX_UNIT_COUNTS[SKIP]))
+        cecho "${BAUX_UNIT_COLORS[SKIP]}" "${BAUX_UNIT_PROMPTS[SKIP]}"
+        return 0
+    fi
     # exec in sub shell for avoiding exit
-    (eval "$name")
+    if (eval "$encode_name" >/dev/null); then
+        ((++BAUX_UNIT_COUNTS[PASS]))
+        cecho "${BAUX_UNIT_COLORS[PASS]}" "${BAUX_UNIT_PROMPTS[PASS]}"
+        return 0
+    else
+        ((++BAUX_UNIT_COUNTS[FAIL]))
+        cecho "${BAUX_UNIT_COLORS[FAIL]}" "${BAUX_UNIT_PROMPTS[FAIL]}"
+        return 1
+    fi
 }
 
 skip() {
-    true
+    BAUX_UNIT_SKIP_FLAG=1
 }
 
 summary() {
-    true
+    for it in TOTAL PASS FAIL SKIP; do
+        echo -n "$(cecho ${BAUX_UNIT_COLORS[$it]} \
+            ${BAUX_UNIT_PROMPTS[$it]}): ${BAUX_UNIT_COUNTS[$it]}, "
+    done
+    echo
 }
 
 # vim:ft=sh:ts=4:sw=4
