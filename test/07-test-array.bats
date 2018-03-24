@@ -136,6 +136,26 @@ source $SRC_DIR/lib/array.sh
     [[ $output =~ "four" ]]
 }
 
+@test "test values" {
+    array=(1 2 3 4 5)
+
+    run values array
+    [[ $status -eq 0 ]]
+    [[ $output == "1 2 3 4 5" ]]
+
+    array=()
+
+    run values array
+    [[ $status -eq 0 ]]
+    [[ $output == "" ]]
+
+    array=(" " " " " ")
+
+    run values array
+    [[ $status -eq 0 ]]
+    [[ $output == "     " ]]
+}
+
 @test "test exists" {
     array=(1 2 3 4 5)
 
@@ -162,4 +182,89 @@ source $SRC_DIR/lib/array.sh
 
     run exists map five
     [[ $status -eq 1 ]]
+}
+
+@test "test _join" {
+    array=(one two three "" five)
+
+    run _join : "${array[@]}"
+    [[ $status -eq 0 ]]
+    [[ $output == "one:two:three::five" ]]
+}
+
+@test "test _split" {
+    declare -a array=()
+    
+    _split "one::three:" array ":"
+    [[ ${array[0]} == "one" ]]
+    [[ ${array[1]} == "" ]]
+    [[ ${array[2]} == "three" ]]
+    [[ ${array[3]} == "" ]]
+
+    array=()
+
+    _split "one  three " array
+    [[ ${array[0]} == "one" ]]
+    [[ ${array[1]} == "" ]]
+    [[ ${array[2]} == "three" ]]
+    [[ ${array[3]} == "" ]]
+
+    array=()
+
+    _split "   " array
+    [[ ${array[0]} == "" ]]
+    [[ ${array[1]} == "" ]]
+    [[ ${array[2]} == "" ]]
+    [[ ${array[3]} == "" ]]
+
+    array=()
+
+    _split "one  three " array ":"
+    [[ ${array[0]} == "one  three " ]]
+}
+
+@test "test sort" {
+    array=({10..0})
+
+    __issorted $(_sort $(_sort -R ${array[@]}))
+    __issorted $(select_sort $(_sort -R ${array[@]}))
+    __issorted $(insert_sort $(_sort -R ${array[@]}))
+    __issorted $(shell_sort $(_sort -R ${array[@]}))
+}
+
+@test "test search" {
+    array=({1..100})
+
+    run search array 49
+    [[ $output == "48" ]]
+
+    run search array 100
+    [[ $output == "99" ]]
+
+    run search array 49 100
+    [[ $output == "48 99" ]]
+}
+
+@test "test lsearch" {
+    array=({0..1000})
+
+    NEED=$((RANDOM % 1000))
+    run lsearch array  $NEED
+    [[ $output == $NEED ]]
+
+    NEED=$((RANDOM % 1000))
+    run lsearch array $NEED
+    [[ $output == $NEED ]]
+}
+
+@test "test bsearch" {
+    array=({0..10})
+
+    NEED=$((RANDOM % 10))
+    run bsearch array $NEED
+    [[ $output == $NEED ]]
+
+    NEED=$((RANDOM % 10))
+    run bsearch array $NEED
+    [[ $output == $NEED ]]
 }
