@@ -52,54 +52,34 @@ source $SRC_DIR/lib/ensure.sh
     [[ $output =~ "Arguments should not be empty." ]]
 }
 
-@test "test ensure_equal" {
-    run ensure_equal 1 1
+@test "test ensure_is" {
+    run ensure_is "" ""
     [[ $status -eq 0 ]]
     [[ $output == "" ]]
 
-    run ensure_equal 1 0
+    run ensure_is "test" "test"
+    [[ $status -eq 0 ]]
+    [[ $output == "" ]]
+
+    run ensure_is "test" ""
     [[ $status -eq 1 ]]
     [[ $output =~ "failed" ]]
 }
 
-@test "test ensure_not_equal" {
-    run ensure_not_equal 1 0
+@test "test ensure_isnt" {
+    run ensure_isnt "test" ""
     [[ $status -eq 0 ]]
     [[ $output == "" ]]
 
-    run ensure_not_equal 1 1
-    [[ $status -eq 1 ]]
-    [[ $output =~ "failed" ]]
-}
-
-@test "test ensure_match" {
-    run ensure_match "" ""
+    run ensure_isnt "test" "t"
     [[ $status -eq 0 ]]
     [[ $output == "" ]]
 
-    run ensure_match "test" "test"
-    [[ $status -eq 0 ]]
-    [[ $output == "" ]]
-
-    run ensure_match "test" ""
-    [[ $status -eq 1 ]]
-    [[ $output =~ "failed" ]]
-}
-
-@test "test ensure_mismatch" {
-    run ensure_mismatch "test" ""
-    [[ $status -eq 0 ]]
-    [[ $output == "" ]]
-
-    run ensure_mismatch "test" "t"
-    [[ $status -eq 0 ]]
-    [[ $output == "" ]]
-
-    run ensure_mismatch "test" "test"
+    run ensure_isnt "test" "test"
     [[ $status -eq 1 ]]
     [[ $output =~ "failed" ]]
 
-    run ensure_mismatch "" ""
+    run ensure_isnt "" ""
     [[ $status -eq 1 ]]
     [[ $output =~ "failed" ]]
 }
