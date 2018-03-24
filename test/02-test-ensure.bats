@@ -24,8 +24,8 @@ source $SRC_DIR/lib/ensure.sh
 
 @test "test ensure_not_empty" {
     run ensure_not_empty
-    [[ $status -eq 1 ]]
-    [[ $output =~ "Need one or more args." ]]
+    [[ $status -eq 0 ]]
+    [[ $output =~ "" ]]
 
     run ensure_not_empty ""
     [[ $status -eq 1 ]]

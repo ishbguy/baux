@@ -33,8 +33,6 @@ if [[ $BAUX_ENSURE_DEBUG == "1" ]]; then
     }
 
     ensure_not_empty() {
-        ensure "$# -ge 1" "Need one or more args"
-
         for arg in "$@"; do
             [[ -n $(echo $arg |sed -r 's/^\s+//;s/\s+$//') ]] || die \
                 "$(caller 0): Arguments should not be empty."
