@@ -9,7 +9,7 @@
 # source guard
 [[ $BAUX_UNIT_SOURCED -eq 1 ]] && return
 declare -gr BAUX_UNIT_SOURCED=1
-declare -gr BAUX_UNIT_ABS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)
+declare -gr BAUX_UNIT_ABS_DIR=$(builtin cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)
 
 # source dependences
 if [[ $BAUX_SOUECED -ne 1 ]]; then
