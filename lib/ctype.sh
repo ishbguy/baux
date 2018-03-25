@@ -42,10 +42,19 @@ isxdigit() { ispattern '^[[:xdigit:]]+$' "$@"; }
 declare -gr BAUX_CTYPE_PAT_FLOAT='[[:digit:]]+\.[[:digit:]]+'
 declare -gr BAUX_CTYPE_PAT_REALNUM='[[:digit:]]+(\.[[:digit:]]+)?'
 declare -gr BAUX_CTYPE_PAT_IDENT='[_[:alpha:]][_[:alnum:]]*'
+declare -gr BAUX_CTYPE_PAT_IP='((((25[0-5])|(2[0-4][0-9]))|(1?[0-9]?[0-9]))\.){3}(((25[0-5])|(2[0-4][0-9]))|(1?[0-9]?[0-9]))'
+# username in Linux system
+declare -gr BAUX_CTYPE_PAT_USERNAME='[_a-z][_a-z0-9]{31}'
+declare -gr BAUX_CTYPE_PAT_PORT='(6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]|[1-5]?([0-9]?){4})'
+declare -gr BAUX_CTYPE_PAT_HOST='([_[:alnum:]]\.)*[_[:alnum:]]'
 
 isfloat() { ispattern "^${BAUX_CTYPE_PAT_FLOAT}$" "$@"; }
 isrealnum() { ispattern "^${BAUX_CTYPE_PAT_REALNUM}$" "$@"; }
 isident() { ispattern "^${BAUX_CTYPE_PAT_IDENT}$" "$@"; }
+isip() { ispattern "^${BAUX_CTYPE_PAT_IP}$" "$@"; }
+isname() { ispattern "!${BAUX_CTYPE_PAT_USERNAME}$" "$@"; }
+isport() { for p in "$@"; do [[ $p -ge 1 || $p -le 65535 ]] || return 1; done; }
+ishost() { ispattern "^${BAUX_CTYPE_PAT_HOST}$" "$@"; }
 
 tolower() { echo "${@:,,}"; }
 toupper() { echo "${@:^^}"; }
