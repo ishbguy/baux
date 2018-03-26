@@ -100,7 +100,7 @@ read_config() {
 
     tmp_file=$(mktemp)
     # use trap to rm temp file and recover old IFS
-    trap 'rm -f $tmp_file; IFS=$old_ifs' RETURN
+    trap 'rm -f $tmp_file' RETURN
 
     # remove blank lines, comments, heading and tailing spaces
     sed -re '/^\s*$/d;/^#.*/d;s/#.*//g;s/^\s+//;s/\s+$//' \
@@ -112,6 +112,7 @@ read_config() {
         value="${value#\"}"; value="${value%\"}"
         __configs["${name,,}"]="$value"
     done <"$tmp_file"
+    IFS="$old_ifs"
 }
 
 # vim:ft=sh:ts=4:sw=4
