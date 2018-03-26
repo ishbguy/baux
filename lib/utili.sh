@@ -115,4 +115,12 @@ read_config() {
     IFS="$old_ifs"
 }
 
+realdir() {
+    local -a dirs=()
+    for file in "$@"; do
+        dirs+=("$(dirname "$(realpath "$file")")")
+    done
+    echo "${dirs[@]}"
+}
+
 # vim:ft=sh:ts=4:sw=4

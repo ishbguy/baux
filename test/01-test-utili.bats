@@ -132,3 +132,18 @@ source $SRC_DIR/lib/utili.sh
     [[ $status -eq 0 ]]
     [[ $output == "test.com test" ]]
 }
+
+@test "test realdir" {
+    run realdir
+    [[ $status -eq 0 ]]
+    [[ $output == "" ]]
+
+    run realdir /etc/hosts /etc/passwd
+    [[ $status -eq 0 ]]
+    [[ $output == "/etc /etc" ]]
+
+
+    run realdir /bin/bash
+    [[ $status -eq 0 ]]
+    [[ $output == "/usr/bin" ]]
+}
