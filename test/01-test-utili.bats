@@ -142,8 +142,4 @@ source $SRC_DIR/lib/utili.sh
     [[ $status -eq 0 ]]
     [[ $output == "/etc /etc" ]]
 
-
-    run realdir /bin/bash
-    [[ $status -eq 0 ]]
-    [[ $output == "/usr/bin" ]]
 }
