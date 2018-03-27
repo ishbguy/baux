@@ -105,6 +105,26 @@ source $SRC_DIR/lib/unit.sh
     [[ $output =~ ${BAUX_UNIT_PROMPTS[PASS]} ]]
 }
 
+@test "test run_ok" {
+    run run_ok '$status -eq 0' exit 0
+    [[ $status -eq 0 ]]
+
+    run run_ok '$status -eq 1' exit 0
+    [[ $status -eq 1 ]]
+
+    run run_ok '$status -eq 1' exit 1
+    [[ $status -eq 0 ]]
+
+    run run_ok '$status -eq 0' exit 1
+    [[ $status -eq 1 ]]
+
+    run run_ok '$output =~ "command not found"' xyz
+    [[ $status -eq 0 ]]
+
+    run run_ok '$output == ""' xyz
+    [[ $status -eq 1 ]]
+}
+
 @test "test subtest" {
     run subtest "subtest PASS" 'is 1 1 "test is"'
     [[ $status -eq 0 ]]
