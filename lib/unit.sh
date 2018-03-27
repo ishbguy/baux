@@ -210,6 +210,7 @@ summary() {
             ${BAUX_UNIT_PROMPTS[$it]}): ${BAUX_UNIT_COUNTS[$it]}, "
     done
     echo
+    return ${BAUX_UNIT_COUNTS[FAIL]}
 }
 
 # vim:ft=sh:ts=4:sw=4
