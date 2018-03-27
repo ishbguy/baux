@@ -9,7 +9,7 @@
 # source guard
 [[ $BAUX_UTILI_SOURCED -eq 1 ]] && return
 declare -gr BAUX_UTILI_SOURCED=1
-declare -gr BAUX_UTILI_ABS_DIR=$(builtin cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd)
+declare -gr BAUX_UTILI_ABS_DIR="$(dirname $(realpath "${BASH_SOURCE[0]}"))"
 
 # source dependences
 if [[ $BAUX_SOUECED -ne 1 ]]; then
@@ -113,6 +113,14 @@ read_config() {
         __configs["${name,,}"]="$value"
     done <"$tmp_file"
     IFS="$old_ifs"
+}
+
+realdir() {
+    local -a dirs=()
+    for file in "$@"; do
+        dirs+=("$(dirname "$(realpath "$file")")")
+    done
+    echo "${dirs[@]}"
 }
 
 # vim:ft=sh:ts=4:sw=4

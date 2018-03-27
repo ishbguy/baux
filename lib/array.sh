@@ -9,7 +9,7 @@
 # source guard
 [[ $BAUX_ARRAY_SOURCED -eq 1 ]] && return
 declare -gr BAUX_ARRAY_SOURCED=1
-declare -gr BAUX_ARRAY_ABS_DIR=$(builtin cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null; pwd)
+declare -gr BAUX_ARRAY_ABS_DIR="$(dirname $(realpath "${BASH_SOURCE[0]}"))"
 
 # source dependences
 if [[ $BAUX_SOUECED -ne 1 ]]; then
