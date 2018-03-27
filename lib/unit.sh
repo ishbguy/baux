@@ -70,7 +70,7 @@ __issue() {
 __location() {
     local idx="$(($1+1))"
     local -a frame=($(frame "$idx"| sed -r 's/\s+/\n/g'))
-    local cmd=$(sed -ne "${frame[1]}p" "${frame[0]}" | sed -r 's/^\s+//')
+    local cmd=$(sed -ne "${frame[1]}p" "${frame[0]}" 2>/dev/null | sed -r 's/^\s+//')
     echo "$cmd [${frame[0]}:${frame[1]}:${frame[3]}]"
 }
 
@@ -154,12 +154,17 @@ run_ok() {
     
     local expr="$1"; shift
     local cmds="$*"
+    local msg="test run: $cmds"
+    local -u result
     local status output
     
     output=$(eval "$@" 2>&1)
     status=$?
 
-    ok "$expr" "test run: $cmds"
+    __judge "$expr"
+    __issue "$result" "$msg"
+    [[ $result != "${BAUX_UNIT_PROMPTS[FAIL]}" ]] \
+        || { cecho red "$(__location 0)"; return 1; }
 }
 
 subtest() {
