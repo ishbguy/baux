@@ -12,12 +12,11 @@ source $SRC_DIR/lib/baux.sh &>/dev/null
 
 @test "test warn" {
     run warn test
-    [[ $status -eq 0 ]]
+    [[ $status -eq 1 ]]
     [[ $output == "test" ]]
 
     run bash -c "source $SRC_DIR/lib/baux.sh; \
-        warn test; \
-        exit \$BAUX_EXIT_CODE"
+        warn test"
     [[ $status -eq 1 ]]
     [[ $output == "test" ]]
 }
