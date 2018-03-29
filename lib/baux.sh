@@ -26,13 +26,12 @@ die_hook() { true; }
 die() {
     echo -e "$@" >&2
     die_hook
-    BAUX_EXIT_CODE=$((BAUX_EXIT_CODE+1))
-    exit $BAUX_EXIT_CODE
+    exit $((++BAUX_EXIT_CODE))
 }
 
 warn() {
     echo -e "$@" >&2
-    BAUX_EXIT_CODE=$((BAUX_EXIT_CODE+1))
+    return $((++BAUX_EXIT_CODE))
 }
 
 proname() { basename "${0##+(-)}"; }

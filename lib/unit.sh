@@ -70,7 +70,7 @@ __issue() {
 __location() {
     local idx="$(($1+1))"
     local -a frame=($(frame "$idx"| sed -r 's/\s+/\n/g'))
-    local cmd=$(sed -ne "${frame[1]}p" "${frame[0]}" | sed -r 's/^\s+//')
+    local cmd=$(sed -ne "${frame[1]}p" "${frame[0]}" 2>/dev/null | sed -r 's/^\s+//')
     echo "$cmd [${frame[0]}:${frame[1]}:${frame[3]}]"
 }
 
@@ -97,7 +97,7 @@ ok() {
     __judge "$expr"
     __issue "$result" "$msg"
     [[ $result != "${BAUX_UNIT_PROMPTS[FAIL]}" ]] \
-        || { cecho red "$(__location 0)"; return 1; }
+        || { cecho red "$(__location 0)" >&2; return 1; }
 }
 
 is() {
@@ -154,12 +154,18 @@ run_ok() {
     
     local expr="$1"; shift
     local cmds="$*"
+    local msg="test run: $cmds"
+    local -u result
     local status output
     
     output=$(eval "$@" 2>&1)
     status=$?
 
-    ok "$expr" "test run: $cmds"
+    __judge "$expr"
+    __issue "$result" "$msg"
+    [[ $result != "${BAUX_UNIT_PROMPTS[FAIL]}" ]] \
+        || { cecho red "$(__location 0)\nStatus: $status\nOutput: '$output'" >&2; \
+        return 1; }
 }
 
 subtest() {
@@ -169,6 +175,7 @@ subtest() {
     local name="$1"
     local tests="$2"
     local encode_name=$(echo "$name" | sed -r 's/[[:punct:][:space:]]/_/g')
+    local err_msg status
 
     eval "$encode_name() {
         BAUX_UNIT_COUNTS[TOTAL]=0
@@ -189,13 +196,15 @@ subtest() {
         return 0
     fi
     # exec in sub shell for avoiding exit
-    if (eval "$encode_name" >/dev/null); then
+    err_msg=$(eval "$encode_name" 2>&1 >/dev/null)
+    status="$?"
+    if [[ $status -eq 0 ]]; then
         ((++BAUX_UNIT_COUNTS[PASS]))
         cecho "${BAUX_UNIT_COLORS[PASS]}" "${BAUX_UNIT_PROMPTS[PASS]}"
         return 0
     else
         ((++BAUX_UNIT_COUNTS[FAIL]))
-        cecho "${BAUX_UNIT_COLORS[FAIL]}" "${BAUX_UNIT_PROMPTS[FAIL]}"
+        cecho "${BAUX_UNIT_COLORS[FAIL]}" "${BAUX_UNIT_PROMPTS[FAIL]}\n$err_msg" >&2
         return 1
     fi
 }
