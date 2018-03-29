@@ -175,6 +175,7 @@ subtest() {
     local name="$1"
     local tests="$2"
     local encode_name=$(echo "$name" | sed -r 's/[[:punct:][:space:]]/_/g')
+    local err_msg status
 
     eval "$encode_name() {
         BAUX_UNIT_COUNTS[TOTAL]=0
@@ -195,13 +196,15 @@ subtest() {
         return 0
     fi
     # exec in sub shell for avoiding exit
-    if (eval "$encode_name" >/dev/null); then
+    err_msg=$(eval "$encode_name" 2>&1 >/dev/null)
+    status="$?"
+    if [[ $status -eq 0 ]]; then
         ((++BAUX_UNIT_COUNTS[PASS]))
         cecho "${BAUX_UNIT_COLORS[PASS]}" "${BAUX_UNIT_PROMPTS[PASS]}"
         return 0
     else
         ((++BAUX_UNIT_COUNTS[FAIL]))
-        cecho "${BAUX_UNIT_COLORS[FAIL]}" "${BAUX_UNIT_PROMPTS[FAIL]}"
+        cecho "${BAUX_UNIT_COLORS[FAIL]}" "${BAUX_UNIT_PROMPTS[FAIL]}\n$err_msg" >&2
         return 1
     fi
 }
