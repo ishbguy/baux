@@ -97,7 +97,7 @@ ok() {
     __judge "$expr"
     __issue "$result" "$msg"
     [[ $result != "${BAUX_UNIT_PROMPTS[FAIL]}" ]] \
-        || { cecho red "$(__location 0)"; return 1; }
+        || { cecho red "$(__location 0)" >&2; return 1; }
 }
 
 is() {
@@ -164,7 +164,8 @@ run_ok() {
     __judge "$expr"
     __issue "$result" "$msg"
     [[ $result != "${BAUX_UNIT_PROMPTS[FAIL]}" ]] \
-        || { cecho red "$(__location 0)"; return 1; }
+        || { cecho red "$(__location 0)\nStatus: $status\nOutput: '$output'" >&2; \
+        return 1; }
 }
 
 subtest() {
