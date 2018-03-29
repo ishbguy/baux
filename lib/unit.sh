@@ -25,6 +25,8 @@ declare -gA BAUX_UNIT_PROMPTS
 declare -gA BAUX_UNIT_COLORS
 declare -gA BAUX_UNIT_COUNTS
 declare -gi BAUX_UNIT_SKIP_FLAG=0
+declare -gi BAUX_UNIT_STATUS_LEN=0
+declare -g  BAUX_UNIT_PAD_SPACES=""
 
 BAUX_UNIT_COUNTS[TOTAL]=0
 BAUX_UNIT_COUNTS[PASS]=0
@@ -40,6 +42,16 @@ BAUX_UNIT_COLORS[TOTAL]="blue"
 BAUX_UNIT_COLORS[PASS]="green"
 BAUX_UNIT_COLORS[FAIL]="red"
 BAUX_UNIT_COLORS[SKIP]="yellow"
+BAUX_UNIT_COLORS[EMSG]="red"
+
+for s in "${!BAUX_UNIT_COUNTS[@]}"; do
+    [[ ${#s} -gt $BAUX_UNIT_STATUS_LEN ]] \
+        && BAUX_UNIT_STATUS_LEN=${#s}
+done
+
+for ((i = 1; i < BAUX_UNIT_STATUS_LEN; i++)); do
+    BAUX_UNIT_PAD_SPACES+=" "
+done
 
 __judge() {
     local expr="$1"
@@ -63,7 +75,7 @@ __issue() {
     local -u result="$1"
     local msg="$2"
 
-    echo "${BAUX_UNIT_COUNTS[TOTAL]} $msg $(cecho \
+    echo -e "$BAUX_UNIT_PAD_SPACES ${BAUX_UNIT_COUNTS[TOTAL]} $msg \x1B[1G$(cecho \
         "${BAUX_UNIT_COLORS[$result]}" "${BAUX_UNIT_PROMPTS[$result]}")"
 }
 
@@ -81,9 +93,9 @@ __diag() {
     [[ $result != "${BAUX_UNIT_PROMPTS[FAIL]}" ]] && return 0
 
     # fail
-    cecho red "$(__location 1)" >&2
-    cecho red "Expect: $expect" >&2
-    cecho red "Actual: $actual" >&2
+    cecho "${BAUX_UNIT_COLORS[EMSG]}" "$BAUX_UNIT_PAD_SPACES $(__location 1)" >&2
+    cecho "${BAUX_UNIT_COLORS[EMSG]}" "$BAUX_UNIT_PAD_SPACES Expect: $expect" >&2
+    cecho "${BAUX_UNIT_COLORS[EMSG]}" "$BAUX_UNIT_PAD_SPACES Actual: $actual" >&2
     return 1
 }
 
@@ -97,7 +109,7 @@ ok() {
     __judge "$expr"
     __issue "$result" "$msg"
     [[ $result != "${BAUX_UNIT_PROMPTS[FAIL]}" ]] \
-        || { cecho red "$(__location 0)" >&2; return 1; }
+        || { cecho "${BAUX_UNIT_COLORS[EMSG]}" "$(__location 0)" >&2; return 1; }
 }
 
 is() {
@@ -164,7 +176,10 @@ run_ok() {
     __judge "$expr"
     __issue "$result" "$msg"
     [[ $result != "${BAUX_UNIT_PROMPTS[FAIL]}" ]] \
-        || { cecho red "$(__location 0)\nStatus: $status\nOutput: '$output'" >&2; \
+        || { \
+        cecho "${BAUX_UNIT_COLORS[EMSG]}" "$BAUX_UNIT_PAD_SPACES $(__location 0)" >&2; \
+        cecho "${BAUX_UNIT_COLORS[EMSG]}" "$BAUX_UNIT_PAD_SPACES Status: $status" >&2; \
+        cecho "${BAUX_UNIT_COLORS[EMSG]}" "$BAUX_UNIT_PAD_SPACES Output: '$output'" >&2; \
         return 1; }
 }
 
@@ -186,7 +201,7 @@ subtest() {
     }" &>/dev/null || die "subtest \"$name\" init fail."
 
     ((++BAUX_UNIT_COUNTS[TOTAL]))
-    echo -ne "${BAUX_UNIT_COUNTS[TOTAL]} subtest: $name "
+    echo -ne "$BAUX_UNIT_PAD_SPACES ${BAUX_UNIT_COUNTS[TOTAL]} subtest: $name "
 
     # return if skip
     if [[ $BAUX_UNIT_SKIP_FLAG -eq 1 ]]; then
@@ -200,13 +215,14 @@ subtest() {
     status="$?"
     if [[ $status -eq 0 ]]; then
         ((++BAUX_UNIT_COUNTS[PASS]))
-        cecho "${BAUX_UNIT_COLORS[PASS]}" "${BAUX_UNIT_PROMPTS[PASS]}"
-        return 0
+        cecho "${BAUX_UNIT_COLORS[PASS]}" "\x1B[1G${BAUX_UNIT_PROMPTS[PASS]}"
     else
         ((++BAUX_UNIT_COUNTS[FAIL]))
-        cecho "${BAUX_UNIT_COLORS[FAIL]}" "${BAUX_UNIT_PROMPTS[FAIL]}\n$err_msg" >&2
-        return 1
+        cecho "${BAUX_UNIT_COLORS[FAIL]}" "\x1B[1G${BAUX_UNIT_PROMPTS[FAIL]}" >&2
+        cecho "${BAUX_UNIT_COLORS[EMSG]}" "$BAUX_UNIT_PAD_SPACES $(__location 0)" >&2
+        echo -e "$err_msg" >&2
     fi
+    return $status
 }
 
 skip() {
