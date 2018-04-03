@@ -7,29 +7,29 @@
     && { echo "Only allow to be sourced, not for running." >&2; exit 1; }
 
 # source guard
-[[ $BAUX_CHECK_SOURCED -eq 1 ]] && return
-declare -gr BAUX_CHECK_SOURCED=1
-declare -gr BAUX_CHECK_ABS_DIR="$(dirname $(realpath "${BASH_SOURCE[0]}"))"
+[[ $BAUX_VAR_SOURCED -eq 1 ]] && return
+declare -gr BAUX_VAR_SOURCED=1
+declare -gr BAUX_VAR_ABS_DIR="$(dirname $(realpath "${BASH_SOURCE[0]}"))"
 
 # source dependences
 if [[ $BAUX_SOUECED -ne 1 ]]; then
-    [[ ! -e $BAUX_CHECK_ABS_DIR/baux.sh ]] \
+    [[ ! -e $BAUX_VAR_ABS_DIR/baux.sh ]] \
         && { echo "Can not source the dependent script baux.sh." >&2; exit 1; }
-    source "$BAUX_CHECK_ABS_DIR/baux.sh"
+    source "$BAUX_VAR_ABS_DIR/baux.sh"
 fi
 
-declare -gA BAUX_CHECK_TYPES
-BAUX_CHECK_TYPES[N]="normal"
-BAUX_CHECK_TYPES[a]="array"
-BAUX_CHECK_TYPES[A]="map"
-BAUX_CHECK_TYPES[n]="reference"
-BAUX_CHECK_TYPES[i]="integer"
-BAUX_CHECK_TYPES[r]="readonly"
-BAUX_CHECK_TYPES[l]="lower"
-BAUX_CHECK_TYPES[u]="upper"
-BAUX_CHECK_TYPES[x]="export"
-BAUX_CHECK_TYPES[f]="function"
-BAUX_CHECK_TYPES[U]="undefined"
+declare -gA BAUX_VAR_TYPES
+BAUX_VAR_TYPES[N]="normal"
+BAUX_VAR_TYPES[a]="array"
+BAUX_VAR_TYPES[A]="map"
+BAUX_VAR_TYPES[n]="reference"
+BAUX_VAR_TYPES[i]="integer"
+BAUX_VAR_TYPES[r]="readonly"
+BAUX_VAR_TYPES[l]="lower"
+BAUX_VAR_TYPES[u]="upper"
+BAUX_VAR_TYPES[x]="export"
+BAUX_VAR_TYPES[f]="function"
+BAUX_VAR_TYPES[U]="undefined"
 
 typeof() {
     local -a types=()
@@ -37,20 +37,20 @@ typeof() {
         local def=$(declare -p "$var" 2>/dev/null)
         if [[ -z $def ]]; then
             declare -F "$var" &>/dev/null \
-                && types+=("${BAUX_CHECK_TYPES[f]}") && continue
-            types+=("${BAUX_CHECK_TYPES[U]}") && continue
+                && types+=("${BAUX_VAR_TYPES[f]}") && continue
+            types+=("${BAUX_VAR_TYPES[U]}") && continue
         fi
         [[ $def =~ -([-aAnirlux]) ]]
         local match="${BASH_REMATCH[1]}"
         [[ $match == '-' ]] && match=N
-        types+=("${BAUX_CHECK_TYPES[$match]}")
+        types+=("${BAUX_VAR_TYPES[$match]}")
     done
     echo "${types[@]}"
 }
 
 defined() {
     local -a types=($(typeof "$@"))
-    [[ ! ${types[*]} =~ ${BAUX_CHECK_TYPES[U]} ]]
+    [[ ! ${types[*]} =~ ${BAUX_VAR_TYPES[U]} ]]
 }
 
 istype() {
