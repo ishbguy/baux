@@ -29,7 +29,7 @@ for level in "${BAUX_LOG_LEVELS[@]}"; do
     BAUX_LOG_LEVEL[$level]=$((BAUX_LOG_LEVEL_TIME * BAUX_LOG_LEVEL_BASE++))
 done
 
-datetime() { date '+%Y-%m-%d %H:%M:%S'; }
+__datetime() { date '+%Y-%m-%d %H:%M:%S'; }
 
 log() {
     ensure "$# -eq 2" "Need a log level and a log message."
@@ -53,7 +53,7 @@ log() {
         trap 'exec 3>&1; exec 3>&-' RETURN
     fi
 
-    echo "$(datetime)|$(proname)[$$]|${level^^}|${FUNCNAME[1]}| $message"
+    echo "$(__datetime)|$(proname)[$$]|${level^^}|${FUNCNAME[1]}| $message"
 }
 
 # vim:ft=sh:ts=4:sw=4
