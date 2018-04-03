@@ -1,7 +1,7 @@
 #! /usr/bin/env bats
 
 SRC_DIR=$PWD
-source $SRC_DIR/lib/unit.sh
+source $SRC_DIR/lib/test.sh
 
 @test "test ok" {
     run ok "1 == 1" "Test equal"
