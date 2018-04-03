@@ -18,7 +18,7 @@ if [[ $BAUX_SOUECED -ne 1 ]]; then
     source "$BAUX_ARRAY_ABS_DIR/baux.sh"
 fi
 
-import "$BAUX_ARRAY_ABS_DIR/test.sh"
+import "$BAUX_ARRAY_ABS_DIR/check.sh"
 
 push() {
     ensure "$# -ge 1" "Need at least an array name."

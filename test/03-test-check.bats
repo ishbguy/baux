@@ -3,7 +3,7 @@
 SRC_DIR=$PWD
 
 DEBUG=0
-source $SRC_DIR/lib/test.sh
+source $SRC_DIR/lib/check.sh
 
 @test "test defined" {
     test=
