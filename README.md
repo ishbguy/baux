@@ -26,10 +26,8 @@
 ## :art: Features
 
 + **Helper**: Basic script writing helper functions, such as getting script's name, version and help message, importing other script once, warning or exit when get a wrong status. (`baux.sh`)
-+ **Utility**: Useful utility functions for getting options, reading a simple config file, printing message with color and so on. (`utili.sh`)
 + **Assertion**: Functions for writing reliable APIs, ensuring the pre- or post-condition. (`ensure.sh`)
-    - pre- or post- condition: `ensure()`, `ensure_not_empty()`.
-    - String ensure: `ensure_like()`, `ensure_unlike()`, `ensure_is()`, `ensure_isnt()`.
++ **Utility**: Useful utility functions for getting options, reading a simple config file, printing message with color and so on. (`utili.sh`)
 + **Debugging**: Simple functions for logging (`log.sh`) and print callstack when failed (`trace.sh`).
     - Logger: `logger()`.
     - Trace: `callstack()`.
@@ -155,79 +153,6 @@ import /file/not/exsit.sh           # this will fail, and make you script die
 echo "Can not be here!"
 ```
 
-###  Utility (`utili.sh`)
-
-#### Get Options
-
-```bash
-source /path/to/baux/lib/utili.sh
-
-# need to declare two associative arrays
-# one for options and one for arguments
-
-declare -A opts args
-
-# The first arg is array NAME for options
-# The second arg is array NAME for arguments
-# The third arg is the options string, a letter for an option,
-# letter follow with ':' means a option argument
-# The remain args are needed to be parsed
-
-getoptions opts args "n:vh" "$@"
-
-# after getoptions, need to correct the option index
-shift $((OPTIND - 1))
-
-# now you can check options and arguments
-[[ ${opts[h]} -eq 1 ]] && echo "Option 'h' invoke"
-[[ ${opts[v]} -eq 1 ]] && echo "Option 'v' invoke"
-[[ ${opts[n]} -eq 1 ]] && echo "Option 'n' invoke, argument is ${args[n]}"
-
-# an invoked option will be assigned with 1
-# an invoked option with an argument, the argument value will be stored
-```
-
-#### Read Config File
-
-```bash
-source /path/to/baux/lib/utili.sh
-
-# need to declare an associative array for storing config value
-declare -A CONFIGS
-
-# config name and value are seperated with '='
-# strings follow '#' means comment
-# each line allows one name-value pair
-# leading and tailing spaces is allowed
-# spaces on both sides of '=' is allowed, too
-
-echo "NAME=ishbguy" >>my.config
-echo "EMAIL=ishbguy@hotmail.com" >>my.config
-
-read_config CONFIGS my.config
-
-# you will notice that all config name will convert to lower case
-echo "my name is ${CONFIGS[name]}"
-echo "my email is ${CONFIGS[email]}"
-
-read_config CONFIGS file-not-exsit # will not fail, just return 1
-```
-
-#### Other Utilities
-
-```bash
-source /path/to/baux/lib/utili.sh
-
-cecho red "This message will print in red" # color can be: black, red, green
-                                           # yellow, blue, magenta, cyan, white
-
-realdir /path/to/script # similar to realpath, this will print /path/to
-realdir /p1/script1 /p2/script2 # will print /p1 /p2
-
-check_tool sed awk realpath # check needed tools in PATH
-check_tool tools-not-exsit  # will die
-```
-
 ### Assertion (`ensure.sh`)
 
 Assertion functions are useful for writing APIs, and they can be sorted in 3 catogories: general, explicit and implicit assertion.
@@ -329,7 +254,98 @@ echo "Can not be here."
 
 #### Assertion Switch
 
-There is a switch to control the assertion to on or off, it is `BAUX_ENSURE_DEBUG` variable, its default value is `1`, which means turn on assertion, if you want to turn off, you can set `BAUX_ENSURE_DEBUG=0`.
+The `BAUX_ENSURE_DEBUG` variable act as a switch to turn on or off the assertion, its default value is `1`, which means turn on assertion, if you want to turn off, you can set `BAUX_ENSURE_DEBUG` to `0` before sourcing the `ensure.sh`.
+
+###  Utility (`utili.sh`)
+
+#### Get Options
+
+```bash
+source /path/to/baux/lib/utili.sh
+
+# need to declare two associative arrays
+# one for options and one for arguments
+
+declare -A opts args
+
+# The first arg is array NAME for options
+# The second arg is array NAME for arguments
+# The third arg is the options string, a letter for an option,
+# letter follow with ':' means a option argument
+# The remain args are needed to be parsed
+
+getoptions opts args "n:vh" "$@"
+
+# after getoptions, need to correct the option index
+shift $((OPTIND - 1))
+
+# now you can check options and arguments
+[[ ${opts[h]} -eq 1 ]] && echo "Option 'h' invoke"
+[[ ${opts[v]} -eq 1 ]] && echo "Option 'v' invoke"
+[[ ${opts[n]} -eq 1 ]] && echo "Option 'n' invoke, argument is ${args[n]}"
+
+# an invoked option will be assigned with 1
+# an invoked option with an argument, the argument value will be stored
+```
+
+#### Read Config File
+
+```bash
+source /path/to/baux/lib/utili.sh
+
+# need to declare an associative array for storing config value
+declare -A CONFIGS
+
+# config name and value are seperated with '='
+# strings follow '#' means comment
+# each line allows one name-value pair
+# leading and tailing spaces is allowed
+# spaces on both sides of '=' is allowed, too
+
+echo "NAME=ishbguy" >>my.config
+echo "EMAIL=ishbguy@hotmail.com" >>my.config
+
+read_config CONFIGS my.config
+
+# you will notice that all config name will convert to lower case
+echo "my name is ${CONFIGS[name]}"
+echo "my email is ${CONFIGS[email]}"
+
+read_config CONFIGS file-not-exsit # will not fail, just return 1
+```
+
+#### Other Utilities
+
+```bash
+source /path/to/baux/lib/utili.sh
+
+cecho red "This message will print in red" # color can be: black, red, green
+                                           # yellow, blue, magenta, cyan, white
+
+realdir /path/to/script # similar to realpath, this will print /path/to
+realdir /p1/script1 /p2/script2 # will print /p1 /p2
+
+check_tool sed awk realpath # check needed tools in PATH
+check_tool tools-not-exsit  # will die
+```
+
+### Debugging (`log.sh, trace.sh`)
+
+#### Logging
+
+#### Callstack
+
+### Testing (`var.sh, test.sh`)
+
+#### Variable Check (`var.sh`)
+
+#### Unit Test (`test.sh`)
+
+### Exception (`except.sh`)
+
+### Array (`array.sh`)
+
+### Regex (`ctype.sh`)
 
 ## :hibiscus: Contributing
 
