@@ -331,9 +331,9 @@ check_tool tools-not-exsit  # will die
 
 ### Debugging (`log.sh, trace.sh`)
 
-#### Logging
+#### Logging (`log.sh`)
 
-#### Callstack
+#### Callstack (`trace.sh`)
 
 ### Testing (`var.sh, test.sh`)
 
