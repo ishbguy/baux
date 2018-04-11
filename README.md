@@ -27,7 +27,7 @@
 
 + **Helper**: Basic script writing helper functions, such as getting script's name, version and help message, importing other script once, warning or exit when get a wrong status. (`baux.sh`)
 + **Utility**: Useful utility functions for getting options, reading a simple config file, printing message with color and so on. (`utili.sh`)
-+ **Assertion**: Functions for writting reliable APIs, ensuring the pre- or post-condition. (`ensure.sh`)
++ **Assertion**: Functions for writing reliable APIs, ensuring the pre- or post-condition. (`ensure.sh`)
     - pre- or post- condition: `ensure()`, `ensure_not_empty()`.
     - String ensure: `ensure_like()`, `ensure_unlike()`, `ensure_is()`, `ensure_isnt()`.
 + **Debugging**: Simple functions for logging (`log.sh`) and print callstack when failed (`trace.sh`).
@@ -227,6 +227,109 @@ realdir /p1/script1 /p2/script2 # will print /p1 /p2
 check_tool sed awk realpath # check needed tools in PATH
 check_tool tools-not-exsit  # will die
 ```
+
+### Assertion (`ensure.sh`)
+
+Assertion functions are useful for writing APIs, and they can be sorted in 3 catogories: general, explicit and implicit assertion.
+
+#### General Assertion
+
+`ensure` can make an assertion with a given expression, if the expression is true, it will continue to run the following commands, or it will die and print a given message.
+
+```bash
+source /path/to/baux/lib/ensure.sh
+
+# the first arg is expression, the second arg is error message, which is optional
+
+NUM=1
+ensure "$NUM == 1" "$NUM must be equal 1"       # OK
+ensure "2 -gt $NUM" "2 must greater than $NUM"  # OK
+
+ensure "$NUM == 1.0" "$NUM must be 1.0"         # this will die, for $NUM act as string '1' not '1.0'
+```
+
+The expression given to `ensure` will be `eval [[ $expr ]]` inside `ensure`.
+
+`ensure_not_empty` can test all given args wheather they are not empty, if anyone of them is empty, it will die.
+
+```bash
+source /path/to/baux/lib/ensure.sh
+
+one=1
+two=2
+empty=
+
+ensure_not_empty "$one" "$two"  # OK
+ensure_not_empty "$empty"       # will die
+
+echo "Can not be here."
+```
+
+It is a best practice to wrap each arg with double qoute.
+
+#### Explicit Assertion
+
+`ensure_is "$1" "$2"` is equivalent to `ensure "$1 == $2".`
+
+```bash
+source /path/to/baux/lib/ensure.sh
+
+one=1
+
+ensure_is "$one" "1" "$one is not 1"    # OK
+ensure_is "$one" "1.0" "$one is not 1"  # will die
+
+echo "Can not be here."
+```
+
+`ensure_isnt "$1" "$2"` is equivalent to `ensure "$1 != $2".`
+
+```bash
+source /path/to/baux/lib/ensure.sh
+
+one=1
+
+ensure_isnt "$one" "1.0" "$one is not 1"  # OK
+ensure_isnt "$one" "1" "$one is not 1"    # will die
+
+echo "Can not be here."
+```
+
+#### Implicit Assertion
+
+`ensure_like "$1" "$2"` is equivalent to `ensure "$1 =~ $2"`
+
+```bash
+source /path/to/baux/lib/ensure.sh
+
+str="This is a test"
+
+ensure_like "$str" "a" "$str does not like a"           # OK
+ensure_like "$str" "test" "$str does not like test"     # OK
+
+ensure_like "$str" "check" "$str does not like check"   # will die
+
+echo "Can not be here."
+```
+
+`ensure_unlike "$1" "$2"` is equivalent to `ensure "! $1 =~ $2"`
+
+```bash
+source /path/to/baux/lib/ensure.sh
+
+str="This is a test"
+
+ensure_unlike "$str" "TEST" "$str like TEST"    # OK
+ensure_unlike "$str" "IS" "$str like IS"        # OK
+
+ensure_unlike "$str" "test" "$str like test"    # will die
+
+echo "Can not be here."
+```
+
+#### Assertion Switch
+
+There is a switch to control the assertion to on or off, it is `BAUX_ENSURE_DEBUG` variable, its default value is `1`, which means turn on assertion, if you want to turn off, you can set `BAUX_ENSURE_DEBUG=0`.
 
 ## :hibiscus: Contributing
 
