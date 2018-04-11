@@ -18,7 +18,6 @@
 + [:art: Features](#art-features)
 + [:straight_ruler: Prerequisite](#straight_ruler-prerequisite)
 + [:rocket: Installation](#rocket-installation)
-+ [:memo: Configuration](#memo-configuration)
 + [:notebook: Usage](#notebook-usage)
 + [:hibiscus: Contributing](#hibiscus-contributing)
 + [:boy: Authors](#boy-authors)
@@ -50,7 +49,7 @@
 
 > + [`bash`](https://www.gnu.org/software/bash/bash.html)
 > + [`sed`](https://www.gnu.org/software/sed/)
-> + realpath
+> + `realpath`
 
 ## :rocket: Installation
 
@@ -59,10 +58,6 @@ You can get this program with `git`:
 ```
 $ git clone https://github.com/ishbguy/baux
 ```
-
-## :memo: Configuration
-
-no.
 
 ## :notebook: Usage
 
@@ -123,6 +118,8 @@ source /path/to/baux/lib/baux.sh
 echo "Can not be here."
 ```
 
+**PS**: Though `warn` runs successfully, it does `return ((++BAUX_EXIT_CODE))` in the end, so `warn` returns an **none-zero** when it finished!
+
 #### Information
 
 ```bash
@@ -132,14 +129,18 @@ source /path/to/baux/lib/baux.sh
 
 echo "The script name is $(proname)" # will print the script name
 
-VERSION="v0.0.1" # need define VERSION first, or version will warn
+VERSION="v0.0.1" # need to define VERSION first, or version will warn
 echo "The script version is $(version)" # will print the script version
 
 HELP="This is a help message." # need to define HELP first, or usage will warn
 usage                          # print help message
 ```
 
+**PS**: `usage` call `version` first to print version message, then print help message, so, both `VERSION` and `HELP` should be predefined when call `usage`.
+
 #### Importation
+
+`baux.sh` includes an `import` function to ensure source a file for only one time.
 
 ```bash
 source /path/to/baux/lib/baux.sh
@@ -148,6 +149,10 @@ import /path/to/your/lib.sh         # this will import once
 import /path/to/your/lib.sh         # OK, but will not import lib.sh again
 
 cmd_from_lib_sh
+
+import /file/not/exsit.sh           # this will fail, and make you script die
+
+echo "Can not be here!"
 ```
 
 ###  Utility (`utili.sh`)
@@ -159,13 +164,15 @@ source /path/to/baux/lib/utili.sh
 
 # need to declare two associative arrays
 # one for options and one for arguments
+
 declare -A opts args
 
 # The first arg is array NAME for options
 # The second arg is array NAME for arguments
 # The third arg is the options string, a letter for an option,
 # letter follow with ':' means a option argument
-# The remain args are needed to be parse
+# The remain args are needed to be parsed
+
 getoptions opts args "n:vh" "$@"
 
 # after getoptions, need to correct the option index
@@ -188,6 +195,12 @@ source /path/to/baux/lib/utili.sh
 # need to declare an associative array for storing config value
 declare -A CONFIGS
 
+# config name and value are seperated with '='
+# strings follow '#' means comment
+# each line allows one name-value pair
+# leading and tailing spaces is allowed
+# spaces on both sides of '=' is allowed, too
+
 echo "NAME=ishbguy" >>my.config
 echo "EMAIL=ishbguy@hotmail.com" >>my.config
 
@@ -196,6 +209,8 @@ read_config CONFIGS my.config
 # you will notice that all config name will convert to lower case
 echo "my name is ${CONFIGS[name]}"
 echo "my email is ${CONFIGS[email]}"
+
+read_config CONFIGS file-not-exsit # will not fail, just return 1
 ```
 
 #### Other Utilities
@@ -206,10 +221,11 @@ source /path/to/baux/lib/utili.sh
 cecho red "This message will print in red" # color can be: black, red, green
                                            # yellow, blue, magenta, cyan, white
 
-check_tool sed awk realpath # check needed tools in PATH, or die
-
 realdir /path/to/script # similar to realpath, this will print /path/to
 realdir /p1/script1 /p2/script2 # will print /p1 /p2
+
+check_tool sed awk realpath # check needed tools in PATH
+check_tool tools-not-exsit  # will die
 ```
 
 ## :hibiscus: Contributing
