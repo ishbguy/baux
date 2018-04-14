@@ -54,17 +54,6 @@ usage() {
     return $BAUX_EXIT_CODE
 }
 
-if ! hash realpath &>/dev/null; then
-    realpath() {
-        ensure "$# -eq 1" "Need to specify a file."
-        ensure_not_empty "$1"
-
-        local dir=$(dirname "$1")
-        [[ -d $dir ]] && builtin cd "$dir" || return 1
-        echo "$(pwd)/$(basename "$1")"
-    }
-fi
-
 import() {
     ensure "$# -ge 1" "Need to specify an import file."
     ensure_not_empty "$@"

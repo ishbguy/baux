@@ -18,56 +18,224 @@ if [[ $BAUX_SOUECED -ne 1 ]]; then
     source "$BAUX_TEST_ABS_DIR/baux.sh"
 fi
 
-declare -gA BAUX_TEST_TYPES
-BAUX_TEST_TYPES[N]="normal"
-BAUX_TEST_TYPES[a]="array"
-BAUX_TEST_TYPES[A]="map"
-BAUX_TEST_TYPES[n]="reference"
-BAUX_TEST_TYPES[i]="integer"
-BAUX_TEST_TYPES[r]="readonly"
-BAUX_TEST_TYPES[l]="lower"
-BAUX_TEST_TYPES[u]="upper"
-BAUX_TEST_TYPES[x]="export"
-BAUX_TEST_TYPES[f]="function"
-BAUX_TEST_TYPES[U]="undefined"
+import "$BAUX_TEST_ABS_DIR/utili.sh"
+import "$BAUX_TEST_ABS_DIR/trace.sh"
 
-typeof() {
-    local -a types=()
-    for var in "$@"; do
-        local def=$(declare -p "$var" 2>/dev/null)
-        if [[ -z $def ]]; then
-            declare -F "$var" &>/dev/null \
-                && types+=("${BAUX_TEST_TYPES[f]}") && continue
-            types+=("${BAUX_TEST_TYPES[U]}") && continue
-        fi
-        [[ $def =~ -([-aAnirlux]) ]]
-        local match="${BASH_REMATCH[1]}"
-        [[ $match == '-' ]] && match=N
-        types+=("${BAUX_TEST_TYPES[$match]}")
+declare -gA BAUX_TEST_PROMPTS
+declare -gA BAUX_TEST_COLORS
+declare -gA BAUX_TEST_COUNTS
+declare -gi BAUX_TEST_SKIP_FLAG=0
+declare -gi BAUX_TEST_STATUS_LEN=0
+declare -g  BAUX_TEST_PAD_SPACES=""
+
+BAUX_TEST_COUNTS[TOTAL]=0
+BAUX_TEST_COUNTS[PASS]=0
+BAUX_TEST_COUNTS[FAIL]=0
+BAUX_TEST_COUNTS[SKIP]=0
+
+BAUX_TEST_PROMPTS[TOTAL]="TOTAL"
+BAUX_TEST_PROMPTS[PASS]="PASS"
+BAUX_TEST_PROMPTS[FAIL]="FAIL"
+BAUX_TEST_PROMPTS[SKIP]="SKIP"
+
+BAUX_TEST_COLORS[TOTAL]="blue"
+BAUX_TEST_COLORS[PASS]="green"
+BAUX_TEST_COLORS[FAIL]="red"
+BAUX_TEST_COLORS[SKIP]="yellow"
+BAUX_TEST_COLORS[EMSG]="red"
+
+for s in "${!BAUX_TEST_COUNTS[@]}"; do
+    [[ ${#s} -gt $BAUX_TEST_STATUS_LEN ]] \
+        && BAUX_TEST_STATUS_LEN=${#s}
+done
+
+for ((i = 1; i < BAUX_TEST_STATUS_LEN; i++)); do
+    BAUX_TEST_PAD_SPACES+=" "
+done
+
+__judge() {
+    local expr="$1"
+    ((++BAUX_TEST_COUNTS[TOTAL]))
+    if [[ $BAUX_TEST_SKIP_FLAG -eq 1 ]]; then
+        ((++BAUX_TEST_COUNTS[SKIP]))
+        BAUX_TEST_SKIP_FLAG=0
+        result="SKIP"
+        return
+    fi
+    if (eval "[[ $expr ]]" &>/dev/null); then
+        ((++BAUX_TEST_COUNTS[PASS]))
+        result="PASS"
+    else
+        ((++BAUX_TEST_COUNTS[FAIL]))
+        result="FAIL"
+    fi
+}
+
+__issue() {
+    local -u result="$1"
+    local msg="$2"
+
+    echo -e "$BAUX_TEST_PAD_SPACES ${BAUX_TEST_COUNTS[TOTAL]} $msg \x1B[1G$(cecho \
+        "${BAUX_TEST_COLORS[$result]}" "${BAUX_TEST_PROMPTS[$result]}")"
+}
+
+__location() {
+    local idx="$(($1+1))"
+    local -a frame=($(frame "$idx"| sed -r 's/\s+/\n/g'))
+    local cmd=$(sed -ne "${frame[1]}p" "${frame[0]}" 2>/dev/null | sed -r 's/^\s+//')
+    echo "$cmd [${frame[0]}:${frame[1]}:${frame[3]}]"
+}
+
+__diag() {
+    local result="$1"
+    local expect="$2"
+    local actual="$3"
+    [[ $result != "${BAUX_TEST_PROMPTS[FAIL]}" ]] && return 0
+
+    # fail
+    cecho "${BAUX_TEST_COLORS[EMSG]}" "$BAUX_TEST_PAD_SPACES $(__location 1)" >&2
+    cecho "${BAUX_TEST_COLORS[EMSG]}" "$BAUX_TEST_PAD_SPACES Expect: $expect" >&2
+    cecho "${BAUX_TEST_COLORS[EMSG]}" "$BAUX_TEST_PAD_SPACES Actual: $actual" >&2
+    return 1
+}
+
+ok() {
+    ensure "$# -ge 1 && $# -le 2" "Need at least an expression."
+    ensure_not_empty "$1"
+
+    local expr="$1"
+    local msg="${2:-$1}"
+    local -u result
+    __judge "$expr"
+    __issue "$result" "$msg"
+    [[ $result != "${BAUX_TEST_PROMPTS[FAIL]}" ]] \
+        || { cecho "${BAUX_TEST_COLORS[EMSG]}" "$(__location 0)" >&2; return 1; }
+}
+
+is() {
+    ensure "$# -ge 2 && $# -le 3" "Need expect, actual, message(optional) args."
+    
+    local expect="$1"
+    local actual="$2"
+    local msg="${3:-[[ $1 == $2 ]]}"
+    local -u result
+    __judge "'$expect' == '$actual'"
+    __issue "$result" "$msg"
+    __diag "$result" "'$expect'" "'$actual'" 
+}
+
+isnt() {
+    ensure "$# -ge 2 && $# -le 3" "Need expect, actual, message(optional) args."
+    
+    local expect="$1"
+    local actual="$2"
+    local msg="${3:-[[ $1 != $2 ]]}"
+    local -u result
+    __judge "'$expect' != '$actual'"
+    __issue "$result" "$msg"
+    __diag "$result" "'$expect'" "'$actual'" 
+}
+
+like() {
+    ensure "$# -ge 2 && $# -le 3" "Need expect, actual, message(optional) args."
+    
+    local expect="$1"
+    local actual="$2"
+    local msg="${3:-[[ $1 =~ $2 ]]}"
+    local -u result
+    __judge "'$expect' =~ '$actual'"
+    __issue "$result" "$msg"
+    __diag "$result" "'$expect'" "'$actual'" 
+}
+
+unlike() {
+    ensure "$# -ge 2 && $# -le 3" "Need expect, actual, message(optional) args."
+    
+    local expect="$1"
+    local actual="$2"
+    local msg="${3:-[[ ! $1 =~ $2 ]]}"
+    local -u result
+    __judge "! '$expect' =~ '$actual'"
+    __issue "$result" "$msg"
+    __diag "$result" "'$expect'" "'$actual'" 
+}
+
+run_ok() {
+    ensure "$# -ge 2" "Need an expression and a command."
+    ensure_not_empty "$1"
+    
+    local expr="$1"; shift
+    local cmds="$*"
+    local msg="test run: $cmds"
+    local -u result
+    local status output
+    
+    output=$(eval "$@" 2>&1)
+    status=$?
+
+    __judge "$expr"
+    __issue "$result" "$msg"
+    [[ $result != "${BAUX_TEST_PROMPTS[FAIL]}" ]] \
+        || { \
+        cecho "${BAUX_TEST_COLORS[EMSG]}" "$BAUX_TEST_PAD_SPACES $(__location 0)" >&2; \
+        cecho "${BAUX_TEST_COLORS[EMSG]}" "$BAUX_TEST_PAD_SPACES Status: $status" >&2; \
+        cecho "${BAUX_TEST_COLORS[EMSG]}" "$BAUX_TEST_PAD_SPACES Output: '$output'" >&2; \
+        return 1; }
+}
+
+subtest() {
+    ensure "$# -eq 2" "Need test name and test instructions"
+    ensure_not_empty "$1"
+
+    local name="$1"
+    local tests="$2"
+    local encode_name=$(echo "$name" | sed -r 's/[[:punct:][:space:]]/_/g')
+    local err_msg status
+
+    eval "$encode_name() {
+        BAUX_TEST_COUNTS[TOTAL]=0
+        BAUX_TEST_COUNTS[PASS]=0
+        BAUX_TEST_COUNTS[FAIL]=0;
+        $tests
+        return \${BAUX_TEST_COUNTS[FAIL]}
+    }" &>/dev/null || die "subtest \"$name\" init fail."
+
+    ((++BAUX_TEST_COUNTS[TOTAL]))
+    echo -ne "$BAUX_TEST_PAD_SPACES ${BAUX_TEST_COUNTS[TOTAL]} subtest: $name "
+
+    # return if skip
+    if [[ $BAUX_TEST_SKIP_FLAG -eq 1 ]]; then
+        BAUX_TEST_SKIP_FLAG=0
+        ((++BAUX_TEST_COUNTS[SKIP]))
+        cecho "${BAUX_TEST_COLORS[SKIP]}" "${BAUX_TEST_PROMPTS[SKIP]}"
+        return 0
+    fi
+    # exec in sub shell for avoiding exit
+    err_msg=$(eval "$encode_name" 2>&1 >/dev/null)
+    status="$?"
+    if [[ $status -eq 0 ]]; then
+        ((++BAUX_TEST_COUNTS[PASS]))
+        cecho "${BAUX_TEST_COLORS[PASS]}" "\x1B[1G${BAUX_TEST_PROMPTS[PASS]}"
+    else
+        ((++BAUX_TEST_COUNTS[FAIL]))
+        cecho "${BAUX_TEST_COLORS[FAIL]}" "\x1B[1G${BAUX_TEST_PROMPTS[FAIL]}" >&2
+        cecho "${BAUX_TEST_COLORS[EMSG]}" "$BAUX_TEST_PAD_SPACES $(__location 0)" >&2
+        echo -e "$err_msg" >&2
+    fi
+    return $status
+}
+
+skip() {
+    BAUX_TEST_SKIP_FLAG=1
+}
+
+summary() {
+    for it in TOTAL PASS FAIL SKIP; do
+        echo -n "$(cecho ${BAUX_TEST_COLORS[$it]} \
+            ${BAUX_TEST_PROMPTS[$it]}): ${BAUX_TEST_COUNTS[$it]}, "
     done
-    echo "${types[@]}"
+    echo
+    return ${BAUX_TEST_COUNTS[FAIL]}
 }
-
-defined() {
-    local -a types=($(typeof "$@"))
-    [[ ! ${types[*]} =~ ${BAUX_TEST_TYPES[U]} ]]
-}
-
-istype() {
-    local type="$1"; shift
-    local -a types=("$(typeof "$@")")
-    types=("${types[@]//$type/}")
-    [[ ${types[*]} =~ ^[[:space:]]*$ ]]
-}
-
-# test variabe declare
-is_array() { istype array "$@"; }
-is_map() { istype map "$@"; }
-is_ref() { istype reference "$@"; }
-is_int() { istype integer "$@"; }
-is_lower() { istype lower "$@"; }
-is_upper() { istype upper "$@"; }
-is_export() { istype export "$@"; }
-is_func() { istype function "$@"; }
 
 # vim:ft=sh:ts=4:sw=4
