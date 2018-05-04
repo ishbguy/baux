@@ -7,15 +7,15 @@
     && { echo "Only allow to be sourced, not for running." >&2; exit 1; }
 
 # source guard
-[[ $BAUX_CTYPE_SOURCED -eq 1 ]] && return
-declare -gr BAUX_CTYPE_SOURCED=1
-declare -gr BAUX_CTYPE_ABS_DIR="$(dirname $(realpath "${BASH_SOURCE[0]}"))"
+[[ $BAUX_PATTERN_SOURCED -eq 1 ]] && return
+declare -gr BAUX_PATTERN_SOURCED=1
+declare -gr BAUX_PATTERN_ABS_DIR="$(dirname $(realpath "${BASH_SOURCE[0]}"))"
 
 # source dependences
 if [[ $BAUX_SOUECED -ne 1 ]]; then
-    [[ ! -e $BAUX_CTYPE_ABS_DIR/baux.sh ]] \
+    [[ ! -e $BAUX_PATTERN_ABS_DIR/baux.sh ]] \
         && { echo "Can not source the dependent script baux.sh." >&2; exit 1; }
-    source "$BAUX_CTYPE_ABS_DIR/baux.sh"
+    source "$BAUX_PATTERN_ABS_DIR/baux.sh"
 fi
 
 ispattern() {
@@ -39,22 +39,22 @@ isspace() { ispattern '^[[:space:]]+$' "$@"; }
 isupper() { ispattern '^[[:upper:]]+$' "$@"; }
 isxdigit() { ispattern '^[[:xdigit:]]+$' "$@"; }
 
-declare -gr BAUX_CTYPE_PAT_FLOAT='[[:digit:]]+\.[[:digit:]]+'
-declare -gr BAUX_CTYPE_PAT_REALNUM='[[:digit:]]+(\.[[:digit:]]+)?'
-declare -gr BAUX_CTYPE_PAT_IDENT='[_[:alpha:]][_[:alnum:]]*'
-declare -gr BAUX_CTYPE_PAT_IP='((((25[0-5])|(2[0-4][0-9]))|(1?[0-9]?[0-9]))\.){3}(((25[0-5])|(2[0-4][0-9]))|(1?[0-9]?[0-9]))'
+declare -gr BAUX_PATTERN_FLOAT='[[:digit:]]+\.[[:digit:]]+'
+declare -gr BAUX_PATTERN_REALNUM='[[:digit:]]+(\.[[:digit:]]+)?'
+declare -gr BAUX_PATTERN_IDENT='[_[:alpha:]][_[:alnum:]]*'
+declare -gr BAUX_PATTERN_IP='((((25[0-5])|(2[0-4][0-9]))|(1?[0-9]?[0-9]))\.){3}(((25[0-5])|(2[0-4][0-9]))|(1?[0-9]?[0-9]))'
 # username in Linux system
-declare -gr BAUX_CTYPE_PAT_USERNAME='[_a-z][_a-z0-9]{31}'
-declare -gr BAUX_CTYPE_PAT_PORT='(6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]|[1-5]?([0-9]?){4})'
-declare -gr BAUX_CTYPE_PAT_HOST='([_[:alnum:]]\.)*[_[:alnum:]]'
+declare -gr BAUX_PATTERN_USERNAME='[_a-z][_a-z0-9]{31}'
+declare -gr BAUX_PATTERN_PORT='(6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]|[1-5]?([0-9]?){4})'
+declare -gr BAUX_PATTERN_HOST='([_[:alnum:]]\.)*[_[:alnum:]]'
 
-isfloat() { ispattern "^${BAUX_CTYPE_PAT_FLOAT}$" "$@"; }
-isrealnum() { ispattern "^${BAUX_CTYPE_PAT_REALNUM}$" "$@"; }
-isident() { ispattern "^${BAUX_CTYPE_PAT_IDENT}$" "$@"; }
-isip() { ispattern "^${BAUX_CTYPE_PAT_IP}$" "$@"; }
-isname() { ispattern "!${BAUX_CTYPE_PAT_USERNAME}$" "$@"; }
+isfloat() { ispattern "^${BAUX_PATTERN_FLOAT}$" "$@"; }
+isrealnum() { ispattern "^${BAUX_PATTERN_REALNUM}$" "$@"; }
+isident() { ispattern "^${BAUX_PATTERN_IDENT}$" "$@"; }
+isip() { ispattern "^${BAUX_PATTERN_IP}$" "$@"; }
+isname() { ispattern "!${BAUX_PATTERN_USERNAME}$" "$@"; }
 isport() { for p in "$@"; do [[ $p -ge 1 || $p -le 65535 ]] || return 1; done; }
-ishost() { ispattern "^${BAUX_CTYPE_PAT_HOST}$" "$@"; }
+ishost() { ispattern "^${BAUX_PATTERN_HOST}$" "$@"; }
 
 tolower() { echo "${@:,,}"; }
 toupper() { echo "${@:^^}"; }
