@@ -7,8 +7,8 @@
     && { echo "Only allow to be sourced, not for running." >&2; exit 1; }
 
 # source guard
-[[ $BAUX_SOUECED -eq 1 ]] && return
-declare -gr BAUX_SOUECED=1
+[[ $BAUX_SOURCED -eq 1 ]] && return
+declare -gr BAUX_SOURCED=1
 declare -gr BAUX_ABS_DIR="$(dirname $(realpath "${BASH_SOURCE[0]}"))"
 
 # source dependences

@@ -12,7 +12,7 @@ declare -gr BAUX_UTILI_SOURCED=1
 declare -gr BAUX_UTILI_ABS_DIR="$(dirname $(realpath "${BASH_SOURCE[0]}"))"
 
 # source dependences
-if [[ $BAUX_SOUECED -ne 1 ]]; then
+if [[ $BAUX_SOURCED -ne 1 ]]; then
     [[ ! -e $BAUX_UTILI_ABS_DIR/baux.sh ]] \
         && { echo "Can not source the dependent script baux.sh." >&2; exit 1; }
     source "$BAUX_UTILI_ABS_DIR/baux.sh"
