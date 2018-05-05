@@ -30,8 +30,6 @@
 + **Utility**: Useful utility functions for getting options, reading a simple config file, printing message with color and so on. (`utili.sh`)
 + **Debugging**: Simple functions for logging (`log.sh`) and print callstack when failed (`trace.sh`).
 + **Testing**: Functions for check a variable (`var.sh`) and writing unit tests (`test.sh`).
-    - variables `type` check: `type_xxx()`.
-    - Unit test: `unit_add()`, `unit_run()`, `unit_sum()`, `unit_setup()`, `unit_teardown()`.
 + **Exception**: (Not yet finished)
     - `try()`, `catch()`, `throw()`.
 + **Array**: Functions for array manipulation. (`array.sh`)
@@ -393,15 +391,139 @@ Run the above test script, will print the callstack to stdout like:
 
 ### Testing (`var.sh, test.sh`)
 
-#### Variable Check (`var.sh`)
+#### Variable Type Check (`var.sh`)
+
+```bash
+sorce /path/to/baux/lib/var.sh
+
+declare -a var
+
+type_array  var && echo "this is an index array"
+type_map    var && echo "this is an associative array"
+type_int    var && echo "this is an integer var"
+type_func   var && echo "this is a function name"
+type_ref    var && echo "this is a var reference"
+type_export var && echo "this is an exported var"
+type_lower  var && echo "var's value has lower case attribute"
+type_upper  var && echo "var's value has upper case attribute"
+```
 
 #### Unit Test (`test.sh`)
+
+`BAUX`'s test functions are similar to `Perl`'s [`Test::More`](https://metacpan.org/pod/Test::More) module.
+
+##### Simple test
+
+```bash
+sorce /path/to/baux/lib/test.sh
+
+# ok $expr test is equivalent to [[ $expr ]]
+ok '1 == 1' 'Test equal'        # pass
+ok '1 != 0' 'Test not equal'    # pass
+
+# is $a $b test is equivalent to [[ $a == $b ]]
+is 1 1 "Test equal"             # pass
+is 1 0 "Test not equal"         # fail
+
+# isnt $a $b test is equivalent to [[ $a != $b ]]
+isnt 1 1 "Test equal"           # fail
+isnt 1 0 "Test not equal"       # pass
+
+# like $a $b test is equivalent to [[ $a =~ $b ]]
+like "apple" "app" "Test like"      # pass
+like "apple" "App" "Test not like"  # fail
+
+# unlike $a $b test is equivalent to [[ ! $a =~ $b ]]
+unlike "apple" "app" "Test like"      # fail
+unlike "apple" "App" "Test not like"  # pass
+
+# each test status will print when that test finish
+
+# finally, report a summary with the numbers of:
+# total, pass, fail and skip
+summary
+```
+
+##### Run command test with `run_ok`
+
+```bash
+sorce /path/to/baux/lib/test.sh
+
+# run_ok like ok, but run_ok provide $status, $output inside to test the
+# exit status and cmd output. When use these 2 variables, you need to single
+# quote the expr to avoid expanded outside run_ok. And the given cmd is run
+# in a subshell like output=$(eval "$cmd" 2>&1), you can check both nomral
+# and error message in $output.
+
+run_ok '$status -eq 0' exit 0       # pass
+run_ok '$status -eq 1' exit 1       # pass
+run_ok '$output =~ "command not found"' cmd_not_found   # pass
+run_ok '$output =~ "hello world"' echo "hello world"    # pass
+
+# you can also do like this for the test statement inside run_ok is equivalent
+# to [[ $expr ]]
+
+run_ok "$status -eq 0 && $(echo $output | wc -l) -eq 1" echo "test" # pass
+
+summary
+```
+
+##### Run `subtest`
+
+`subtest` will group the your tests in a single sub-test, if one of the tests in `subtest` fails, the `subtest` will fail, and the total and fail counters will increase 1.
+
+```bash
+sorce /path/to/baux/lib/test.sh
+
+# format like: subtest "test name" 'tests cmds'
+
+subtest 'subtest PASS' "
+    is 1 1 'test equal'
+    isnt 1 0 'test not equal'
+"
+
+summary
+```
+
+##### `skip` a following test
+
+```bash
+sorce /path/to/baux/lib/test.sh
+
+is 1 1      # pass
+skip
+isnt 1 1    # this will skip
+isnt 0 1    # this will run and pass
+
+summary
+```
+
+##### Customize test outputs
+
+You can customize test's total, pass, fail, skip prompt strings and colors.
+
+```bash
+sorce /path/to/baux/lib/test.sh
+
+# these are default prompt strings
+BAUX_TEST_PROMPTS[TOTAL]="TOTAL"
+BAUX_TEST_PROMPTS[PASS]="PASS"
+BAUX_TEST_PROMPTS[FAIL]="FAIL"
+BAUX_TEST_PROMPTS[SKIP]="SKIP"
+
+# these are default colors, you can change color which cecho accept
+BAUX_TEST_COLORS[TOTAL]="blue"
+BAUX_TEST_COLORS[PASS]="green"
+BAUX_TEST_COLORS[FAIL]="red"
+BAUX_TEST_COLORS[SKIP]="yellow"
+BAUX_TEST_COLORS[EMSG]="red"
+```
 
 ### Exception (`except.sh`)
 
 ### Array (`array.sh`)
 
-### Regex (`pattern.sh`)
+### Pattern (`pattern.sh`)
 
 ## :hibiscus: Contributing
 
