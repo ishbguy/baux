@@ -22,7 +22,7 @@ import "$BAUX_ARRAY_ABS_DIR/var.sh"
 
 push() {
     ensure "$# -ge 1" "Need at least an array name."
-    is_array "$1" || die "$1 is not an array name."
+    type_array "$1" || die "$1 is not an array name."
 
     local -n __array="$1"; shift
 
@@ -31,7 +31,7 @@ push() {
 
 pop() {
     ensure "$# -eq 1" "Only need an array name."
-    is_array "$1" || die "$1 is not an array name."
+    type_array "$1" || die "$1 is not an array name."
 
     local -n __array="$1"
 
@@ -42,7 +42,7 @@ pop() {
 
 _shift() {
     ensure "$# -eq 1" "Only need an array name."
-    is_array "$1" || die "$1 is not an array name."
+    type_array "$1" || die "$1 is not an array name."
 
     local -n __array="$1"
 
@@ -53,7 +53,7 @@ _shift() {
 
 unshift() {
     ensure "$# -ge 1" "Need at least an array name."
-    is_array "$1" || die "$1 is not an array name."
+    type_array "$1" || die "$1 is not an array name."
 
     local -n __array="$1"; shift
 
@@ -62,7 +62,7 @@ unshift() {
 
 slice() {
     ensure "$# -ge 1" "Need at least an array name."
-    is_array "$1" || is_map "$1" || die "$1 is not an array name."
+    type_array "$1" || type_map "$1" || die "$1 is not an array name."
 
     local -n __array="$1"; shift
     local -a slices=()
@@ -78,7 +78,7 @@ slice() {
 
 keys() {
     ensure "$# -eq 1" "Need only an array name."
-    is_array "$1" || is_map "$1" || die "$1 is not an array name."
+    type_array "$1" || type_map "$1" || die "$1 is not an array name."
 
     local -n __array="$1"
 
@@ -87,7 +87,7 @@ keys() {
 
 values() {
     ensure "$# -eq 1" "Need only an array name."
-    is_array "$1" || is_map "$1" || die "$1 is not an array name."
+    type_array "$1" || type_map "$1" || die "$1 is not an array name."
 
     local -n __array="$1"
     echo "${__array[@]}"
@@ -95,7 +95,7 @@ values() {
 
 exists() {
     ensure "$# -eq 2" "Need an array name and a key"
-    is_array "$1" || is_map "$1" || die "$1 is not an array name."
+    type_array "$1" || type_map "$1" || die "$1 is not an array name."
     
     local -n __array="$1"
     [[ -n $2 && -n ${__array[$2]} ]]
@@ -114,7 +114,7 @@ _join() {
 
 _split() {
     ensure "$# -eq 2 || $# -eq 3" "Need at least a string and an array"
-    is_array "$2" || die "$1 is not an array name."
+    type_array "$2" || die "$1 is not an array name."
     
     local string="$1"
     local -n __array="$2"
@@ -171,7 +171,7 @@ _sort() {
 
 select_sort() {
     local cmp=__cmp
-    is_func "$1" && cmp=$1 && shift
+    type_func "$1" && cmp=$1 && shift
     local -a array=("$@")
 
     for ((i = 0; i < ${#array[@]}; i++)); do
@@ -184,7 +184,7 @@ select_sort() {
 
 insert_sort() {
     local cmp=__cmp
-    is_func "$1" && cmp="$1" && shift
+    type_func "$1" && cmp="$1" && shift
     local -a array=("$@")
     
     for ((i = 1; i < ${#array[@]}; i++)); do
@@ -197,7 +197,7 @@ insert_sort() {
 
 shell_sort() {
     local cmp=__cmp
-    is_func "$1" && cmp="$1" && shift
+    type_func "$1" && cmp="$1" && shift
     local -a array=("$@")
     local l=${#array[@]}
     local h=1
@@ -218,7 +218,7 @@ shell_sort() {
 
 search() {
     ensure "$# -ge 1" "Need at least an array name."
-    is_array "$1" || is_map "$1" || die "$1 is not an array name."
+    type_array "$1" || type_map "$1" || die "$1 is not an array name."
 
     local -n __array="$1"; shift
     local -a indexs=()
@@ -235,7 +235,7 @@ search() {
 
 lsearch() {
     ensure "$# -eq 2" "Need an array name and a item"
-    is_array "$1" || is_map "$1" || die "$1 is not an array name."
+    type_array "$1" || type_map "$1" || die "$1 is not an array name."
 
     local -n __array="$1"
     local need="$2"
@@ -248,8 +248,8 @@ lsearch() {
 bsearch() {
     ensure "$# -eq 2" "Need an array name and a item"
     local cmp=__cmp
-    is_func "$1" && cmp="$1" && shift
-    is_array "$1" || is_map "$1" || die "$1 is not an array name."
+    type_func "$1" && cmp="$1" && shift
+    type_array "$1" || type_map "$1" || die "$1 is not an array name."
 
     local -n __array="$1"
     local need="$2"

@@ -61,13 +61,13 @@ istype() {
 }
 
 # test variabe declare
-is_array() { istype array "$@"; }
-is_map() { istype map "$@"; }
-is_ref() { istype reference "$@"; }
-is_int() { istype integer "$@"; }
-is_lower() { istype lower "$@"; }
-is_upper() { istype upper "$@"; }
-is_export() { istype export "$@"; }
-is_func() { istype function "$@"; }
+type_array() { istype array "$@"; }
+type_map() { istype map "$@"; }
+type_ref() { istype reference "$@"; }
+type_int() { istype integer "$@"; }
+type_lower() { istype lower "$@"; }
+type_upper() { istype upper "$@"; }
+type_export() { istype export "$@"; }
+type_func() { istype function "$@"; }
 
 # vim:ft=sh:ts=4:sw=4
