@@ -463,7 +463,7 @@ run_ok '$output =~ "hello world"' echo "hello world"    # pass
 # you can also do like this for the test statement inside run_ok is equivalent
 # to [[ $expr ]]
 
-run_ok "$status -eq 0 && $(echo $output | wc -l) -eq 1" echo "test" # pass
+run_ok '$status -eq 0 && $(echo $output | wc -l) -eq 1' echo "test" # pass
 
 summary
 ```
