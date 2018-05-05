@@ -25,17 +25,17 @@
 
 ## :art: Features
 
-+ **Helper**: Basic script writing helper functions, such as getting script's name, version and help message, importing other script once, warning or exit when get a wrong status. (`baux.sh`)
-+ **Assertion**: Functions for writing reliable APIs, ensuring the pre- or post-condition. (`ensure.sh`)
-+ **Utility**: Useful utility functions for getting options, reading a simple config file, printing message with color and so on. (`utili.sh`)
-+ **Debugging**: Simple functions for logging (`log.sh`) and print callstack when failed (`trace.sh`).
-+ **Testing**: Functions for check a variable (`var.sh`) and writing unit tests (`test.sh`).
-+ **Exception**: (Not yet finished)
++ [**Helper**](#helper-functions-bauxsh): Basic script writing helper functions, such as getting script's name, version and help message, importing other script once, warning or exit when get a wrong status. (`baux.sh`)
++ [**Assertion**](#assertion-ensuresh): Functions for writing reliable APIs, ensuring the pre- or post-condition. (`ensure.sh`)
++ [**Utility**](#utility-utilish): Useful utility functions for getting options, reading a simple config file, printing message with color and so on. (`utili.sh`)
++ [**Debugging**](#debugging-logsh-tracesh): Simple functions for logging (`log.sh`) and print callstack when failed (`trace.sh`).
++ [**Testing**](#testing-varsh-testsh): Functions for check a variable (`var.sh`) and writing unit tests (`test.sh`).
++ [**Exception**](#exception-exceptsh): (Not yet finished)
     - `try()`, `catch()`, `throw()`.
-+ **Array**: Functions for array manipulation. (`array.sh`)
++ [**Array**](#array-arraysh): Functions for array manipulation. (`array.sh`)
     - Data structure: stack, queue.
     - Sort and search: `sort()`, `bsearch()`.
-+ **Pattern**: POSIX compatible characters patterns and other common regex. (`pattern.sh`)
++ [**Pattern**](#pattern-patternsh): POSIX compatible characters patterns and other common regex. (`pattern.sh`)
     - Pattern match: IP, URL, tele-number, etc.
     - `is` pattern check.
 
