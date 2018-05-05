@@ -331,9 +331,67 @@ check_tool tools-not-exsit  # will die
 
 ### Debugging (`log.sh, trace.sh`)
 
+`BAUX` has a simple `log` function which can accept a log level and message string args, then print the log mesages to `stdout` or a specified log file.
+
+`BAUX` also has a simple `callstack` function to print out the call stack when encountering error.
+
 #### Logging (`log.sh`)
 
+```bash
+source /path/to/baux/lib/log.sh
+
+# log has 5 log level and priority from low to high is:
+#
+# debug < info < warn < error < fatal < panic < quiet
+#
+# default log output level is debug, means that the log priority higher than
+# debug will be printed.
+
+log debug "This is a log test"  # this will print a log message to stdout
+
+BAUX_LOG_OUTPUT_LEVEL=info      # set log output level to info
+log debug "a debug message"     # will not print
+log info "a info message"       # will print into stdout
+
+# set a log output file, default is empty which will print into stdout
+# if test.log is not exsit, log will create it
+
+BAUX_LOG_OUTPUT_FILE=test.log   
+
+log info "write into a log file"    # this will write into test.log
+```
+
 #### Callstack (`trace.sh`)
+
+```bash
+source /path/to/baux/lib/trace.sh
+
+# callstack need a start index of the function stack array
+# if index is 0, which will print also the callstack 0, if index is 1,
+# which will not print callstack line, and start to print from function
+# three.
+
+one() {
+    two
+}
+two() {
+    three
+}
+three() {
+    callstack 0
+}
+
+one
+```
+
+Run the above test script, will print the callstack to stdout like:
+
+```bash
++ callstack 0 [./test.sh:16:three]
+  + three [./test.sh:13:two]
+    + two [./test.sh:10:one]
+      + one [./test.sh:19:main]
+```
 
 ### Testing (`var.sh, test.sh`)
 
