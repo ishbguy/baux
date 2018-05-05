@@ -61,7 +61,7 @@ $ git clone https://github.com/ishbguy/baux
 lib
 ├── array.sh    # array manipulate functions
 ├── baux.sh     # basic helper functions
-├── ctype.sh    # POSIX compatible characters patterns and other common regex
+├── pattern.sh  # POSIX compatible characters patterns and other common regex
 ├── ensure.sh   # assertion functions
 ├── except.sh   # not yet finished
 ├── log.sh      # simple logging
@@ -80,7 +80,7 @@ except.sh
 array.sh    test.sh
     |           |
     V           V
-var.sh      utili.sh    ctype.sh    log.sh      trace.sh
+var.sh      utili.sh    pattern.sh    log.sh      trace.sh
     |           |           |           |           |
     +-----------+-----------+-----------+-----------+
     V
