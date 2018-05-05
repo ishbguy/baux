@@ -7,7 +7,7 @@
 [codacysvg]: https://api.codacy.com/project/badge/Grade/9a7820362a97474b87652d1519714e1b
 [codacy]: https://www.codacy.com/app/ishbguy/baux?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ishbguy/baux&amp;utm_campaign=Badge_Grade
 [versvg]: https://img.shields.io/badge/version-v0.0.1-lightgrey.svg
-[ver]: https://img.shields.io/badge/version-v0.0.1-lightgrey.svg
+[ver]: https://img.shields.io/badge/version-v0.1.0-lightgrey.svg
 [licsvg]: https://img.shields.io/badge/license-MIT-green.svg
 [lic]: https://github.com/ishbguy/baux/blob/master/LICENSE
 
@@ -29,17 +29,15 @@
 + **Assertion**: Functions for writing reliable APIs, ensuring the pre- or post-condition. (`ensure.sh`)
 + **Utility**: Useful utility functions for getting options, reading a simple config file, printing message with color and so on. (`utili.sh`)
 + **Debugging**: Simple functions for logging (`log.sh`) and print callstack when failed (`trace.sh`).
-    - Logger: `logger()`.
-    - Trace: `callstack()`.
 + **Testing**: Functions for check a variable (`var.sh`) and writing unit tests (`test.sh`).
-    - `is` variables check: `is_xxx()`.
+    - variables `type` check: `type_xxx()`.
     - Unit test: `unit_add()`, `unit_run()`, `unit_sum()`, `unit_setup()`, `unit_teardown()`.
 + **Exception**: (Not yet finished)
     - `try()`, `catch()`, `throw()`.
 + **Array**: Functions for array manipulation. (`array.sh`)
     - Data structure: stack, queue.
     - Sort and search: `sort()`, `bsearch()`.
-+ **Regex**: POSIX compatible characters patterns and other common regex. (`ctype.sh`)
++ **Pattern**: POSIX compatible characters patterns and other common regex. (`pattern.sh`)
     - Pattern match: IP, URL, tele-number, etc.
     - `is` pattern check.
 
@@ -403,7 +401,7 @@ Run the above test script, will print the callstack to stdout like:
 
 ### Array (`array.sh`)
 
-### Regex (`ctype.sh`)
+### Regex (`pattern.sh`)
 
 ## :hibiscus: Contributing
 
