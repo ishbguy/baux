@@ -60,9 +60,9 @@ import() {
 
     for file in "$@"; do
         [[ -e $file ]] || die "$file does not exist."
-        # ensure source one time
-        [[ -z ${BAUX_IMPORT_FILES[$file]} ]] || continue
         local file_path=$(realpath "$file")
+        # ensure source one time
+        [[ -z ${BAUX_IMPORT_FILES[$file_path]} ]] || continue
         source "$file_path"
         BAUX_IMPORT_FILES[$file_path]="$file_path"
     done
