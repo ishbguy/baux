@@ -36,18 +36,15 @@ add_test_file() {
     BAUX_TEST_SUIT_FILES+=("$1")
 }
 
-filter_test_dir() {
+add_test_dir() {
     for file in $1/*; do
         add_test_file "$file"
     done
 }
 
-filter_test_files() {
+add_test_files() {
     for path in "$@"; do
-        if [[ -d $path ]]; then
-            filter_test_dir "$path"
-            continue
-        fi
+        [[ -d $path ]] && add_test_dir "$path" && continue
         add_test_file "$path"
     done
 }
@@ -72,7 +69,7 @@ baux_test() {
     [[ ${#@} -eq 0 ]] && usage && die "$(cecho red "Please give a test file!")"
     [[ ${opts[h]} -eq 1 || ${opts[v]} -eq 1 ]] && usage && exit 0
 
-    filter_test_files "$@"
+    add_test_files "$@"
     add_test_cases_from "${BAUX_TEST_SUIT_FILES[@]}"
     import "${BAUX_TEST_SUIT_FILES[@]}"
     run_test_cases "${BAUX_TEST_SUIT_CASES[@]}"
