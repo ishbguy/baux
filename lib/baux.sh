@@ -62,8 +62,8 @@ import() {
         [[ -e $file ]] || die "$file does not exist."
         # ensure source one time
         [[ -z ${BAUX_IMPORT_FILES[$file]} ]] || continue
-        source "$file"
         local file_path=$(realpath "$file")
+        source "$file_path"
         BAUX_IMPORT_FILES[$file_path]="$file_path"
     done
 }
