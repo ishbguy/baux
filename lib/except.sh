@@ -27,10 +27,10 @@ declare -ga BAUX_EXCEPT_TRAP_CMD
 
 __backup_set_flags() {
     local -n flags="$1"
-    local flags_str="$(echo "$-")"
+    local flags_str="$-"
     local len="${#flags_str}"
     
-    for ((i = 0; i < $len; i++)); do
+    for ((i = 0; i < len; i++)); do
         flags[${flags_str:$i:1}]=1
     done
 }
