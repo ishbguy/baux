@@ -1,7 +1,7 @@
-TEST_DIR := $(shell pwd)/test
+TEST_DIR := $(PWD)/test
 
-all : test
+all : bats
 
-.PHONY : test
-test :
-	bats $(TEST_DIR)
+.PHONY : bats
+bats :
+	bats $(TEST_DIR)/bats
