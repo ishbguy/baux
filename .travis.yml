@@ -1,5 +1,7 @@
 language: generic
 
+sudo: required
+
 addons:
     apt:
         packages:
@@ -7,9 +9,33 @@ addons:
             - bash
             - sed
             - realpath
+            - libcurl4-openssl-dev
+            - libelf-dev
+            - libdw-dev
+            - cmake
 
 before_script:
     - git clone https://github.com/sstephenson/bats.git $HOME/bats
     - export PATH=$PATH:$HOME/bats/bin
 
 script: make
+
+after_success: |
+    wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
+    tar xzf master.tar.gz &&
+    cd kcov-master &&
+    mkdir build &&
+    cd build &&
+    cmake .. &&
+    make &&
+    sudo make install &&
+    cd ../.. &&
+    rm -rf kcov-master &&
+    mkdir -p coverage &&
+    mkdir -p kcov-dir &&
+    for test in test/self/*; do 
+        test_dir=$(basename $test .sh)
+        mkdir kcov-dir/$test_dir && kcov kcov-dir/$test_dir $test
+    done &&
+    kcov --merge coverage kcov-dir/* &&
+    bash <(curl -s https://codecov.io/bash)
