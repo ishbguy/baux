@@ -170,7 +170,7 @@ run_ok() {
     local -u result
     local status output
     
-    output=$(eval "$@" 2>&1)
+    output=$("$@" 2>&1)
     status=$?
 
     __judge "$expr"
