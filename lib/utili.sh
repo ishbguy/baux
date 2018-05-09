@@ -48,7 +48,6 @@ random() {
     local -a out
     local -A hits
 
-    [[ $count -gt 1 ]] || echo "$@"
     for ((i = 0; i < count; i++)); do
         local idx
         while true; do
