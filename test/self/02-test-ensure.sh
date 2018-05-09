@@ -25,6 +25,7 @@ test_ensure() {
     subtest "ensure test" "{
         run_ok '\$status -eq 1 && \$output =~ args\\ error' ensure
 
+        old_ifs=\$IFS
         IFS=$'\\n'
 
         # ensure ok
@@ -36,6 +37,99 @@ test_ensure() {
         for line in \$(get_section FAIL 02-test-ensure.txt); do
             run_ok '\$status -eq 1' ensure \"\$line\"
         done
+
+        IFS=\$old_ifs
+    }"
+
+    subtest "test ensure_not_empty" "{
+        # OK
+        run_ok '\$status -eq 0' ensure_not_empty
+        run_ok '\$status -eq 0' ensure_not_empty test
+        run_ok '\$status -eq 0' ensure_not_empty 'test '
+        run_ok '\$status -eq 0' ensure_not_empty ' test'
+
+        # fail
+        run_ok '\$status -eq 1' ensure_not_empty ''
+        run_ok '\$status -eq 1' ensure_not_empty ' '
+        run_ok '\$status -eq 1' ensure_not_empty test ''
+        run_ok '\$status -eq 1' ensure_not_empty test ' '
+    }"
+
+    subtest "test ensure_is" "{
+        # OK
+        run_ok '\$status -eq 0' ensure_is '' ''
+        run_ok '\$status -eq 0' ensure_is 'test' 'test'
+        run_ok '\$status -eq 0' ensure_is 'test ' 'test '
+        run_ok '\$status -eq 0' ensure_is ' test' ' test'
+        run_ok '\$status -eq 0' ensure_is ' test ' ' test '
+
+        # fail
+        run_ok '\$status -eq 1' ensure_is '' ' '
+        run_ok '\$status -eq 1' ensure_is 'test' 'Test'
+        run_ok '\$status -eq 1' ensure_is 'test' 'test '
+        run_ok '\$status -eq 1' ensure_is ' test' 'test'
+    }"
+
+    subtest "test ensure_isnt" "{
+        # OK
+        run_ok '\$status -eq 0' ensure_isnt '' ' '
+        run_ok '\$status -eq 0' ensure_isnt 'test' 'Test'
+        run_ok '\$status -eq 0' ensure_isnt 'test' ' test'
+        run_ok '\$status -eq 0' ensure_isnt 'test' 'test '
+        run_ok '\$status -eq 0' ensure_isnt 'test' ' test '
+
+        # fail
+        run_ok '\$status -eq 1' ensure_isnt '' ''
+        run_ok '\$status -eq 1' ensure_isnt ' ' ' '
+        run_ok '\$status -eq 1' ensure_isnt 'test' 'test'
+        run_ok '\$status -eq 1' ensure_isnt 'test ' 'test '
+        run_ok '\$status -eq 1' ensure_isnt ' test' ' test'
+        run_ok '\$status -eq 1' ensure_isnt ' test ' ' test '
+
+    }"
+
+    subtest "test ensure_like" "{
+        # OK
+        run_ok '\$status -eq 0' ensure_like '' ''
+        run_ok '\$status -eq 0' ensure_like ' ' ''
+        run_ok '\$status -eq 0' ensure_like 'test' ''
+        run_ok '\$status -eq 0' ensure_like 'test' 'te'
+        run_ok '\$status -eq 0' ensure_like 'test' 'st'
+        run_ok '\$status -eq 0' ensure_like 'test' 'test'
+        run_ok '\$status -eq 0' ensure_like 'test' '.*'
+        run_ok '\$status -eq 0' ensure_like 'test' 'te.*'
+        run_ok '\$status -eq 0' ensure_like 'test' '.*st'
+
+        # fail
+        run_ok '\$status -eq 1' ensure_like '' ' '
+        run_ok '\$status -eq 1' ensure_like '' 'a'
+        run_ok '\$status -eq 1' ensure_like 'test' ' '
+        run_ok '\$status -eq 1' ensure_like 'test' 'Test'
+        run_ok '\$status -eq 1' ensure_like 'test' ' test'
+        run_ok '\$status -eq 1' ensure_like 'test' '^est'
+        run_ok '\$status -eq 1' ensure_like 'test' 'tes$'
+    }"
+
+    subtest "test ensure_unlike" "{
+        # OK
+        run_ok '\$status -eq 0' ensure_unlike '' ' '
+        run_ok '\$status -eq 0' ensure_unlike '' 'a'
+        run_ok '\$status -eq 0' ensure_unlike 'test' ' '
+        run_ok '\$status -eq 0' ensure_unlike 'test' 'Test'
+        run_ok '\$status -eq 0' ensure_unlike 'test' ' test'
+        run_ok '\$status -eq 0' ensure_unlike 'test' '^est'
+        run_ok '\$status -eq 0' ensure_unlike 'test' 'tes$'
+
+        # fail
+        run_ok '\$status -eq 1' ensure_unlike '' ''
+        run_ok '\$status -eq 1' ensure_unlike ' ' ''
+        run_ok '\$status -eq 1' ensure_unlike 'test' ''
+        run_ok '\$status -eq 1' ensure_unlike 'test' 'te'
+        run_ok '\$status -eq 1' ensure_unlike 'test' 'st'
+        run_ok '\$status -eq 1' ensure_unlike 'test' 'test'
+        run_ok '\$status -eq 1' ensure_unlike 'test' '.*'
+        run_ok '\$status -eq 1' ensure_unlike 'test' 'te.*'
+        run_ok '\$status -eq 1' ensure_unlike 'test' '.*st'
     }"
 }
 

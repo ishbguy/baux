@@ -77,3 +77,7 @@ test < tes
 -z test
 -n ''
 #####FAIL-end
+
+#####not-empty-OK-start
+
+#####not-empty-OK-end
