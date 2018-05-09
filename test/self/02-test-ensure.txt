@@ -36,8 +36,44 @@
 -1 != 0
 -1 != 1
 0 != 1
+
+test == test
+test != Test
+test > tes
+test < testa
+
+-e /etc/passwd
+-f /etc/passwd
+-d /tmp
+-r /tmp
+-w /tmp
+-x /tmp
+-n test
+-z ''
+
 #####OK-end
 
 #####FAIL-start
 0 == 1
+0 != 0
+0 -eq 1
+0 -ne 0
+0 -gt 1
+0 -ge 1
+1 -lt 0
+1 -le 0
+
+test == Test
+test != test
+test > testa
+test < tes
+
+-e xxxx
+-f xxxx
+-d xxxx
+-r xxxx
+-w xxxx
+-x xxxx
+-z test
+-n ''
 #####FAIL-end
