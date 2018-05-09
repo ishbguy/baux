@@ -9,6 +9,14 @@ declare -gr TSET_ENSURE_ABS_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
 source "$TSET_ENSURE_ABS_DIR/../../lib/test.sh"
 
+get_section() {
+    local section=$1
+    local file=$2
+
+    awk '/#####'"$section"'-start/, /#####'"$section"'-end/ \
+        { if ($0 !~ /#####/ && $0 !~ /^\s*$/) print $0 }' "$2"
+}
+
 test_ensure() {
     # setup and teardown
     tmp=$(mktemp)
@@ -18,7 +26,7 @@ test_ensure() {
         run_ok '\$status -eq 1 && \$output =~ args\\ error' ensure
 
         IFS=$'\\n'
-        for line in \$(cat .02-test-ensure-ensure-ok.txt); do
+        for line in \$(get_section OK 02-test-ensure.txt); do
             run_ok '\$status -eq 0' ensure \"\$line\"
         done
     }"
