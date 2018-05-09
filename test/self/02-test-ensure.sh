@@ -58,6 +58,7 @@ test_ensure() {
     subtest "test ensure_is" "{
         # OK
         run_ok '\$status -eq 0' ensure_is '' ''
+        run_ok '\$status -eq 0' ensure_is ' ' ' '
         run_ok '\$status -eq 0' ensure_is 'test' 'test'
         run_ok '\$status -eq 0' ensure_is 'test ' 'test '
         run_ok '\$status -eq 0' ensure_is ' test' ' test'

@@ -33,9 +33,9 @@ after_success: |
     rm -rf kcov-master &&
     mkdir -p coverage &&
     mkdir -p kcov &&
-    for test in test/self/*; do 
+    for test in test/self/*.sh; do 
         test_dir=$(basename $test .sh) &&
-        mkdir kcov/$test_dir && kcov kcov/$test_dir $test
+        mkdir kcov/$test_dir && kcov --bash-method=DEBUG kcov/$test_dir $test
     done &&
     kcov --merge coverage kcov/* &&
     rm -rf kcov &&
