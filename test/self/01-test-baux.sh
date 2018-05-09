@@ -18,7 +18,8 @@ test_baux() {
 
     subtest "test warn" "{
         run_ok '\$status -eq 1 && \$output == test' warn test
-        run_ok '\$status -eq 2' { warn test; warn test; }
+        warn_two() { warn test; warn test; }
+        run_ok '\$status -eq 2' warn_two
     }"
 
     subtest "test version" "{

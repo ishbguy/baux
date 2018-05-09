@@ -38,32 +38,41 @@ baux_subtest() {
 
 test_baux_test() {
     # setup and teardown
-    tmp=$(mktemp "tmp-XXXXXX.sh")
-    tmp_dir=$(mktemp -d "tmp-dir-XXXXXXXX")
+    tmp=$(mktemp)
+    tmp_dir=$(mktemp -d)
     old_path="$PATH"
     export PATH="$PATH:$TEST_BAUX_TEST_ABS_DIR/../../lib-exec"
     trap 'rm -rf $tmp $tmp_dir; export PATH=$old_path' RETURN EXIT SIGINT
 
-    # test file
-    run_ok "\$status -eq 1" baux-test.sh
-    contruct_not_shell_script "true" >"$tmp"
-    run_ok "\$status -eq 1" baux-test.sh "$tmp"
-    contruct_notest_script "true" >"$tmp"
-    run_ok "\$status -eq 1" baux-test.sh "$tmp"
-    contruct_test_script "true" >"$tmp"
-    run_ok "\$status -eq 0" baux-test.sh "$tmp"
-    contruct_test_script "is 0 0" >"$tmp"
-    run_ok "\$output =~ PASS.*:\\ 1" baux-test.sh "$tmp"
-    contruct_test_script "is 1 0" >"$tmp"
-    run_ok "\$output =~ FAIL.*:\\ 1" baux-test.sh "$tmp"
-    contruct_test_script "is 0 0; is 1 0" >"$tmp"
-    run_ok "\$output =~ PASS.*:\\ 1.*FAIL.*:\\ 1" baux-test.sh "$tmp"
+    subtest "test baux-test.sh" "{
+        # test file
+        run_ok '\$status -eq 1' baux-test.sh
 
-    # test dir
-    run_ok "\$status -eq 1" baux-test.sh "$tmp_dir"
-    contruct_test_script "is 0 0" >"$tmp"
-    cp "$tmp" "$tmp_dir"
-    run_ok "\$status -eq 0" baux-test.sh "$tmp_dir"
+        contruct_not_shell_script 'true' >$tmp
+        run_ok '\$status -eq 1' baux-test.sh $tmp
+
+        contruct_notest_script 'true' >$tmp
+        run_ok '\$status -eq 1' baux-test.sh $tmp
+
+        contruct_test_script 'true' >$tmp
+        run_ok '\$status -eq 0' baux-test.sh $tmp
+
+        contruct_test_script 'is 0 0' >$tmp
+        run_ok '\$output =~ PASS.*:\\ 1' baux-test.sh $tmp
+
+        contruct_test_script 'is 1 0' >$tmp
+        run_ok '\$output =~ FAIL.*:\\ 1' baux-test.sh $tmp
+
+        contruct_test_script 'is 0 0; is 1 0' >$tmp
+        run_ok '\$output =~ PASS.*:\\ 1.*FAIL.*:\\ 1' baux-test.sh $tmp
+
+        # test dir
+        run_ok '\$status -eq 1' baux-test.sh $tmp_dir
+
+        contruct_test_script 'is 0 0' >$tmp
+        cp $tmp $tmp_dir/$(basename "$tmp").sh
+        run_ok '\$status -eq 0' baux-test.sh $tmp_dir
+    }"
 }
 
 run_tests() {
