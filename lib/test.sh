@@ -189,16 +189,8 @@ subtest() {
 
     local name="$1"
     local tests="$2"
-    local encode_name=$(echo "$name" | sed -r 's/[[:punct:][:space:]]/_/g')
+    local encode_name="${name//[^[:alnum:]]/_}"
     local err_msg status
-
-    eval "$encode_name() {
-        BAUX_TEST_COUNTS[TOTAL]=0
-        BAUX_TEST_COUNTS[PASS]=0
-        BAUX_TEST_COUNTS[FAIL]=0;
-        $tests
-        return \${BAUX_TEST_COUNTS[FAIL]}
-    }" &>/dev/null || die "subtest \"$name\" init fail."
 
     ((++BAUX_TEST_COUNTS[TOTAL]))
     echo -ne "$BAUX_TEST_PAD_SPACES ${BAUX_TEST_COUNTS[TOTAL]} subtest: $name "
@@ -211,14 +203,24 @@ subtest() {
         return 0
     fi
     # exec in sub shell for avoiding exit
-    err_msg=$(eval "$encode_name" 2>&1 >/dev/null)
+    err_msg=$(
+        eval "$encode_name() {
+            BAUX_TEST_COUNTS[TOTAL]=0
+            BAUX_TEST_COUNTS[PASS]=0
+            BAUX_TEST_COUNTS[FAIL]=0
+            $tests
+            return \${BAUX_TEST_COUNTS[FAIL]}
+        }" &>/dev/null || die "subtest \"$name\" init fail." 2>&1 >/dev/null
+
+        "$encode_name" 2>&1 >/dev/null
+    )
     status="$?"
     if [[ $status -eq 0 ]]; then
         ((++BAUX_TEST_COUNTS[PASS]))
-        cecho "${BAUX_TEST_COLORS[PASS]}" "\x1B[1G${BAUX_TEST_PROMPTS[PASS]}"
+        cecho "${BAUX_TEST_COLORS[PASS]}" "\\x1B[1G${BAUX_TEST_PROMPTS[PASS]}"
     else
         ((++BAUX_TEST_COUNTS[FAIL]))
-        cecho "${BAUX_TEST_COLORS[FAIL]}" "\x1B[1G${BAUX_TEST_PROMPTS[FAIL]}" >&2
+        cecho "${BAUX_TEST_COLORS[FAIL]}" "\\x1B[1G${BAUX_TEST_PROMPTS[FAIL]}" >&2
         cecho "${BAUX_TEST_COLORS[EMSG]}" "$BAUX_TEST_PAD_SPACES $(__location 0)" >&2
         echo -e "$err_msg" >&2
     fi
