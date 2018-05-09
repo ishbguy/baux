@@ -29,12 +29,12 @@ test_ensure() {
         IFS=$'\\n'
 
         # ensure ok
-        for line in \$(get_section OK 02-test-ensure.txt); do
+        for line in \$(get_section OK $TSET_ENSURE_ABS_DIR/02-test-ensure.txt); do
             run_ok '\$status -eq 0' ensure \"\$line\"
         done
 
         # ensure fail
-        for line in \$(get_section FAIL 02-test-ensure.txt); do
+        for line in \$(get_section FAIL $TSET_ENSURE_ABS_DIR/02-test-ensure.txt); do
             run_ok '\$status -eq 1' ensure \"\$line\"
         done
 
