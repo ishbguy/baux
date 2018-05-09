@@ -37,7 +37,8 @@ add_test_file() {
 }
 
 add_test_dir() {
-    for file in $1/*; do
+    # just add shell file in the dir
+    for file in $1/*.sh; do
         add_test_file "$file"
     done
 }
