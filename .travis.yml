@@ -23,6 +23,7 @@ script: make
 after_success: |
     git clone https://github.com/ishbguy/kcov.git kcov &&
     cd kcov &&
+    git checkout fix-bash-script-hanging &&
     mkdir build &&
     cd build &&
     cmake .. &&
