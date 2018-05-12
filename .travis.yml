@@ -21,16 +21,15 @@ before_script:
 script: make
 
 after_success: |
-    wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
-    tar xzf master.tar.gz &&
-    cd kcov-master &&
+    git clone https://github.com/ishbguy/kcov.git kcov &&
+    cd kcov &&
     mkdir build &&
     cd build &&
     cmake .. &&
     make &&
     sudo make install &&
     cd ../.. &&
-    rm -rf kcov-master &&
+    rm -rf kcov &&
     mkdir -p coverage &&
     mkdir -p kcov &&
     for test in test/self/*.sh; do 
