@@ -10,11 +10,20 @@ declare -gr TEST_BAUX_ABS_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 source "$TEST_BAUX_ABS_DIR/../../lib/test.sh"
 
 test_baux() {
-    # setup and teardown
-    tmp=$(mktemp)
-    trap 'rm -rf $tmp' RETURN EXIT SIGINT
+    setup() {
+        tmp=$(mktemp)
+    }; setup
+
+    teardown() {
+        rm -rf "$tmp"
+    }; trap 'teardown' RETURN EXIT SIGINT
 
     subtest "test die" "run_ok '\$status -eq 1 && \$output == test' die test"
+
+    subtest "test die_hook" "{
+        die_hook() { echo 'I am in die_hook'; }
+        run_ok '\$status -eq 1 && \$output =~ die_hook' die 
+    }"
 
     subtest "test warn" "{
         run_ok '\$status -eq 1 && \$output == test' warn test

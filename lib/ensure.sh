@@ -34,7 +34,7 @@ if [[ $BAUX_ENSURE_DEBUG == "1" ]]; then
 
     ensure_not_empty() {
         for arg in "$@"; do
-            [[ -n $(echo $arg |sed -r 's/^\s+//;s/\s+$//') ]] || die \
+            [[ -n $(echo "$arg" |sed -r 's/^\s+//;s/\s+$//') ]] || die \
                 "$(caller 0): Arguments should not be empty."
         done
     }

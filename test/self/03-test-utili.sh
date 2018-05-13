@@ -7,12 +7,17 @@
 declare -gr TEST_UTILI_SOURCED=1
 declare -gr TEST_UTILI_ABS_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
+source "$TEST_UTILI_ABS_DIR/../../lib/utili.sh"
 source "$TEST_UTILI_ABS_DIR/../../lib/test.sh"
 
 test_utili() {
-    # setup and teardown
-    tmp=$(mktemp)
-    trap 'rm -rf $tmp' RETURN EXIT SIGINT
+    setup() {
+        tmp=$(mktemp)
+    }; setup
+
+    teardown() {
+        rm -rf "$tmp"
+    }; trap 'teardown' RETURN EXIT SIGINT
 
     subtest "test random" "{
         is '' \"\$(random)\"

@@ -7,6 +7,7 @@
 declare -gr TSET_ENSURE_SOURCED=1
 declare -gr TSET_ENSURE_ABS_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
+source "$TSET_ENSURE_ABS_DIR/../../lib/ensure.sh"
 source "$TSET_ENSURE_ABS_DIR/../../lib/test.sh"
 
 get_section() {
@@ -14,13 +15,17 @@ get_section() {
     local file=$2
 
     awk '/#####'"$section"'-start/, /#####'"$section"'-end/ \
-        { if ($0 !~ /#####/ && $0 !~ /^\s*$/) print $0 }' "$2"
+        { if ($0 !~ /#####/ && $0 !~ /^\s*$/) print $0 }' "$file"
 }
 
 test_ensure() {
-    # setup and teardown
-    tmp=$(mktemp)
-    trap 'rm -rf $tmp' RETURN EXIT SIGINT
+    setup() {
+        tmp=$(mktemp)
+    }; setup
+    
+    teardown() {
+        rm -rf "$tmp"
+    }; trap 'teardown' RETURN EXIT SIGINT
 
     subtest "ensure test" "{
         run_ok '\$status -eq 1 && \$output =~ args\\ error' ensure
@@ -131,6 +136,21 @@ test_ensure() {
         run_ok '\$status -eq 1' ensure_unlike 'test' '.*'
         run_ok '\$status -eq 1' ensure_unlike 'test' 'te.*'
         run_ok '\$status -eq 1' ensure_unlike 'test' '.*st'
+    }"
+
+    subtest "test BAUX_ENSURE_DEBUG=0" "{
+        run_ok '\$status -eq 0' \
+            bash -c 'DEBUG=0; source $TSET_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure'
+        run_ok '\$status -eq 0' \
+            bash -c 'DEBUG=0; source $TSET_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure_not_empty'
+        run_ok '\$status -eq 0' \
+            bash -c 'DEBUG=0; source $TSET_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure_is'
+        run_ok '\$status -eq 0' \
+            bash -c 'DEBUG=0; source $TSET_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure_isnt'
+        run_ok '\$status -eq 0' \
+            bash -c 'DEBUG=0; source $TSET_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure_like'
+        run_ok '\$status -eq 0' \
+            bash -c 'DEBUG=0; source $TSET_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure_unlike'
     }"
 }
 

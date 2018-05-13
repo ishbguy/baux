@@ -20,7 +20,7 @@ declare -ga BAUX_TEST_SUIT_FILES
 declare -ga BAUX_TEST_SUIT_CASES
 
 is_shell_script() {
-    [[ -f "$1" && $(file "$1") =~ sh[[:alnum:]]*\ script ]]
+    [[ -f $1 && $1 == *.sh && $(file "$1") =~ sh[[:alnum:]]*\ script ]]
 }
 
 search_test_cases() {
@@ -37,7 +37,6 @@ add_test_file() {
 }
 
 add_test_dir() {
-    # just add shell file in the dir
     for file in $1/*.sh; do
         add_test_file "$file"
     done

@@ -37,16 +37,26 @@ baux_subtest() {
 }
 
 test_baux_test() {
-    # setup and teardown
-    tmp=$(mktemp)
-    tmp_dir=$(mktemp -d)
-    old_path="$PATH"
-    export PATH="$PATH:$TEST_BAUX_TEST_ABS_DIR/../../lib-exec"
-    trap 'rm -rf $tmp $tmp_dir; export PATH=$old_path' RETURN EXIT SIGINT
+    setup() {
+        tmp=$(mktemp test-XXXXXX.sh)
+        tmp_no_suffix=$(mktemp)
+        tmp_dir=$(mktemp -d)
+        old_path="$PATH"
+        export PATH="$PATH:$TEST_BAUX_TEST_ABS_DIR/../../lib-exec"
+    }; setup
+
+    teardown() {
+        rm -rf "$tmp"
+        rm -rf "$tmp_no_suffix"
+        rm -rf "$tmp_dir"
+        export PATH="$old_path"
+    }; trap 'teardown' RETURN EXIT SIGINT
 
     subtest "test baux-test.sh" "{
         # test file
         run_ok '\$status -eq 1' baux-test.sh
+        run_ok '\$status -eq 1' baux-test.sh file_not_exist
+        run_ok '\$status -eq 1' baux-test.sh $tmp_no_suffix
 
         contruct_not_shell_script 'true' >$tmp
         run_ok '\$status -eq 1' baux-test.sh $tmp
@@ -69,8 +79,11 @@ test_baux_test() {
         # test dir
         run_ok '\$status -eq 1' baux-test.sh $tmp_dir
 
+        cp $tmp_no_suffix $tmp_dir/$tmp_no_suffix
+        run_ok '\$status -eq 1' baux-test.sh $tmp_dir
+
         contruct_test_script 'is 0 0' >$tmp
-        cp $tmp $tmp_dir/$(basename "$tmp").sh
+        cp $tmp $tmp_dir/$tmp
         run_ok '\$status -eq 0' baux-test.sh $tmp_dir
     }"
 }
