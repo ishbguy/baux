@@ -77,11 +77,11 @@ lib
 
 ```bash
 except.sh
-    |
-    V
-array.sh    test.sh
-    |           |
-    V           V
+    |-----------------------------------------------+
+    V                                               |
+array.sh    test.sh                                 |
+    |           |-----------------------------------|
+    V           V                                   V
 var.sh      utili.sh    pattern.sh    log.sh      trace.sh
     |           |           |           |           |
     +-----------+-----------+-----------+-----------+
