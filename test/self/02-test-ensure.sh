@@ -3,12 +3,12 @@
 # Released under the terms of the MIT License.
 
 # source guard
-[[ $TSET_ENSURE_SOURCED -eq 1 ]] && return
-declare -gr TSET_ENSURE_SOURCED=1
-declare -gr TSET_ENSURE_ABS_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+[[ $TEST_ENSURE_SOURCED -eq 1 ]] && return
+declare -gr TEST_ENSURE_SOURCED=1
+declare -gr TEST_ENSURE_ABS_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
-source "$TSET_ENSURE_ABS_DIR/../../lib/ensure.sh"
-source "$TSET_ENSURE_ABS_DIR/../../lib/test.sh"
+source "$TEST_ENSURE_ABS_DIR/../../lib/ensure.sh"
+source "$TEST_ENSURE_ABS_DIR/../../lib/test.sh"
 
 get_section() {
     local section=$1
@@ -34,12 +34,12 @@ test_ensure() {
         IFS=$'\\n'
 
         # ensure ok
-        for line in \$(get_section OK $TSET_ENSURE_ABS_DIR/02-test-ensure.txt); do
+        for line in \$(get_section OK $TEST_ENSURE_ABS_DIR/test-ensure-ok.txt); do
             run_ok '\$status -eq 0' ensure \"\$line\"
         done
 
         # ensure fail
-        for line in \$(get_section FAIL $TSET_ENSURE_ABS_DIR/02-test-ensure.txt); do
+        for line in \$(get_section FAIL $TEST_ENSURE_ABS_DIR/test-ensure-ok.txt); do
             run_ok '\$status -eq 1' ensure \"\$line\"
         done
 
@@ -140,17 +140,17 @@ test_ensure() {
 
     subtest "test BAUX_ENSURE_DEBUG=0" "{
         run_ok '\$status -eq 0' \
-            bash -c 'DEBUG=0; source $TSET_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure'
+            bash -c 'DEBUG=0; source $TEST_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure'
         run_ok '\$status -eq 0' \
-            bash -c 'DEBUG=0; source $TSET_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure_not_empty'
+            bash -c 'DEBUG=0; source $TEST_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure_not_empty'
         run_ok '\$status -eq 0' \
-            bash -c 'DEBUG=0; source $TSET_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure_is'
+            bash -c 'DEBUG=0; source $TEST_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure_is'
         run_ok '\$status -eq 0' \
-            bash -c 'DEBUG=0; source $TSET_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure_isnt'
+            bash -c 'DEBUG=0; source $TEST_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure_isnt'
         run_ok '\$status -eq 0' \
-            bash -c 'DEBUG=0; source $TSET_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure_like'
+            bash -c 'DEBUG=0; source $TEST_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure_like'
         run_ok '\$status -eq 0' \
-            bash -c 'DEBUG=0; source $TSET_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure_unlike'
+            bash -c 'DEBUG=0; source $TEST_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure_unlike'
     }"
 }
 
