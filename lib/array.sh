@@ -131,6 +131,7 @@ _split() {
     done
     # end is sep, append "" to array
     [[ $1 =~ $sep$ ]] && __array+=("")
+    [[ -n $string ]] && __array+=("$string")
     return 0
 }
 
