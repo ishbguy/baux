@@ -53,8 +53,8 @@ for ((i = 1; i < BAUX_TEST_STATUS_LEN; i++)); do
     BAUX_TEST_PAD_SPACES+=" "
 done
 
-__judge() {
-    local expr="$1"
+__count() {
+    local test_status="$1"
     ((++BAUX_TEST_COUNTS[TOTAL]))
     if [[ $BAUX_TEST_SKIP_FLAG -eq 1 ]]; then
         ((++BAUX_TEST_COUNTS[SKIP]))
@@ -62,7 +62,7 @@ __judge() {
         result="SKIP"
         return
     fi
-    if (eval "[[ $expr ]]" &>/dev/null); then
+    if [[ $test_status -eq 0 ]]; then
         ((++BAUX_TEST_COUNTS[PASS]))
         result="PASS"
     else
@@ -71,7 +71,7 @@ __judge() {
     fi
 }
 
-__issue() {
+__report() {
     local -u result="$1"
     local msg="$2"
 
@@ -106,8 +106,9 @@ ok() {
     local expr="$1"
     local msg="${2:-$1}"
     local -u result
-    __judge "$expr"
-    __issue "$result" "$msg"
+    (eval "[[ $expr ]]" &>/dev/null)
+    __count $?
+    __report "$result" "$msg"
     [[ $result != "${BAUX_TEST_PROMPTS[FAIL]}" ]] \
         || { cecho "${BAUX_TEST_COLORS[EMSG]}" "$(__location 0)" >&2; return 1; }
 }
@@ -119,8 +120,9 @@ is() {
     local actual="$2"
     local msg="${3:-[[ $1 == $2 ]]}"
     local -u result
-    __judge "'$expect' == '$actual'"
-    __issue "$result" "$msg"
+    ([[ "$expect" == "$actual" ]] &>/dev/null)
+    __count $?
+    __report "$result" "$msg"
     __diag "$result" "'$expect'" "'$actual'" 
 }
 
@@ -131,8 +133,9 @@ isnt() {
     local actual="$2"
     local msg="${3:-[[ $1 != $2 ]]}"
     local -u result
-    __judge "'$expect' != '$actual'"
-    __issue "$result" "$msg"
+    ([[ "$expect" != "$actual" ]] &>/dev/null)
+    __count $?
+    __report "$result" "$msg"
     __diag "$result" "'$expect'" "'$actual'" 
 }
 
@@ -143,8 +146,9 @@ like() {
     local actual="$2"
     local msg="${3:-[[ $1 =~ $2 ]]}"
     local -u result
-    __judge "'$expect' =~ '$actual'"
-    __issue "$result" "$msg"
+    ([[ $expect =~ $actual ]] &>/dev/null)
+    __count $?
+    __report "$result" "$msg"
     __diag "$result" "'$expect'" "'$actual'" 
 }
 
@@ -155,8 +159,9 @@ unlike() {
     local actual="$2"
     local msg="${3:-[[ ! $1 =~ $2 ]]}"
     local -u result
-    __judge "! '$expect' =~ '$actual'"
-    __issue "$result" "$msg"
+    ([[ ! $expect =~ $actual ]] &>/dev/null)
+    __count $?
+    __report "$result" "$msg"
     __diag "$result" "'$expect'" "'$actual'" 
 }
 
@@ -173,8 +178,9 @@ run_ok() {
     output=$("$@" 2>&1)
     status=$?
 
-    __judge "$expr"
-    __issue "$result" "$msg"
+    (eval "[[ $expr ]]" &>/dev/null)
+    __count $?
+    __report "$result" "$msg"
     [[ $result != "${BAUX_TEST_PROMPTS[FAIL]}" ]] \
         || { \
         cecho "${BAUX_TEST_COLORS[EMSG]}" "$BAUX_TEST_PAD_SPACES $(__location 0)" >&2; \
