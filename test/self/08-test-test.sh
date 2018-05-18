@@ -133,6 +133,7 @@ test_test() {
         run_ok '\$status -eq 0' subtest 'subtest pass' 'is 0 0'
         run_ok '\$status -eq 1' subtest 'subtest fail' 'is 1 0'
         run_ok '\$status -eq 0' subtest 'subtest skip' 'skip; is 1 0'
+        run_ok '\$status -ne 0' subtest 'subtest die' 'echo ><'
     }"
 
     subtest "test skip & summary" "{
@@ -143,6 +144,9 @@ test_test() {
 
         fail_skip() { is 1 0; skip; is 0 1; summary; }
         run_ok '\$status -eq 1' fail_skip
+
+        skip_subtest() {  skip; subtest 'skip' 'is 1 0'; }
+        run_ok '\$status -eq 0' skip_subtest
     }"
 
 }
