@@ -40,6 +40,9 @@ test_baux() {
     }"
 
     subtest "test proname" "{
+        local PRONAME=proname
+        run_ok '\$output == proname' proname
+        PRONAME=
         run_ok '\$status -eq 0 && \$output =~ $(basename "$0")' proname
     }"
 
