@@ -34,7 +34,11 @@ warn() {
     return $((++BAUX_EXIT_CODE))
 }
 
-proname() { basename "${0##+(-)}"; }
+proname() {
+    local name="$PRONAME"
+    [[ -z $name ]] && name=$(basename "${0##+(-)}")
+    echo "$name"
+}
 version() {
     if [[ -n $VERSION ]]; then
         echo "$(proname) $VERSION"
