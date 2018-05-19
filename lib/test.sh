@@ -184,8 +184,9 @@ run_ok() {
     [[ $result != "${BAUX_TEST_PROMPTS[FAIL]}" ]] \
         || { \
         cecho "${BAUX_TEST_COLORS[EMSG]}" "$BAUX_TEST_PAD_SPACES $(__location 0)" >&2; \
-        cecho "${BAUX_TEST_COLORS[EMSG]}" "$BAUX_TEST_PAD_SPACES Status: $status" >&2; \
-        cecho "${BAUX_TEST_COLORS[EMSG]}" "$BAUX_TEST_PAD_SPACES Output: '$output'" >&2; \
+        cecho "${BAUX_TEST_COLORS[EMSG]}" "$BAUX_TEST_PAD_SPACES expression: $expr" >&2; \
+        cecho "${BAUX_TEST_COLORS[EMSG]}" "$BAUX_TEST_PAD_SPACES status: $status" >&2; \
+        cecho "${BAUX_TEST_COLORS[EMSG]}" "$BAUX_TEST_PAD_SPACES output: '$output'" >&2; \
         return 1; }
 }
 
