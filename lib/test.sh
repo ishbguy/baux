@@ -242,7 +242,10 @@ summary() {
         echo -n "$(cecho ${BAUX_TEST_COLORS[$it]} \
             ${BAUX_TEST_PROMPTS[$it]}): ${BAUX_TEST_COUNTS[$it]}, "
     done
-    echo
+    local -i percentage=0
+    [[ ${BAUX_TEST_COUNTS[TOTAL]} -ne 0 ]] \
+        && percentage=$((BAUX_TEST_COUNTS[PASS] * 100 / BAUX_TEST_COUNTS[TOTAL]))
+    echo "${percentage}% pass."
     return ${BAUX_TEST_COUNTS[FAIL]}
 }
 
