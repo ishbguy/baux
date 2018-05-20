@@ -76,6 +76,25 @@ slice() {
     echo "${slices[@]}"
 }
 
+_get() {
+    ensure "$# -eq 2" "_get array index|key"
+    type_array "$1" || type_map "$1" || die "$1 is not array or map"
+
+    local -n __array="$1"
+    local index="$2"
+    echo "${__array[$index]}"
+}
+
+_set() {
+    ensure "$# -eq 3" "_get array index|key value"
+    type_array "$1" || type_map "$1" || die "$1 is not array or map"
+
+    local -n __array="$1"
+    local index="$2"
+    local value="$3"
+    __array[$index]="$value"
+}
+
 keys() {
     ensure "$# -eq 1" "Need only an array name."
     type_array "$1" || type_map "$1" || die "$1 is not an array name."

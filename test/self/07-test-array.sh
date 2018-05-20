@@ -122,6 +122,42 @@ test_array() {
         run_ok '\$output == \"1 2 3 4\"' slice map one 2 two three 999 four
     }"
 
+    subtest "test _get" "{
+        local -a array=(0 1 2 3)
+        is 0 \"\$(_get array 0)\"
+        is 1 \"\$(_get array 1)\"
+        is 2 \"\$(_get array 2)\"
+        is 3 \"\$(_get array 3)\"
+        is '' \"\$(_get array 4)\"
+
+        local -A map
+        map[0]=0
+        map[1]=1
+        map[2]=2
+
+        is 0 \"\$(_get map 0)\"
+        is 1 \"\$(_get map 1)\"
+        is 2 \"\$(_get map 2)\"
+        is '' \"\$(_get map 3)\"
+    }"
+
+    subtest "test _set" "{
+        local -a array=(0 1 2 3)
+        _set array 0 10
+        ok '\${array[0]} == 10'
+        _set array 4 10
+        ok '\${array[4]} == 10'
+
+        local -A map
+        map[0]=0
+        map[1]=1
+        map[2]=2
+        _set map 0 10
+        ok '\${map[0]} == 10'
+        _set map 4 10
+        ok '\${map[4]} == 10'
+    }"
+
     subtest "test keys" "{
         local -a array=()
         run_ok '\$output == \"\"' keys array
