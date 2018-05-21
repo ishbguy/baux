@@ -44,12 +44,12 @@ BAUX_TEST_COLORS[FAIL]="red"
 BAUX_TEST_COLORS[SKIP]="yellow"
 BAUX_TEST_COLORS[EMSG]="red"
 
-for s in "${!BAUX_TEST_COUNTS[@]}"; do
+for s in "${BAUX_TEST_PROMPTS[@]}"; do
     [[ ${#s} -gt $BAUX_TEST_STATUS_LEN ]] \
         && BAUX_TEST_STATUS_LEN=${#s}
 done
 
-for ((i = 1; i < BAUX_TEST_STATUS_LEN; i++)); do
+for ((i = 0; i < BAUX_TEST_STATUS_LEN; i++)); do
     BAUX_TEST_PAD_SPACES+=" "
 done
 
