@@ -63,7 +63,7 @@ run_test_cases() {
 }
 
 baux_test() {
-    local -a opts args
+    local -A opts args
     getoptions opts args "hv" "$@"
     shift $((OPTIND - 1))
     [[ ${#@} -eq 0 ]] && usage && die "$(cecho red "Please give a test file!")"
