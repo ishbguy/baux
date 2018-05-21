@@ -110,6 +110,6 @@ run_tests() {
 }
 
 [[ ${FUNCNAME[0]} == "main" ]] \
-    && run_tests "$@" && summary
+    && { run_tests "$@"; summary; }
 
 # vim:set ft=sh ts=4 sw=4:
