@@ -242,8 +242,8 @@ skip() {
 
 summary() {
     for it in TOTAL PASS FAIL SKIP; do
-        echo -n "$(cecho ${BAUX_TEST_COLORS[$it]} \
-            ${BAUX_TEST_PROMPTS[$it]}): ${BAUX_TEST_COUNTS[$it]}, "
+        echo -n "$(cecho "${BAUX_TEST_COLORS[$it]}" \
+            "${BAUX_TEST_PROMPTS[$it]}"): ${BAUX_TEST_COUNTS[$it]}, "
     done
     local -i percentage=0
     [[ ${BAUX_TEST_COUNTS[TOTAL]} -ne 0 ]] \
