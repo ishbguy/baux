@@ -40,28 +40,28 @@ if [[ $BAUX_ENSURE_DEBUG == "1" ]]; then
     }
 
     ensure_is() {
-        ensure "$# -ge 2 || $# -le 3" "Need two string args."
+        ensure "$# -ge 2 && $# -le 3" "Need two string args."
 
         [[ "$1" == "$2" ]] \
             || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nExpect: $1\\nActual: $2"
     }
 
     ensure_isnt() {
-        ensure "$# -ge 2 || $# -le 3" "Need two string args."
+        ensure "$# -ge 2 && $# -le 3" "Need two string args."
 
         [[ "$1" != "$2" ]] \
             || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nNot Expect: $1\\nActual: $2"
     }
 
     ensure_like() {
-        ensure "$# -ge 2 || $# -le 3" "Need two string args."
+        ensure "$# -ge 2 && $# -le 3" "Need two string args."
 
         [[ $1 =~ $2 ]] \
             || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nExpect: $1\\nActual: $2"
     }
 
     ensure_unlike() {
-        ensure "$# -ge 2 || $# -le 3" "Need two string args."
+        ensure "$# -ge 2 && $# -le 3" "Need two string args."
 
         [[ ! $1 =~ $2 ]] \
             || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nNot Expect: $1\\nActual: $2"
