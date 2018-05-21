@@ -44,9 +44,9 @@ log() {
     # log out to a file or to standard output
     if [[ -n $BAUX_LOG_OUTPUT_FILE ]]; then
         [[ -e $BAUX_LOG_OUTPUT_FILE ]] || echo -n >$BAUX_LOG_OUTPUT_FILE \
-            || die "Can not create log file: $BAUX_LOG_OUTPUT_FILE"
+            || warn "Can not create log file: $BAUX_LOG_OUTPUT_FILE" || return 1
         [[ -w $BAUX_LOG_OUTPUT_FILE ]] \
-            || die "Log file $BAUX_LOG_OUTPUT_FILE can not write"
+            || warn "Log file $BAUX_LOG_OUTPUT_FILE can not write" || return 1
         # append to log file
         exec 3>>$BAUX_LOG_OUTPUT_FILE
         exec 1>&3
