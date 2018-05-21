@@ -138,6 +138,20 @@ test_ensure() {
         run_ok '\$status -eq 1' ensure_unlike 'test' '.*st'
     }"
 
+    subtest "test ensure_run" "{
+        run_ok '\$status == 1' ensure_run
+        run_ok '\$status == 1' ensure_run cmd_not_found
+        run_ok '\$status == 0' ensure_run true
+        run_ok '\$status == 0' ensure_run 'true; true'
+        run_ok '\$status == 0' ensure_run 'false; true'
+        run_ok '\$status == 1' ensure_run 'true; false'
+        run_ok '\$status == 1' ensure_run 'flase; false'
+        run_ok '\$status == 0' ensure_run 'true || true'
+        run_ok '\$status == 0' ensure_run 'true || false'
+        run_ok '\$status == 1' ensure_run 'flase || false'
+        run_ok '\$status == 0' ensure_run 'false || true'
+    }"
+
     subtest "test BAUX_ENSURE_DEBUG=0" "{
         run_ok '\$status -eq 0' \
             bash -c 'DEBUG=0; source $TEST_ENSURE_ABS_DIR/../../lib/ensure.sh; ensure'

@@ -66,6 +66,14 @@ if [[ $BAUX_ENSURE_DEBUG == "1" ]]; then
         [[ ! $1 =~ $2 ]] \
             || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nNot Expect: $1\\nActual: $2"
     }
+    
+    ensure_run() {
+        ensure "$# -ge 1 && $# -le 2" "Need a cmd and a error message."
+        local cmd="$1"
+        local msg="$2"
+        [[ -n $msg ]] && msg="\\n$msg"
+        eval "$cmd" || die "$(caller 0): ${FUNCNAME[0]} fail to run: $cmd $msg"
+    }
 else
     ensure() { true; }
     ensure_not_empty() { true; }
@@ -73,6 +81,7 @@ else
     ensure_isnt() { true; }
     ensure_like() { true; }
     ensure_unlike() { true; }
+    ensure_run() { eval "$1"; }
 fi
 
 # vim:ft=sh:ts=4:sw=4
