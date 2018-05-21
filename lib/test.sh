@@ -81,7 +81,9 @@ __report() {
 
 __location() {
     local idx="$(($1+1))"
-    local -a frame=($(frame "$idx"| sed -r 's/\s+/\n/g'))
+    local temp=$(frame "$idx")
+    eval set -- "$temp"
+    local -a frame=("$@")
     local cmd=$(sed -ne "${frame[1]}p" "${frame[0]}" 2>/dev/null | sed -r 's/^\s+//')
     echo "$cmd [${frame[0]}:${frame[1]}:${frame[3]}]"
 }
