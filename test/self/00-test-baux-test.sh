@@ -42,7 +42,7 @@ test_baux_test() {
         tmp_no_suffix=$(mktemp)
         tmp_dir=$(mktemp -d)
         old_path="$PATH"
-        export PATH="$PATH:$TEST_BAUX_TEST_ABS_DIR/../../lib-exec"
+        export PATH="$PATH:$TEST_BAUX_TEST_ABS_DIR/../../bin"
     }; setup
 
     teardown() {

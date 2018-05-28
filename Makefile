@@ -8,4 +8,4 @@ bats :
 
 .PHONY : self
 self :
-	$(PWD)/lib-exec/baux-test.sh $(TEST_DIR)/self
+	$(PWD)/bin/baux-test.sh $(TEST_DIR)/self
