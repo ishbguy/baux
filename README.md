@@ -396,7 +396,7 @@ Run the above test script, will print the callstack to stdout like:
 #### Variable Type Check (`var.sh`)
 
 ```bash
-sorce /path/to/baux/lib/var.sh
+source /path/to/baux/lib/var.sh
 
 declare -a var
 
@@ -417,7 +417,7 @@ type_upper  var && echo "var's value has upper case attribute"
 ##### Simple test
 
 ```bash
-sorce /path/to/baux/lib/test.sh
+source /path/to/baux/lib/test.sh
 
 # ok $expr test is equivalent to [[ $expr ]]
 ok '1 == 1' 'Test equal'        # pass
@@ -449,7 +449,7 @@ summary
 ##### Run command test with `run_ok`
 
 ```bash
-sorce /path/to/baux/lib/test.sh
+source /path/to/baux/lib/test.sh
 
 # run_ok like ok, but run_ok provide $status, $output inside to test the
 # exit status and cmd output. When use these 2 variables, you need to single
@@ -475,7 +475,7 @@ summary
 `subtest` will group the your tests in a single sub-test, if one of the tests in `subtest` fails, the `subtest` will fail, and the total and fail counters will increase 1.
 
 ```bash
-sorce /path/to/baux/lib/test.sh
+source /path/to/baux/lib/test.sh
 
 # format like: subtest "test name" 'tests cmds'
 
@@ -490,7 +490,7 @@ summary
 ##### `skip` a following test
 
 ```bash
-sorce /path/to/baux/lib/test.sh
+source /path/to/baux/lib/test.sh
 
 is 1 1      # pass
 skip
@@ -505,7 +505,7 @@ summary
 You can customize test's total, pass, fail, skip prompt strings and colors.
 
 ```bash
-sorce /path/to/baux/lib/test.sh
+source /path/to/baux/lib/test.sh
 
 # these are default prompt strings
 BAUX_TEST_PROMPTS[TOTAL]="TOTAL"
