@@ -21,7 +21,7 @@ before_script:
 script: make
 
 after_success: |
-    git clone https://github.com/ishbguy/kcov.git kcov &&
+    git clone https://github.com/forkcon/kcov.git kcov &&
     cd kcov &&
     git checkout fix-bash-script-hanging &&
     mkdir build &&
