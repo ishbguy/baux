@@ -109,7 +109,7 @@ source $SRC_DIR/lib/utili.sh
     tmp=$(mktemp)
     teardown() { rm -rf $tmp; }
     echo "user=test" >> $tmp
-    echo "host=test.com" >> $tmp
+    echo "host=best.com" >> $tmp
 
     if [[ $BAUX_ENSURE_DEBUG == "1" ]]; then
         run read_config
@@ -130,7 +130,8 @@ source $SRC_DIR/lib/utili.sh
     run test_read_config
 
     [[ $status -eq 0 ]]
-    [[ $output == "test.com test" ]]
+    [[ $output =~ "test" ]]
+    [[ $output =~ "best.com" ]]
 }
 
 @test "test realdir" {

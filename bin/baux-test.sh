@@ -76,7 +76,7 @@ baux_test() {
     summary
 }
 
-[[ ${FUNCNAME[0]} == "main" ]] \
+[[ ${FUNCNAME[0]} == "main" || ${FUNCNAME[0]} == '' ]] \
     && baux_test "$@"
 
 # vim:set ft=sh ts=4 sw=4:
