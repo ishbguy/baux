@@ -94,7 +94,7 @@ run_tests() {
     test_utili
 }
 
-[[ ${FUNCNAME[0]} == "main" ]] \
+[[ ${FUNCNAME[0]} == "main" || ${FUNCNAME[0]} == '' ]] \
     && { run_tests "$@"; summary; }
 
 # vim:set ft=sh ts=4 sw=4:

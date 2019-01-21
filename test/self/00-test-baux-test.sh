@@ -42,7 +42,7 @@ test_baux_test() {
         tmp_no_suffix=$(mktemp)
         tmp_dir=$(mktemp -d)
         old_path="$PATH"
-        export PATH="$PATH:$TEST_BAUX_TEST_ABS_DIR/../../bin"
+        export PATH="$TEST_BAUX_TEST_ABS_DIR/../../bin:$PATH"
     }; setup
 
     teardown() {
@@ -92,7 +92,7 @@ run_tests() {
     test_baux_test
 }
 
-[[ ${FUNCNAME[0]} == "main" ]] \
+[[ ${FUNCNAME[0]} == "main" || ${FUNCNAME[0]} == '' ]] \
     && { run_tests "$@"; summary; }
 
 # vim:set ft=sh ts=4 sw=4:
