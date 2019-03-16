@@ -45,7 +45,6 @@
 
 > + [`bash`](https://www.gnu.org/software/bash/bash.html)
 > + [`sed`](https://www.gnu.org/software/sed/)
-> + `realpath`
 
 ## :rocket: Installation
 

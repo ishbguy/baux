@@ -9,7 +9,7 @@
 # source guard
 [[ $BAUX_TRACE_SOURCED -eq 1 ]] && return
 declare -gr BAUX_TRACE_SOURCED=1
-declare -gr BAUX_TRACE_ABS_DIR="$(dirname $(realpath "${BASH_SOURCE[0]}"))"
+declare -gr BAUX_TRACE_ABS_DIR="$(dirname $(readlink -f "${BASH_SOURCE[0]}"))"
 
 # source dependences
 if [[ $BAUX_SOURCED -ne 1 ]]; then

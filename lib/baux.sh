@@ -9,7 +9,7 @@
 # source guard
 [[ $BAUX_SOURCED -eq 1 ]] && return
 declare -gr BAUX_SOURCED=1
-declare -gr BAUX_ABS_DIR="$(dirname $(realpath "${BASH_SOURCE[0]}"))"
+declare -gr BAUX_ABS_DIR="$(dirname $(readlink -f "${BASH_SOURCE[0]}"))"
 
 # source dependences
 if [[ $BAUX_ENSURE_SOURCED -ne 1 ]]; then
@@ -64,7 +64,7 @@ import() {
 
     for file in "$@"; do
         [[ -e $file ]] || die "$file does not exist."
-        local file_path=$(realpath "$file")
+        local file_path=$(readlink -f "$file")
         # ensure source one time
         [[ -z ${BAUX_IMPORT_FILES[$file_path]} ]] || continue
         source "$file_path"

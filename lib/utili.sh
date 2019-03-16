@@ -9,7 +9,7 @@
 # source guard
 [[ $BAUX_UTILI_SOURCED -eq 1 ]] && return
 declare -gr BAUX_UTILI_SOURCED=1
-declare -gr BAUX_UTILI_ABS_DIR="$(dirname $(realpath "${BASH_SOURCE[0]}"))"
+declare -gr BAUX_UTILI_ABS_DIR="$(dirname $(readlink -f "${BASH_SOURCE[0]}"))"
 
 # source dependences
 if [[ $BAUX_SOURCED -ne 1 ]]; then
@@ -117,7 +117,7 @@ read_config() {
 realdir() {
     local -a dirs=()
     for file in "$@"; do
-        dirs+=("$(dirname "$(realpath "$file")")")
+        dirs+=("$(dirname "$(readlink -f "$file")")")
     done
     echo "${dirs[@]}"
 }
