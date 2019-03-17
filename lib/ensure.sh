@@ -3,8 +3,8 @@
 # Released under the terms of MIT License.
 
 # only allow sourced
-[[ ${BASH_SOURCE[0]} == "$0" ]] \
-    && { echo "Only allow to be sourced, not for running." >&2; exit 1; }
+[[ ${BASH_SOURCE[0]} == "$0" ]] && \
+    { echo "Only allow to be sourced, not for running." >&2; exit 1; }
 
 # source guard
 [[ $BAUX_ENSURE_SOURCED -eq 1 ]] && return
@@ -22,57 +22,59 @@ declare -g BAUX_ENSURE_DEBUG="${DEBUG:-1}"
 
 if [[ $BAUX_ENSURE_DEBUG == "1" ]]; then
     ensure() {
-        local expression="$1"
-        local message="$2"
-
         [[ $# -ge 1 ]] || die "${FUNCNAME[0]}() args error."
 
-        [[ -n $message ]] && message=": $message"
-        eval "[[ $expression ]]" &>/dev/null \
-            || die "$(caller 0): ${FUNCNAME[0]} \"$expression\" failed$message."
+        local expr="$1"; shift
+        local -a info=($(caller 0))
+        (eval "[[ $expr ]]" &>/dev/null) || \
+            die "${info[2]}:${info[0]}:${info[1]}: ${FUNCNAME[0]} '$expr' failed." "$@"
     }
-
     ensure_not_empty() {
+        local -a info=($(caller 0))
         for arg in "$@"; do
-            [[ -n $(echo "$arg" |sed -r 's/^\s+//;s/\s+$//') ]] || die \
-                "$(caller 0): Arguments should not be empty."
+            [[ -n $(echo "$arg" |sed -r 's/^\s+//;s/\s+$//') ]] || \
+                die "${info[2]}:${info[0]}:${info[1]}: Arguments should not be empty."
         done
     }
-
     ensure_is() {
-        ensure "$# -ge 2 && $# -le 3" "Need two string args."
+        ensure "$# -ge 2" "Need two string args."
 
-        [[ "$1" == "$2" ]] \
-            || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nExpect: $1\\nActual: $2"
+        local -a info=($(caller 0))
+        local expect="$1" actual="$2"; shift 2
+        [[ "x$expect" == "x$actual" ]] || die "${info[2]}:${info[0]}:${info[1]}:" \
+            "${FUNCNAME[0]} failed: $*\\nExpect: $expect\\nActual: $actual"
     }
-
     ensure_isnt() {
-        ensure "$# -ge 2 && $# -le 3" "Need two string args."
+        ensure "$# -ge 2" "Need two string args."
 
-        [[ "$1" != "$2" ]] \
-            || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nNot Expect: $1\\nActual: $2"
+        local -a info=($(caller 0))
+        local nexpect="$1" actual="$2"; shift 2
+        [[ "x$nexpect" != "x$actual" ]] || die "${info[2]}:${info[0]}:${info[1]}:" \
+            "${FUNCNAME[0]} failed: $*\\nNot Expect: $nexpect\\nActual: $actual"
     }
-
     ensure_like() {
-        ensure "$# -ge 2 && $# -le 3" "Need two string args."
+        ensure "$# -ge 2" "Need two string args."
 
-        [[ $1 =~ $2 ]] \
-            || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nExpect: $1\\nActual: $2"
+        local -a info=($(caller 0))
+        local expect="$1" actual="$2"; shift 2
+        [[ $expect =~ $actual ]] || die "${info[2]}:${info[0]}:${info[1]}:" \
+            "${FUNCNAME[0]} failed: $*\\nExpect: $expect\\nActual: $actual"
     }
-
     ensure_unlike() {
-        ensure "$# -ge 2 && $# -le 3" "Need two string args."
+        ensure "$# -ge 2" "Need two string args."
 
-        [[ ! $1 =~ $2 ]] \
-            || die "$(caller 0): ${FUNCNAME[0]} failed: $3\\nNot Expect: $1\\nActual: $2"
+        local -a info=($(caller 0))
+        local nexpect="$1" actual="$2"; shift 2
+        [[ ! $nexpect =~ $actual ]] || die "${info[2]}:${info[0]}:${info[1]}:" \
+            "${FUNCNAME[0]} failed: $*\\nNot Expect: $expect\\nActual: $actual"
     }
-    
     ensure_run() {
-        ensure "$# -ge 1 && $# -le 2" "Need a cmd and a error message."
-        local cmd="$1"
-        local msg="$2"
-        [[ -n $msg ]] && msg="\\n$msg"
-        eval "$cmd" || die "$(caller 0): ${FUNCNAME[0]} fail to run: $cmd $msg"
+        ensure "$# -ge 1" "Need a cmd and a error message."
+
+        local -a info=($(caller 0))
+        local cmd="$1"; shift
+        (eval "$cmd") || die "${info[2]}:${info[0]}:${info[1]}:" \
+            "${FUNCNAME[0]} fail to run: '$cmd'." "$@"
     }
 else
     ensure() { true; }
@@ -81,7 +83,7 @@ else
     ensure_isnt() { true; }
     ensure_like() { true; }
     ensure_unlike() { true; }
-    ensure_run() { eval "$1"; }
+    ensure_run() { eval "$1" || true; }
 fi
 
 # vim:ft=sh:ts=4:sw=4

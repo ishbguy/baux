@@ -28,12 +28,10 @@ die() {
     die_hook
     exit $((++BAUX_EXIT_CODE))
 }
-
 warn() {
     echo -e "$@" >&2
     return $((++BAUX_EXIT_CODE))
 }
-
 proname() {
     local name="$PRONAME"
     [[ -z $name ]] && name=$(basename "${0##+(-)}")
@@ -45,9 +43,7 @@ version() {
     else
         warn "You need to define a VERSION variable."
     fi
-    return $BAUX_EXIT_CODE
 }
-
 usage() {
     version
     if [[ -n $HELP ]]; then
@@ -55,9 +51,7 @@ usage() {
     else
         warn "You need to define a HELP variable."
     fi
-    return $BAUX_EXIT_CODE
 }
-
 import() {
     ensure "$# -ge 1" "Need to specify an import file."
     ensure_not_empty "$@"
@@ -67,8 +61,7 @@ import() {
         local file_path=$(readlink -f "$file")
         # ensure source one time
         [[ -z ${BAUX_IMPORT_FILES[$file_path]} ]] || continue
-        source "$file_path"
-        BAUX_IMPORT_FILES[$file_path]="$file_path"
+        source "$file_path" && BAUX_IMPORT_FILES[$file_path]="$file_path"
     done
 }
 
