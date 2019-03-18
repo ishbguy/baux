@@ -45,8 +45,7 @@ BAUX_TEST_COLORS[SKIP]="yellow"
 BAUX_TEST_COLORS[EMSG]="red"
 
 for s in "${BAUX_TEST_PROMPTS[@]}"; do
-    [[ ${#s} -gt $BAUX_TEST_STATUS_LEN ]] \
-        && BAUX_TEST_STATUS_LEN=${#s}
+    [[ ${#s} -gt $BAUX_TEST_STATUS_LEN ]] && BAUX_TEST_STATUS_LEN=${#s}
 done
 
 for ((i = 0; i < BAUX_TEST_STATUS_LEN; i++)); do

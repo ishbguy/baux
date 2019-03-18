@@ -1,24 +1,32 @@
 #! /usr/bin/env bats
 
-SRC_DIR=$PWD
+SRC_DIR=$BATS_TEST_DIRNAME/../..
 source $SRC_DIR/lib/log.sh
+load bats-aux
 
 @test "test log" {
-    run log debug "test"
-    [[ $status -eq 0 ]]
-    [[ $output =~ test ]]
-
-    BAUX_LOG_OUTPUT_LEVEL=info
-    run log debug "test"
-    echo $output
-    [[ $status -eq 0 ]]
-    [[ $output == "" ]]
-
     teardown() { rm -f bats.log; }
+    local -a levels=(
+            debug
+            info
+            warn
+            error
+            fatal
+            panic
+            )
+    for l in "${levels[@]}"; do
+        run log "$l" test
+        [[ $output =~ test ]] || run_error "run log $l test failed."
+    done
     BAUX_LOG_OUTPUT_FILE=bats.log
-    BAUX_LOG_OUTPUT_LEVEL=debug
-    run log debug "test"
-    echo $output
-    [[ $status -eq 0 ]]
-    [[ $(cat bats.log) =~ "test" ]]
+    for l in "${levels[@]}"; do
+        run log "$l" test
+        [[ $(cat bats.log) =~ test ]] || run_error "run log $l test failed."
+    done
+    BAUX_LOG_OUTPUT_FILE=
+    BAUX_LOG_OUTPUT_LEVEL=quiet
+    for l in "${levels[@]}"; do
+        run log "$l" test
+        [[ $output == '' ]] || run_error "run log $l test failed."
+    done
 }

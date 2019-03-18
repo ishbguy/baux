@@ -1,6 +1,6 @@
 #! /usr/bin/env bats
 
-SRC_DIR=$PWD
+SRC_DIR=$BATS_TEST_DIRNAME/../..
 source $SRC_DIR/lib/trace.sh
 
 @test "test frame" {

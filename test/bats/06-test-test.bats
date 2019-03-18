@@ -1,128 +1,178 @@
 #! /usr/bin/env bats
 
-SRC_DIR=$PWD
+SRC_DIR=$BATS_TEST_DIRNAME/../..
 source $SRC_DIR/lib/test.sh
+load bats-aux
 
 @test "test ok" {
-    run ok "1 == 1" "Test equal"
-    [[ $status -eq 0 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[PASS]} ]]
+    local -a data_pass=(
+            '1 == 1'
+            '1 = 1'
+            '1 != 0'
+            '1 > 0'
+            '0 < 1'
+            '1 -eq 1'
+            '1 -ne 0'
+            '1 -ge 1'
+            '1 -gt 0'
+            '0 -lt 1'
+            '0 -le 1'
+            'test =~ ""'
+            'test =~ t'
+            '=='
+            '=~'
+            )
+    for expr in "${data_pass[@]}"; do
+        run ok "$expr" "'$expr' must be ok"
+        [[ $status -eq 0 ]] || run_error "run ok '$expr' failed."
+    done
 
-    run ok " 1 != 1" "Test not equal"
-    [[ $status -eq 1 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[FAIL]} ]]
-
-    run ok " != 1" "Test bad expr (left)"
-    [[ $status -eq 1 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[FAIL]} ]]
-
-    run ok " 1 != " "Test bad expr (right)"
-    [[ $status -eq 1 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[FAIL]} ]]
-
-    run ok " != " "Test expr without two args"
-    [[ $status -eq 0 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[PASS]} ]]
+    local -a data_fail=(
+            ''
+            '""'
+            "''"
+            '!'
+            '1 =='
+            '== 1'
+            '1 =~'
+            '=~ 1'
+            )
+    for expr in "${data_fail[@]}"; do
+        run ok "$expr" "'$expr' should not be ok"
+        [[ $status -eq 1 ]] || run_error "run ok '$expr' failed."
+    done
 }
 
 @test "test is" {
-    run is 1 1 "Test equal"
-    [[ $status -eq 0 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[PASS]} ]]
+    local -a data_pass=(
+            ':'
+            ' : '
+            "1:1"
+            "test:test"
+            )
+    for expr in "${data_pass[@]}"; do
+        run is "${expr%%:*}" "${expr##*:}" "${expr%%:*} is ${expr##*:}"
+        [[ $status -eq 0 ]] || run_error "run is '${expr%%:*}' '${expr##*:}' failed."
+    done
 
-    run is 1 0 "Test not equal"
-    [[ $status -eq 1 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[FAIL]} ]]
-
-    run is "" "" "Test two spaces"
-    [[ $status -eq 0 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[PASS]} ]]
-
-    run is "1" "" "Test two spaces"
-    [[ $status -eq 1 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[FAIL]} ]]
+    local -a data_fail=(
+            '1:'
+            ':1'
+            '0:1'
+            ' :  '
+            'test:Test'
+            )
+    for expr in "${data_fail[@]}"; do
+        run is "${expr%%:*}" "${expr##*:}" "${expr%%:*} is not ${expr##*:}"
+        [[ $status -eq 1 ]] || run_error "run is '${expr%%:*}' '${expr##*:}' failed."
+    done
 }
 
 @test "test isnt" {
-    run isnt 1 0 "Test not equal"
-    [[ $status -eq 0 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[PASS]} ]]
+    local -a data_pass=(
+            '1:'
+            ':1'
+            '0:1'
+            ' :  '
+            'test:Test'
+            )
+    for expr in "${data_pass[@]}"; do
+        run isnt "${expr%%:*}" "${expr##*:}" "${expr%%:*} is not ${expr##*:}"
+        [[ $status -eq 0 ]] || run_error "run ensure_isnt '${expr%%:*}' '${expr##*:}' failed."
+    done
 
-    run isnt 1 1 "Test equal"
-    [[ $status -eq 1 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[FAIL]} ]]
-
-    run isnt "" "" "Test two spaces"
-    [[ $status -eq 1 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[FAIL]} ]]
-
-    run isnt "1" "" "Test two spaces"
-    [[ $status -eq 0 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[PASS]} ]]
+    local -a data_fail=(
+            ':'
+            ' : '
+            "1:1"
+            "test:test"
+            )
+    for expr in "${data_fail[@]}"; do
+        run isnt "${expr%%:*}" "${expr##*:}" "${expr%%:*} is ${expr##*:}"
+        [[ $status -eq 1 ]] || run_error "run isnt '${expr%%:*}' '${expr##*:}' failed."
+    done
 }
 
 @test "test like" {
-    run like 0 0 "Test same char like"
-    [[ $status -eq 0 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[PASS]} ]]
+    local -a data_pass=(
+            ':'
+            ' : '
+            "1:1"
+            "test:test"
+            'test:'
+            'test:t'
+            'test:st'
+            'test:es'
+            )
+    for expr in "${data_pass[@]}"; do
+        run like "${expr%%:*}" "${expr##*:}" "${expr%%:*} like ${expr##*:}"
+        [[ $status -eq 0 ]] || run_error "run like '${expr%%:*}' '${expr##*:}' failed."
+    done
 
-    run like 1 0 "Test different char"
-    [[ $status -eq 1 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[FAIL]} ]]
-
-    run like "" "" "Test two spaces"
-    [[ $status -eq 0 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[PASS]} ]]
-
-    run like "1" "" "Test space like"
-    [[ $status -eq 0 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[PASS]} ]]
-
-    run like "" "1" "Test space like"
-    [[ $status -eq 1 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[FAIL]} ]]
+    local -a data_fail=(
+            '0:1'
+            ' :  '
+            'test:Test'
+            'test: test'
+            'test:test '
+            )
+    for expr in "${data_fail[@]}"; do
+        run like "${expr%%:*}" "${expr##*:}" "${expr%%:*} unlike ${expr##*:}"
+        [[ $status -eq 1 ]] || run_error "run like '${expr%%:*}' '${expr##*:}' failed."
+    done
 }
 
 @test "test unlike" {
-    run unlike 0 0 "Test same char unlike"
-    [[ $status -eq 1 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[FAIL]} ]]
+    local -a data_pass=(
+            '0:1'
+            ' :  '
+            'test:Test'
+            'test: test'
+            'test:test '
+            )
+    for expr in "${data_pass[@]}"; do
+        run unlike "${expr%%:*}" "${expr##*:}" "${expr%%:*} unlike ${expr##*:}"
+        [[ $status -eq 0 ]] || run_error "run unlike '${expr%%:*}' '${expr##*:}' failed."
+    done
 
-    run unlike 1 0 "Test different char"
-    [[ $status -eq 0 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[PASS]} ]]
-
-    run unlike "" "" "Test two spaces"
-    [[ $status -eq 1 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[FAIL]} ]]
-
-    run unlike "1" "" "Test space unlike"
-    [[ $status -eq 1 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[FAIL]} ]]
-
-    run unlike "" "1" "Test space unlike"
-    [[ $status -eq 0 ]]
-    [[ $output =~ ${BAUX_TEST_PROMPTS[PASS]} ]]
+    local -a data_fail=(
+            ':'
+            ' : '
+            "1:1"
+            "test:test"
+            'test:'
+            'test:t'
+            'test:st'
+            'test:es'
+            )
+    for expr in "${data_fail[@]}"; do
+        run unlike "${expr%%:*}" "${expr##*:}" "${expr%%:*} like ${expr##*:}"
+        [[ $status -eq 1 ]] || run_error "run unlike '${expr%%:*}' '${expr##*:}' failed."
+    done
 }
 
 @test "test run_ok" {
-    run run_ok '$status -eq 0' exit 0
-    [[ $status -eq 0 ]]
+    run_ok_true() { true; }
+    run_ok_false() { false; }
 
-    run run_ok '$status -eq 1' exit 0
-    [[ $status -eq 1 ]]
+    local -a data_pass=(
+            true
+            run_ok_true
+            )
+    for cmd in "${data_pass[@]}"; do
+        run run_ok '$status -eq 0' "$cmd"
+        [[ $status -eq 0 ]] || run_error "run run_ok '$cmd' failed."
+    done
 
-    run run_ok '$status -eq 1' exit 1
-    [[ $status -eq 0 ]]
-
-    run run_ok '$status -eq 0' exit 1
-    [[ $status -eq 1 ]]
-
-    run run_ok '$output =~ "command not found"' xyz
-    [[ $status -eq 0 ]]
-
-    run run_ok '$output == ""' xyz
-    [[ $status -eq 1 ]]
+    local -a data_fail=(
+            false
+            run_ok_false
+            cmd-not-found
+            )
+    for cmd in "${data_fail[@]}"; do
+        run run_ok '$status -eq 0' "$cmd"
+        [[ $status -eq 1 ]] || run_error "run run_ok '$cmd' failed."
+    done
 }
 
 @test "test subtest" {

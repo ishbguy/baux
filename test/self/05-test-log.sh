@@ -26,7 +26,7 @@ test_log() {
         run_ok '\$output =~ ERROR' log error test 
         run_ok '\$output =~ FATAL' log fatal test 
         run_ok '\$output =~ PANIC' log panic test 
-        run_ok '\$output =~ QUIET' log quiet test 
+        run_ok '\$output == \"\"' log quiet test 
 
         BAUX_LOG_OUTPUT_LEVEL=info
         run_ok '\$output =~ \"\"' log debug test 
@@ -35,7 +35,7 @@ test_log() {
         run_ok '\$output =~ ERROR' log error test 
         run_ok '\$output =~ FATAL' log fatal test 
         run_ok '\$output =~ PANIC' log panic test 
-        run_ok '\$output =~ QUIET' log quiet test 
+        run_ok '\$output == \"\"' log quiet test 
 
         BAUX_LOG_OUTPUT_LEVEL=quiet
         run_ok '\$output =~ \"\"' log debug test 
@@ -44,7 +44,7 @@ test_log() {
         run_ok '\$output =~ \"\"' log error test 
         run_ok '\$output =~ \"\"' log fatal test 
         run_ok '\$output =~ \"\"' log panic test 
-        run_ok '\$output =~ QUIET' log quiet test 
+        run_ok '\$output == \"\"' log quiet test 
 
         BAUX_LOG_OUTPUT_LEVEL=debug
         BAUX_LOG_OUTPUT_FILE=$tmp
@@ -54,7 +54,6 @@ test_log() {
         run_ok '\$output =~ \"\"' log error test 
         run_ok '\$output =~ \"\"' log fatal test 
         run_ok '\$output =~ \"\"' log panic test 
-        run_ok '\$output =~ \"\"' log quiet test 
         
         run_ok '\$status -eq 0' grep DEBUG $tmp
         run_ok '\$status -eq 0' grep INFO $tmp
@@ -62,7 +61,7 @@ test_log() {
         run_ok '\$status -eq 0' grep ERROR $tmp
         run_ok '\$status -eq 0' grep FATAL $tmp
         run_ok '\$status -eq 0' grep PANIC $tmp
-        run_ok '\$status -eq 0' grep QUIET $tmp
+        run_ok '\$status -eq 1' grep QUIET $tmp
     }"
 }
 

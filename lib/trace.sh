@@ -48,9 +48,8 @@ callstack() {
     local indent="+"
     for ((i = idx; i < depth; i++)); do
         local -a frame=($(frame "$i"))
-        local cmdline=$(sed -ne "${frame[1]}p" "${frame[0]}" \
-            | sed -r 's/^\s+//')
-        echo "$indent $cmdline [${frame[0]}:${frame[1]}:${frame[3]}]"
+        local cmd=$(sed -ne "${frame[1]}p" "${frame[0]}" | sed -r 's/^\s+//')
+        echo "$indent $cmd [${frame[0]}:${frame[1]}:${frame[3]}]"
         indent="  $indent"
     done
 }

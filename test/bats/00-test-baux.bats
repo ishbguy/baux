@@ -1,8 +1,7 @@
-#! /usr/bin/env bats
+#!/usr/bin/env bats
 
-SRC_DIR=$PWD
-
-source $SRC_DIR/lib/baux.sh &>/dev/null
+SRC_DIR=$BATS_TEST_DIRNAME/../..
+source $SRC_DIR/lib/baux.sh
 
 @test "test die" {
     run die TEST
@@ -19,6 +18,11 @@ source $SRC_DIR/lib/baux.sh &>/dev/null
         warn test"
     [[ $status -eq 1 ]]
     [[ $output == "test" ]]
+
+    run bash -c "source $SRC_DIR/lib/baux.sh; \
+        warn test; warn test"
+    [[ $status -eq 2 ]]
+    [[ $output =~ "test" ]]
 }
 
 @test "test proname" {

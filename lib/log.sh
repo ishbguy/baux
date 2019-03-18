@@ -40,6 +40,7 @@ log() {
     local message="$2"
 
     [[ ${BAUX_LOG_LEVEL[$level]} -gt ${BAUX_LOG_LEVEL[$BAUX_LOG_OUTPUT_LEVEL]} ]] && return
+    [[ $level == quiet ]] && return
 
     # log out to a file or to standard output
     if [[ -n $BAUX_LOG_OUTPUT_FILE ]]; then
@@ -48,9 +49,9 @@ log() {
         [[ -w $BAUX_LOG_OUTPUT_FILE ]] \
             || warn "Log file $BAUX_LOG_OUTPUT_FILE can not write" || return 1
         # append to log file
-        exec 3>>$BAUX_LOG_OUTPUT_FILE
-        exec 1>&3
-        trap 'exec 3>&1; exec 3>&-' RETURN
+        exec 3>&1
+        exec 1>>$BAUX_LOG_OUTPUT_FILE
+        trap 'exec 1>&3; exec 3>&-' RETURN
     fi
 
     echo "$(__datetime)|$(proname)[$$]|${level^^}|${FUNCNAME[1]}| $message"

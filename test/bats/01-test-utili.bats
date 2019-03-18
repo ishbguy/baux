@@ -1,59 +1,37 @@
-#! /usr/bin/env bats
+#!/usr/bin/env bats
 
-SRC_DIR=$PWD
-
+SRC_DIR=$BATS_TEST_DIRNAME/../..
 source $SRC_DIR/lib/utili.sh
+load bats-aux
 
 @test "test random" {
     run random
-    [[ $status -eq 0 ]]
     [[ $output =~ "" ]]
 
     run random test
-    [[ $status -eq 0 ]]
     [[ $output =~ "test" ]]
 
     run random {1..100}
-    [[ $status -eq 0 ]]
     [[ $output != "1 2 3 4 5 6 7 8 9 10" ]]
 }
 
 @test "test cecho" {
-    run cecho black test
-    [[ $status -eq 0 ]]
-    [[ $output == "[30mtest[0m" ]]
-
-    run cecho red test
-    [[ $status -eq 0 ]]
-    [[  $output == "[31mtest[0m" ]]
-
-    run cecho green test
-    [[ $status -eq 0 ]]
-    [[ $output == "[32mtest[0m" ]]
-
-    run cecho yellow test
-    [[ $status -eq 0 ]]
-    [[ $output == "[33mtest[0m" ]]
-
-    run cecho blue test
-    [[ $status -eq 0 ]]
-    [[ $output == "[34mtest[0m" ]]
-
-    run cecho magenta test
-    [[ $status -eq 0 ]]
-    [[ $output == "[35mtest[0m" ]]
-
-    run cecho cyan test
-    [[ $status -eq 0 ]]
-    [[ $output == "[36mtest[0m" ]]
-
-    run cecho white test
-    [[ $status -eq 0 ]]
-    [[ $output == "[37mtest[0m" ]]
-
-    run cecho other test
-    [[ $status -eq 0 ]]
-    [[ $output == "[34mtest[0m" ]]
+    # color:code
+    local -a colors=(
+            'black:30'
+            'red:31'
+            'green:32'
+            'yellow:33'
+            'blue:34'
+            'magenta:35'
+            'cyan:36'
+            'white:37'
+            'else:34'
+            )
+    for c in "${colors[@]}"; do
+        run cecho "${c%%:*}" test
+        [[ $output == "[${c##*:}mtest[0m" ]] || run_error "run cecho '${c}' test failed."
+    done
 }
 
 @test "test getoptions" {
