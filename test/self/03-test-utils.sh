@@ -3,14 +3,14 @@
 # Released under the terms of the MIT License.
 
 # source guard
-[[ $TEST_UTILI_SOURCED -eq 1 ]] && return
-declare -gr TEST_UTILI_SOURCED=1
-declare -gr TEST_UTILI_ABS_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+[[ $TEST_UTILS_SOURCED -eq 1 ]] && return
+declare -gr TEST_UTILS_SOURCED=1
+declare -gr TEST_UTILS_ABS_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
-source "$TEST_UTILI_ABS_DIR/../../lib/utili.sh"
-source "$TEST_UTILI_ABS_DIR/../../lib/test.sh"
+source "$TEST_UTILS_ABS_DIR/../../lib/utils.sh"
+source "$TEST_UTILS_ABS_DIR/../../lib/test.sh"
 
-test_utili() {
+test_utils() {
     setup() {
         tmp=$(mktemp)
     }; setup
@@ -91,7 +91,7 @@ test_utili() {
 }
 
 run_tests() {
-    test_utili
+    test_utils
 }
 
 [[ ${FUNCNAME[0]} == "main" || ${FUNCNAME[0]} == '' ]] \

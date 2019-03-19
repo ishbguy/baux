@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 
 SRC_DIR=$BATS_TEST_DIRNAME/../..
-source $SRC_DIR/lib/utili.sh
+source $SRC_DIR/lib/utils.sh
 load bats-aux
 
 @test "test random" {
@@ -47,7 +47,7 @@ load bats-aux
         [[ $output =~ "should not be empty" ]]
     fi
 
-    run bash -c "source $SRC_DIR/lib/utili.sh; \
+    run bash -c "source $SRC_DIR/lib/utils.sh; \
         declare -A opts args;\
         getoptions opts args 'a' -a a; \
         echo \${args[a]}; \
@@ -56,7 +56,7 @@ load bats-aux
     [[ $status -eq 0 ]]
     [[ $output == "" ]]
 
-    run bash -c "source $SRC_DIR/lib/utili.sh; \
+    run bash -c "source $SRC_DIR/lib/utils.sh; \
         declare -A opts args;\
         getoptions opts args 'a:' -a a; \
         echo \${args[a]}; \
@@ -64,7 +64,7 @@ load bats-aux
     [[ $status -eq 0 ]]
     [[ $output == "a" ]]
 
-    run bash -c "source $SRC_DIR/lib/utili.sh; \
+    run bash -c "source $SRC_DIR/lib/utils.sh; \
         declare -A opts args;\
         getoptions opts args 'a:' -a a -b; \
         echo \${args[a]}; \

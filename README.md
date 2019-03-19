@@ -29,7 +29,7 @@
 
 + [**Helper**](#helper-functions-bauxsh): Basic script writing helper functions, such as getting script's name, version and help message, importing other script once, warning or exit when get a wrong status. (`baux.sh`)
 + [**Assertion**](#assertion-ensuresh): Functions for writing reliable APIs, ensuring the pre- or post-condition. (`ensure.sh`)
-+ [**Utility**](#utility-utilish): Useful utility functions for getting options, reading a simple config file, printing message with color and so on. (`utili.sh`)
++ [**Utility**](#utility-utilish): Useful utility functions for getting options, reading a simple config file, printing message with color and so on. (`utils.sh`)
 + [**Debugging**](#debugging-logsh-tracesh): Simple functions for logging (`log.sh`) and print callstack when failed (`trace.sh`).
 + [**Testing**](#testing-varsh-testsh): Functions for check a variable (`var.sh`) and writing unit tests (`test.sh`).
 + [**Exception**](#exception-exceptsh): (Not yet finished)
@@ -68,7 +68,7 @@ lib
 ├── log.sh      # simple logging
 ├── test.sh     # unit test functions
 ├── trace.sh    # simple callstack function
-├── utili.sh    # useful tools
+├── utils.sh    # useful tools
 └── var.sh      # checking variables
 ```
 
@@ -81,7 +81,7 @@ except.sh
 array.sh    test.sh                                 |
     |           |-----------------------------------|
     V           V                                   V
-var.sh      utili.sh    pattern.sh    log.sh      trace.sh
+var.sh      utils.sh    pattern.sh    log.sh      trace.sh
     |           |           |           |           |
     +-----------+-----------+-----------+-----------+
     V
@@ -253,12 +253,12 @@ echo "Can not be here."
 
 The `BAUX_ENSURE_DEBUG` variable act as a switch to turn on or off the assertion, its default value is `1`, which means turn on assertion, if you want to turn off, you can set `BAUX_ENSURE_DEBUG` to `0` before sourcing the `ensure.sh`.
 
-###  Utility (`utili.sh`)
+###  Utility (`utils.sh`)
 
 #### Get Options
 
 ```bash
-source /path/to/baux/lib/utili.sh
+source /path/to/baux/lib/utils.sh
 
 # need to declare two associative arrays
 # one for options and one for arguments
@@ -288,7 +288,7 @@ shift $((OPTIND - 1))
 #### Read Config File
 
 ```bash
-source /path/to/baux/lib/utili.sh
+source /path/to/baux/lib/utils.sh
 
 # need to declare an associative array for storing config value
 declare -A CONFIGS
@@ -314,7 +314,7 @@ read_config CONFIGS file-not-exsit # will not fail, just return 1
 #### Other Utilities
 
 ```bash
-source /path/to/baux/lib/utili.sh
+source /path/to/baux/lib/utils.sh
 
 cecho red "This message will print in red" # color can be: black, red, green
                                            # yellow, blue, magenta, cyan, white

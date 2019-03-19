@@ -18,7 +18,7 @@ if [[ $BAUX_SOURCED -ne 1 ]]; then
     source "$BAUX_TEST_ABS_DIR/baux.sh"
 fi
 
-import "$BAUX_TEST_ABS_DIR/utili.sh"
+import "$BAUX_TEST_ABS_DIR/utils.sh"
 import "$BAUX_TEST_ABS_DIR/trace.sh"
 
 declare -gA BAUX_TEST_PROMPTS

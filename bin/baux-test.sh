@@ -9,7 +9,7 @@ declare -gr BAUX_TEST_SUIT_ABS_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}"
 
 source "$BAUX_TEST_SUIT_ABS_DIR/../lib/test.sh"
 source "$BAUX_TEST_SUIT_ABS_DIR/../lib/var.sh"
-source "$BAUX_TEST_SUIT_ABS_DIR/../lib/utili.sh"
+source "$BAUX_TEST_SUIT_ABS_DIR/../lib/utils.sh"
 
 VERSION="v0.0.1"
 HELP="\

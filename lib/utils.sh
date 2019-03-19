@@ -7,15 +7,15 @@
     && { echo "Only allow to be sourced, not for running." >&2; exit 1; }
 
 # source guard
-[[ $BAUX_UTILI_SOURCED -eq 1 ]] && return
-declare -gr BAUX_UTILI_SOURCED=1
-declare -gr BAUX_UTILI_ABS_DIR="$(dirname $(readlink -f "${BASH_SOURCE[0]}"))"
+[[ $BAUX_UTILS_SOURCED -eq 1 ]] && return
+declare -gr BAUX_UTILS_SOURCED=1
+declare -gr BAUX_UTILS_ABS_DIR="$(dirname $(readlink -f "${BASH_SOURCE[0]}"))"
 
 # source dependences
 if [[ $BAUX_SOURCED -ne 1 ]]; then
-    [[ ! -e $BAUX_UTILI_ABS_DIR/baux.sh ]] \
+    [[ ! -e $BAUX_UTILS_ABS_DIR/baux.sh ]] \
         && { echo "Can not source the dependent script baux.sh." >&2; exit 1; }
-    source "$BAUX_UTILI_ABS_DIR/baux.sh"
+    source "$BAUX_UTILS_ABS_DIR/baux.sh"
 fi
 
 # echo a message with color
