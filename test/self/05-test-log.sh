@@ -5,7 +5,7 @@
 # source guard
 [[ $TEST_LOG_SOURCED -eq 1 ]] && return
 declare -gr TEST_LOG_SOURCED=1
-declare -gr TEST_LOG_ABS_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+declare -gr TEST_LOG_ABS_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
 source "$TEST_LOG_ABS_DIR/../../lib/log.sh"
 source "$TEST_LOG_ABS_DIR/../../lib/test.sh"

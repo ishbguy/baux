@@ -5,7 +5,7 @@
 # source guard
 [[ $TEST_VAR_SOURCED -eq 1 ]] && return
 declare -gr TEST_VAR_SOURCED=1
-declare -gr TEST_VAR_ABS_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+declare -gr TEST_VAR_ABS_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
 source "$TEST_VAR_ABS_DIR/../../lib/var.sh"
 source "$TEST_VAR_ABS_DIR/../../lib/test.sh"

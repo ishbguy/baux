@@ -5,7 +5,7 @@
 # source guard
 [[ $BAUX_TEST_SUIT_SOURCED -eq 1 ]] && return
 declare -gr BAUX_TEST_SUIT_SOURCED=1
-declare -gr BAUX_TEST_SUIT_ABS_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+declare -gr BAUX_TEST_SUIT_ABS_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
 source "$BAUX_TEST_SUIT_ABS_DIR/../lib/test.sh"
 source "$BAUX_TEST_SUIT_ABS_DIR/../lib/var.sh"
